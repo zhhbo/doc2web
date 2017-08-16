@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Autofac" Version="4.6.1" />
+    <PackageReference Include="DocumentFormat.OpenXml" Version="2.7.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Plugins\TrackChanges\" />
+    <Folder Include="Plugins\Numbering\" />
+    <Folder Include="Plugins\Run\" />
+    <Folder Include="Plugins\Style\" />
+    <Folder Include="Plugins\Paragraph\" />
+  </ItemGroup>
+
+</Project>
