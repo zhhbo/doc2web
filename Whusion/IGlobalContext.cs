@@ -7,8 +7,12 @@ namespace Whusion
 {
     public interface IGlobalContext
     {
-        IEnumerable<OpenXmlElement> Elements { get; }
+        IEnumerable<OpenXmlElement> RootElements { get; }
+
+        void AddHtml(string html);
+
         void AddCss(string css);
-        void AddJavascript(string js);
+
+        void AddJs(string js);
     }
 }
