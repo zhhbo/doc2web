@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Whusion
 {
-    interface IGlobalContext
+    public interface IGlobalContext
     {
         IEnumerable<OpenXmlElement> Elements { get; }
         void AddCss(string css);

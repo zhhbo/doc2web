@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Whusion.Core
+namespace Whusion
 {
-    class PluginCombinator
+    public class PostProcessingAttribute : Attribute
     {
     }
 }
