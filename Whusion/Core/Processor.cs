@@ -7,15 +7,15 @@ namespace Whusion.Core
 {
     public class Processor
     {
-        public List<Action<IGlobalContext>> PreRendering { get; set; }
-        public List<Action<IGlobalContext>> PostRendering { get; set; }
-        public Dictionary<Type, List<Action<IElementContext, OpenXmlElement>>> ElementRendering { get; set; }
+        public List<Action<IGlobalContext>> PreRenderingActions { get; }
+        public List<Action<IGlobalContext>> PostRenderingActions { get; }
+        public Dictionary<Type, List<Action<IElementContext, OpenXmlElement>>> ElementRenderingActions { get; internal set; }
 
         public Processor()
         {
-            PreRendering = new List<Action<IGlobalContext>>();
-            PostRendering = new List<Action<IGlobalContext>>();
-            ElementRendering = new Dictionary<Type, List<Action<IElementContext, OpenXmlElement>>>();
+            PreRenderingActions = new List<Action<IGlobalContext>>();
+            PostRenderingActions = new List<Action<IGlobalContext>>();
+            ElementRenderingActions = new Dictionary<Type, List<Action<IElementContext, OpenXmlElement>>>();
         }
 
         public Processor(params Processor[] plugins) : this()
@@ -25,20 +25,20 @@ namespace Whusion.Core
 
         public void PreRender(IGlobalContext context)
         {
-            foreach (var action in PreRendering)
+            foreach (var action in PreRenderingActions)
                 action(context);
         }
 
         public void PostRender(IGlobalContext context)
         {
-            foreach (var action in PostRendering)
+            foreach (var action in PostRenderingActions)
                 action(context);
         }
 
         public void ElementRender(IElementContext context, OpenXmlElement element)
         {
             List<Action<IElementContext, OpenXmlElement>> processorActions;
-            if (ElementRendering.TryGetValue(element.GetType(), out processorActions))
+            if (ElementRenderingActions.TryGetValue(element.GetType(), out processorActions))
             {
                 foreach(var action in processorActions)
                     action(context, element);
@@ -47,29 +47,25 @@ namespace Whusion.Core
 
         private void Combine(Processor other)
         {
-            AddOtherElementRendering(other);
-            AddOtherPrePostRendering(other);
+            AddElementProcessingActionFromProcessor(other);
+            AddPrePostRenderingActionsFromProcessor(other);
         }
 
-        private void AddOtherPrePostRendering(Processor other)
+        private void AddPrePostRenderingActionsFromProcessor(Processor processor)
         {
-            PreRendering.AddRange(other.PreRendering);
-            PostRendering.AddRange(other.PostRendering);
+            PreRenderingActions.AddRange(processor.PreRenderingActions);
+            PostRenderingActions.AddRange(processor.PostRenderingActions);
         }
 
-        private void AddOtherElementRendering(Processor other)
+        private void AddElementProcessingActionFromProcessor(Processor processor)
         {
-            foreach (var type in other.ElementRendering.Keys)
+            foreach (var type in processor.ElementRenderingActions.Keys)
             {
                 List<Action<IElementContext, OpenXmlElement>> current;
-                if (ElementRendering.TryGetValue(type, out current))
-                {
-                    current.AddRange(other.ElementRendering[type]);
-                }
+                if (ElementRenderingActions.TryGetValue(type, out current))
+                    current.AddRange(processor.ElementRenderingActions[type]);
                 else
-                {
-                    ElementRendering.Add(type, other.ElementRendering[type]);
-                }
+                    ElementRenderingActions.Add(type, processor.ElementRenderingActions[type]);
             }
         }
     }

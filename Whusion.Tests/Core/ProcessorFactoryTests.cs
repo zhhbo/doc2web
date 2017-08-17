@@ -11,6 +11,10 @@ namespace Whusion.Tests.Core
     [TestClass]
     public class ProcessorFactoryTests
     {
+        private ProcessorFactory _instance;
+        private IGlobalContext _globalContext;
+        private IElementContext _elementContext;
+
         public class PreProcessorConfig
         {
             [PreProcessing]
@@ -59,90 +63,89 @@ namespace Whusion.Tests.Core
             public virtual void ProcessRun(Run r) { }
         }
 
+        [TestInitialize]
+        public void Initalize()
+        {
+            _instance = new ProcessorFactory();
+            _globalContext = Substitute.For<IGlobalContext>();
+            _elementContext = Substitute.For<IElementContext>();
+        }
+
         [TestMethod]
         public void BuildSingle_PreProcessing_Test()
         {
-            var instance = new ProcessorFactory();
-            var globalContext = Substitute.For<IGlobalContext>();
             var preProcessorConfig = BuildPreProcessorConfig();
 
-            var processor = instance.BuildSingle(preProcessorConfig);
-            Assert.AreEqual(1, processor.PreRendering.Count);
+            var processor = _instance.BuildSingle(preProcessorConfig);
+            processor.PreRender(_globalContext);
 
-            processor.PreRendering[0](globalContext);
-            preProcessorConfig.Received(1).PreProcess(Arg.Is(globalContext));
+            Assert.AreEqual(1, processor.PreRenderingActions.Count);
+            preProcessorConfig.Received(1).PreProcess(Arg.Is(_globalContext));
         }
+
 
         [TestMethod]
         public void BuildSingle_PostProcessing_Test()
         {
-            var instance = new ProcessorFactory();
-            var globalContext = Substitute.For<IGlobalContext>();
             var postProcessorConfig = BuildPostProcessorConfig();
 
-            var processor = instance.BuildSingle(postProcessorConfig);
-            Assert.AreEqual(1, processor.PostRendering.Count);
+            var processor = _instance.BuildSingle(postProcessorConfig);
+            processor.PostRender(_globalContext);
 
-            processor.PostRendering[0](globalContext);
-            postProcessorConfig.Received(1).PostProcessing(Arg.Is(globalContext));
+            Assert.AreEqual(1, processor.PostRenderingActions.Count);
+            postProcessorConfig.Received(1).PostProcessing(Arg.Is(_globalContext));
         }
 
         [TestMethod]
         public void BuildSingle_ElementProcessing_Test()
         {
-            var instance = new ProcessorFactory();
-            var elementContext = Substitute.For<IElementContext>();
             var paragraph = new Paragraph();
             var elementProcessingConfig = BuildElementProcessorConfig();
 
-            var processor = instance.BuildSingle(elementProcessingConfig);
+            var processor = _instance.BuildSingle(elementProcessingConfig);
+            processor.ElementRender(_elementContext, paragraph);
+
             Assert.AreEqual(
                 1,
-                processor.ElementRendering[typeof(Paragraph)].Count
+                processor.ElementRenderingActions[typeof(Paragraph)].Count
             );
-
-            processor.ElementRendering[typeof(Paragraph)][0](elementContext, paragraph);
             elementProcessingConfig
                 .Received(1)
-                .ProcessElement(Arg.Is(elementContext), Arg.Is(paragraph));
+                .ProcessElement(Arg.Is(_elementContext), Arg.Is(paragraph));
         }
 
         [TestMethod]
         public void BuildSingle_PreProcessing_InvalidTest()
         {
-            var instance = new ProcessorFactory();
-            var globalContext = Substitute.For<IGlobalContext>();
             var preProcessorConfig = BuildInvalidPreProcessingConfig();
 
             Assert.ThrowsException<ArgumentException>(() =>
-                instance.BuildSingle(preProcessorConfig)
+                _instance.BuildSingle(preProcessorConfig)
             );
         }
 
         [TestMethod]
         public void BuildSingle_PostProcessing_InvalidTest()
         {
-            var instance = new ProcessorFactory();
-            var globalContext = Substitute.For<IGlobalContext>();
             var postProcessingConfig = BuildInvalidPostProcessingConfig();
 
             Assert.ThrowsException<ArgumentException>(() =>
-                instance.BuildSingle(postProcessingConfig));
+                _instance.BuildSingle(postProcessingConfig));
         }
 
         [TestMethod]
         public void BuildSingle_ElementProcessing_InvalidTest()
         {
-            var processorFactory = new ProcessorFactory();
-            object[] instances = new object[]
+            object[] processorConfigs = new object[]
             {
                 new InvalidElementProcessingConfig1(),
                 new InvalidElementProcessingConfig2(),
                 new InvalidElementProcessingConfig3(),
             };
-            foreach (object instance in instances)
+
+            foreach (object processorConfig in processorConfigs)
                 Assert.ThrowsException<ArgumentException>(
-                    () => processorFactory.BuildSingle(instance)
+                    () => _instance.BuildSingle(processorConfig)
                 );
         }
 
