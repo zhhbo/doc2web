@@ -18,13 +18,12 @@ namespace Whusion.Core
         public IConversionTask Build(IEnumerable<OpenXmlElement> elements)
         {
             var container = EngineContainer.BeginLifetimeScope();
-            var task = new ConversionTask
+            return new ConversionTask
             {
                 GlobalContext = new GlobalContext(container, elements),
                 Processor = Processor,
                 ContextRenderer = ContextRenderer
             };
-            return task;
         }
     }
 }

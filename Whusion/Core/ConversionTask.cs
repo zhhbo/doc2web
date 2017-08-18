@@ -27,7 +27,9 @@ namespace Whusion.Core
 
         public void PreProcess()
         {
-            Processor.PreProcess(GlobalContext);
+            GlobalContext.Container = 
+                GlobalContext.Container.BeginLifetimeScope(containerBuilder =>
+                    Processor.PreProcess(GlobalContext, containerBuilder));
         }
 
         public void ConvertElements() {

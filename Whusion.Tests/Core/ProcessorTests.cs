@@ -1,4 +1,5 @@
-﻿using DocumentFormat.OpenXml;
+﻿using Autofac;
+using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Wordprocessing;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
@@ -14,12 +15,14 @@ namespace Whusion.Tests.Core
     {
         private List<string> _calledActions;
         private Processor _instance;
+        private ContainerBuilder _containerBuilder;
 
         [TestInitialize]
         public void Initialize()
         {
             _calledActions = new List<string>();
             _instance = new Processor();
+            _containerBuilder = new ContainerBuilder();
         }
 
         [TestMethod]
@@ -50,7 +53,7 @@ namespace Whusion.Tests.Core
             AddPreRenderingAction("C");
             AddPreRenderingAction("D");
 
-            _instance.PreProcess(Substitute.For<IGlobalContext>());
+            _instance.PreProcess(Substitute.For<IGlobalContext>(), _containerBuilder);
 
             Assert.AreEqual(4, _calledActions.Count);
             _calledActions.Contains("A");
@@ -97,7 +100,7 @@ namespace Whusion.Tests.Core
         private static Processor BuildProcessorA()
         {
             var processor = new Processor();
-            processor.PreRenderingActions.Add(c => { });
+            processor.PreRenderingActions.Add((c, containerBuilder) => { });
             processor.ElementRenderingActions
                 .Add(typeof(Paragraph), new List<Action<IElementContext, OpenXmlElement>>()
             {
@@ -163,12 +166,12 @@ namespace Whusion.Tests.Core
 
         private void AddPreRenderingAction(string key)
         {
-            _instance.PreRenderingActions.Add(BuildPrePostProcessingAction(key));
+            _instance.PreRenderingActions.Add(BuildPreProcessingAction(key));
         }
 
         private void AddPostRenderingAction(string v)
         {
-            _instance.PostRenderingActions.Add(BuildPrePostProcessingAction(v));
+            _instance.PostRenderingActions.Add(BuildPostProcessingAction(v));
         }
 
         private void AddElementRenderingAction<T>(string key)
@@ -186,9 +189,11 @@ namespace Whusion.Tests.Core
             }
 
         }
+        private Action<IGlobalContext, ContainerBuilder> BuildPreProcessingAction(string key) =>
+            (c, containerBuilder) => _calledActions.Add(key);
 
-        private Action<IGlobalContext> BuildPrePostProcessingAction(string key) =>
-            (IGlobalContext _) => _calledActions.Add(key);
+        private Action<IGlobalContext> BuildPostProcessingAction(string key) =>
+            (c) => _calledActions.Add(key);
 
         private (Type, Action<IElementContext, OpenXmlElement>) BuildElementProcessingAction<T>(List<string> whenCalled, string key)
             where T : OpenXmlElement =>

@@ -1,4 +1,5 @@
-﻿using DocumentFormat.OpenXml.Wordprocessing;
+﻿using Autofac;
+using DocumentFormat.OpenXml.Wordprocessing;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 using System;
@@ -13,12 +14,13 @@ namespace Whusion.Tests.Core
     {
         private ProcessorFactory _instance;
         private IGlobalContext _globalContext;
+        private ContainerBuilder _containerBuilder;
         private IElementContext _elementContext;
 
         public class PreProcessorConfig
         {
             [PreProcessing]
-            public virtual void PreProcess(IGlobalContext ctx) { }
+            public virtual void PreProcess(IGlobalContext ctx, ContainerBuilder containerBuilder) { }
         }
 
         public class PostProcessorConfig
@@ -33,31 +35,43 @@ namespace Whusion.Tests.Core
             public virtual void ProcessElement(IElementContext context, Paragraph p) { }
         }
 
-        public class InvalidPreProcessingConfig
+        public class InvalidPreProcessorConfig1
         {
             [PreProcessing]
-            public virtual void PreProccess() { }
+            public virtual void PreProccess(IGlobalContext ctx) { }
         }
 
-        public class InvalidPostProcessorConfig
+        public class InvalidPreProcessorConfig2
+        {
+            [PreProcessing]
+            public virtual void PreProccess(IGlobalContext ctx, object something) { }
+        }
+
+        public class InvalidPostProcessorConfig1
+        {
+            [PostProcessing]
+            public virtual void PostProcess() { }
+        }
+
+        public class InvalidPostProcessorConfig2
         {
             [PostProcessing]
             public virtual void PostProcess(object something) { }
         }
 
-        public class InvalidElementProcessingConfig1
+        public class InvalidElementProcessorConfig1
         {
             [ElementProcessing]
             public virtual void ProcessString(IElementContext ctx, string str) { }
         }
 
-        public class InvalidElementProcessingConfig2
+        public class InvalidElementProcessorConfig2
         {
             [ElementProcessing]
             public virtual void ProcessParagraph(IGlobalContext ctx, Paragraph p) { }
         }
 
-        public class InvalidElementProcessingConfig3
+        public class InvalidElementProcessorConfig3
         {
             [ElementProcessing]
             public virtual void ProcessRun(Run r) { }
@@ -67,6 +81,7 @@ namespace Whusion.Tests.Core
         public void Initalize()
         {
             _instance = new ProcessorFactory();
+            _containerBuilder = new ContainerBuilder();
             _globalContext = Substitute.For<IGlobalContext>();
             _elementContext = Substitute.For<IElementContext>();
         }
@@ -74,33 +89,61 @@ namespace Whusion.Tests.Core
         [TestMethod]
         public void BuildSingle_PreProcessing_Test()
         {
-            var preProcessorConfig = BuildPreProcessorConfig();
+            var preProcessorConfig = Substitute.For<PreProcessorConfig>();
 
             var processor = _instance.BuildSingle(preProcessorConfig);
-            processor.PreProcess(_globalContext);
+            processor.PreProcess(_globalContext, _containerBuilder);
 
             Assert.AreEqual(1, processor.PreRenderingActions.Count);
-            preProcessorConfig.Received(1).PreProcess(Arg.Is(_globalContext));
+            preProcessorConfig.Received(1).PreProcess(_globalContext, _containerBuilder);
+        }
+
+        [TestMethod]
+        public void BuildSingle_PreProcessing_InvalidTest()
+        {
+            var preProcessorConfigs = new object[]
+            {
+                Substitute.For<InvalidPreProcessorConfig1>(),
+                Substitute.For<InvalidPreProcessorConfig2>()
+            };
+
+            foreach (var preProcessorConfig in preProcessorConfigs)
+                Assert.ThrowsException<ArgumentException>(() =>
+                    _instance.BuildSingle(preProcessorConfig));
         }
 
 
         [TestMethod]
         public void BuildSingle_PostProcessing_Test()
         {
-            var postProcessorConfig = BuildPostProcessorConfig();
+            var postProcessorConfig = Substitute.For<PostProcessorConfig>();
 
             var processor = _instance.BuildSingle(postProcessorConfig);
             processor.PostProcess(_globalContext);
 
             Assert.AreEqual(1, processor.PostRenderingActions.Count);
-            postProcessorConfig.Received(1).PostProcessing(Arg.Is(_globalContext));
+            postProcessorConfig.Received(1).PostProcessing(_globalContext);
+        }
+
+        [TestMethod]
+        public void BuildSingle_PostProcessing_InvalidTest()
+        {
+            var postProcessorConfigs = new object[]
+            {
+                new InvalidPostProcessorConfig1(),
+                new InvalidPostProcessorConfig2()
+            };
+
+            foreach (var postProcessorConfig in postProcessorConfigs)
+                Assert.ThrowsException<ArgumentException>(() =>
+                    _instance.BuildSingle(postProcessorConfig));
         }
 
         [TestMethod]
         public void BuildSingle_ElementProcessing_Test()
         {
             var paragraph = new Paragraph();
-            var elementProcessingConfig = BuildElementProcessorConfig();
+            var elementProcessingConfig = Substitute.For<ElementProcessorConfig>();
 
             var processor = _instance.BuildSingle(elementProcessingConfig);
             processor.ProcessElement(_elementContext, paragraph);
@@ -114,33 +157,15 @@ namespace Whusion.Tests.Core
                 .ProcessElement(Arg.Is(_elementContext), Arg.Is(paragraph));
         }
 
-        [TestMethod]
-        public void BuildSingle_PreProcessing_InvalidTest()
-        {
-            var preProcessorConfig = BuildInvalidPreProcessingConfig();
-
-            Assert.ThrowsException<ArgumentException>(() =>
-                _instance.BuildSingle(preProcessorConfig)
-            );
-        }
-
-        [TestMethod]
-        public void BuildSingle_PostProcessing_InvalidTest()
-        {
-            var postProcessingConfig = BuildInvalidPostProcessingConfig();
-
-            Assert.ThrowsException<ArgumentException>(() =>
-                _instance.BuildSingle(postProcessingConfig));
-        }
 
         [TestMethod]
         public void BuildSingle_ElementProcessing_InvalidTest()
         {
             object[] processorConfigs = new object[]
             {
-                new InvalidElementProcessingConfig1(),
-                new InvalidElementProcessingConfig2(),
-                new InvalidElementProcessingConfig3(),
+                new InvalidElementProcessorConfig1(),
+                new InvalidElementProcessorConfig2(),
+                new InvalidElementProcessorConfig3(),
             };
 
             foreach (object processorConfig in processorConfigs)
@@ -148,21 +173,6 @@ namespace Whusion.Tests.Core
                     () => _instance.BuildSingle(processorConfig)
                 );
         }
-
-        private PreProcessorConfig BuildPreProcessorConfig() =>
-            Substitute.For<PreProcessorConfig>();
-
-        private PostProcessorConfig BuildPostProcessorConfig() =>
-            Substitute.For<PostProcessorConfig>();
-
-        private ElementProcessorConfig BuildElementProcessorConfig() =>
-            Substitute.For<ElementProcessorConfig>();
-
-        private InvalidPreProcessingConfig BuildInvalidPreProcessingConfig() =>
-            Substitute.For<InvalidPreProcessingConfig>();
-
-        private InvalidPostProcessorConfig BuildInvalidPostProcessingConfig() =>
-            Substitute.For<InvalidPostProcessorConfig>();
 
     }
 }

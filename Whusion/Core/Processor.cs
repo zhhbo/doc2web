@@ -1,4 +1,5 @@
-﻿using DocumentFormat.OpenXml;
+﻿using Autofac;
+using DocumentFormat.OpenXml;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -7,13 +8,13 @@ namespace Whusion.Core
 {
     public class Processor : IProcessor
     {
-        public List<Action<IGlobalContext>> PreRenderingActions { get; }
+        public List<Action<IGlobalContext, ContainerBuilder>> PreRenderingActions { get; }
         public List<Action<IGlobalContext>> PostRenderingActions { get; }
         public Dictionary<Type, List<Action<IElementContext, OpenXmlElement>>> ElementRenderingActions { get; internal set; }
 
         public Processor()
         {
-            PreRenderingActions = new List<Action<IGlobalContext>>();
+            PreRenderingActions = new List<Action<IGlobalContext, ContainerBuilder>>();
             PostRenderingActions = new List<Action<IGlobalContext>>();
             ElementRenderingActions = new Dictionary<Type, List<Action<IElementContext, OpenXmlElement>>>();
         }
@@ -23,10 +24,10 @@ namespace Whusion.Core
             foreach (var plugin in plugins) Combine(plugin);
         }
 
-        public void PreProcess(IGlobalContext context)
+        public void PreProcess(IGlobalContext context, ContainerBuilder containerBuilder)
         {
             foreach (var action in PreRenderingActions)
-                action(context);
+                action(context, containerBuilder);
         }
 
         public void PostProcess(IGlobalContext context)

@@ -1,4 +1,5 @@
-﻿using DocumentFormat.OpenXml;
+﻿using Autofac;
+using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Drawing;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
@@ -22,6 +23,7 @@ namespace Whusion.Tests.Core
         public void Initialize()
         {
             _globalContext = Substitute.For<IGlobalContext>();
+            _globalContext.Container.Returns(new ContainerBuilder().Build().BeginLifetimeScope());
             _processor = Substitute.For<IProcessor>();
             _contextRenderer = Substitute.For<IContextRenderer>();
 
@@ -43,7 +45,8 @@ namespace Whusion.Tests.Core
         {
             _instance.PreProcess();
 
-            _processor.Received(1).PreProcess(_globalContext);
+            _processor.Received(1).PreProcess(_globalContext, Arg.Any<ContainerBuilder>());
+            _globalContext.Received(1).Container = Arg.Any<ILifetimeScope>();
         }
 
         [TestMethod]
