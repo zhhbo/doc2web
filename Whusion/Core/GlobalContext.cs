@@ -8,33 +8,35 @@ namespace Whusion.Core
 {
     public class GlobalContext : IGlobalContext
     {
-        private IContainer _container;
         private IEnumerable<OpenXmlElement> _rootElements;
+        private StringBuilder _html;
+        private StringBuilder _css;
+        private StringBuilder _js;
 
-        public GlobalContext(IContainer container, IEnumerable<OpenXmlElement> rootElements)
+        public GlobalContext(ILifetimeScope container, IEnumerable<OpenXmlElement> rootElements)
         {
-            _container = container;
             _rootElements = rootElements;
-            Html = new StringBuilder();
-            Css = new StringBuilder();
-            Js = new StringBuilder();
+            _html = new StringBuilder();
+            _css = new StringBuilder();
+            _js = new StringBuilder();
+            Container = container;
         }
 
-        public IContainer Container => _container;
+        public ILifetimeScope Container { get; set; }
 
         public IEnumerable<OpenXmlElement> RootElements => _rootElements;
 
-        public StringBuilder Html { get; private set; }
+        public string Html => _html.ToString();
 
-        public StringBuilder Css { get; private set; }
+        public string Css => _css.ToString();
 
-        public StringBuilder Js { get; private set; }
+        public string Js => _js.ToString();
 
-        public void AddHtml(string html) => Html.AppendLine(html);
+        public void AddHtml(string html) => _html.AppendLine(html);
 
-        public void AddCss(string css) => Css.AppendLine(css);
+        public void AddCss(string css) => _css.AppendLine(css);
 
-        public void AddJs(string js) => Js.AppendLine(js);
+        public void AddJs(string js) => _js.AppendLine(js);
     }
 }
 

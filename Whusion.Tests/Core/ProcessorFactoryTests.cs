@@ -77,7 +77,7 @@ namespace Whusion.Tests.Core
             var preProcessorConfig = BuildPreProcessorConfig();
 
             var processor = _instance.BuildSingle(preProcessorConfig);
-            processor.PreRender(_globalContext);
+            processor.PreProcess(_globalContext);
 
             Assert.AreEqual(1, processor.PreRenderingActions.Count);
             preProcessorConfig.Received(1).PreProcess(Arg.Is(_globalContext));
@@ -90,7 +90,7 @@ namespace Whusion.Tests.Core
             var postProcessorConfig = BuildPostProcessorConfig();
 
             var processor = _instance.BuildSingle(postProcessorConfig);
-            processor.PostRender(_globalContext);
+            processor.PostProcess(_globalContext);
 
             Assert.AreEqual(1, processor.PostRenderingActions.Count);
             postProcessorConfig.Received(1).PostProcessing(Arg.Is(_globalContext));
@@ -103,7 +103,7 @@ namespace Whusion.Tests.Core
             var elementProcessingConfig = BuildElementProcessorConfig();
 
             var processor = _instance.BuildSingle(elementProcessingConfig);
-            processor.ElementRender(_elementContext, paragraph);
+            processor.ProcessElement(_elementContext, paragraph);
 
             Assert.AreEqual(
                 1,

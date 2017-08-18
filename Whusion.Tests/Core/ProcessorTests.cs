@@ -50,7 +50,7 @@ namespace Whusion.Tests.Core
             AddPreRenderingAction("C");
             AddPreRenderingAction("D");
 
-            _instance.PreRender(Substitute.For<IGlobalContext>());
+            _instance.PreProcess(Substitute.For<IGlobalContext>());
 
             Assert.AreEqual(4, _calledActions.Count);
             _calledActions.Contains("A");
@@ -68,7 +68,7 @@ namespace Whusion.Tests.Core
             AddPostRenderingAction("C");
             AddPostRenderingAction("D");
 
-            _instance.PostRender(Substitute.For<IGlobalContext>());
+            _instance.PostProcess(Substitute.For<IGlobalContext>());
 
             Assert.AreEqual(4, _calledActions.Count);
             _calledActions.Contains("A");
@@ -86,7 +86,7 @@ namespace Whusion.Tests.Core
             AddElementRenderingAction<Paragraph>("A2");
             AddElementRenderingAction<Run>("B");
 
-            _instance.ElementRender(context, new Paragraph());
+            _instance.ProcessElement(context, new Paragraph());
 
             Assert.AreEqual(2, _calledActions.Count);
             _calledActions.Sort();

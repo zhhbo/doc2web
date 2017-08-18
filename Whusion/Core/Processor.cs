@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Whusion.Core
 {
-    public class Processor
+    public class Processor : IProcessor
     {
         public List<Action<IGlobalContext>> PreRenderingActions { get; }
         public List<Action<IGlobalContext>> PostRenderingActions { get; }
@@ -23,24 +23,24 @@ namespace Whusion.Core
             foreach (var plugin in plugins) Combine(plugin);
         }
 
-        public void PreRender(IGlobalContext context)
+        public void PreProcess(IGlobalContext context)
         {
             foreach (var action in PreRenderingActions)
                 action(context);
         }
 
-        public void PostRender(IGlobalContext context)
+        public void PostProcess(IGlobalContext context)
         {
             foreach (var action in PostRenderingActions)
                 action(context);
         }
 
-        public void ElementRender(IElementContext context, OpenXmlElement element)
+        public void ProcessElement(IElementContext context, OpenXmlElement element)
         {
-            List<Action<IElementContext, OpenXmlElement>> processorActions;
-            if (ElementRenderingActions.TryGetValue(element.GetType(), out processorActions))
+            if (ElementRenderingActions.TryGetValue(element.GetType(), 
+                out List<Action<IElementContext, OpenXmlElement>> processorActions))
             {
-                foreach(var action in processorActions)
+                foreach (var action in processorActions)
                     action(context, element);
             }
         }
@@ -61,8 +61,8 @@ namespace Whusion.Core
         {
             foreach (var type in processor.ElementRenderingActions.Keys)
             {
-                List<Action<IElementContext, OpenXmlElement>> current;
-                if (ElementRenderingActions.TryGetValue(type, out current))
+                if (ElementRenderingActions.TryGetValue(type, 
+                    out List<Action<IElementContext, OpenXmlElement>> current))
                     current.AddRange(processor.ElementRenderingActions[type]);
                 else
                     ElementRenderingActions.Add(type, processor.ElementRenderingActions[type]);

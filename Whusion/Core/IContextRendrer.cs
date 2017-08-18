@@ -4,7 +4,8 @@ using System.Text;
 
 namespace Whusion.Core
 {
-    class Crawler
+    public interface IContextRenderer
     {
+        string Render(IElementContext elementContext);
     }
 }
