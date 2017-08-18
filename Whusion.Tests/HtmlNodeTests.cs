@@ -117,5 +117,70 @@ namespace Whusion.Tests
             Assert.ThrowsException<ArgumentException>(() =>
                 instance.SetAttribute("class", "test"));
         }
+
+        [TestMethod]
+        public void Equal_Test()
+        {
+            var node1 = new HtmlNode
+            {
+                Start = 0,
+                End = 100,
+            };
+            var node2 = node1.Clone();
+
+            Assert.IsTrue(node1.Equals(node2));
+        }
+
+        [TestMethod]
+        public void Clone_Test()
+        {
+            var node1 = new HtmlNode
+            {
+                Start = 0,
+                End = 100,
+            };
+            node1.AddClass("ng-redirect");
+            node1.SetAttribute("id", "10");
+            node1.SetStyle("color", "red");
+            var node2 = node1.Clone();
+
+            Assert.AreEqual(node1, node2);
+        }
+
+        [TestMethod]
+        public void HasIntersection_TrueTest()
+        {
+            var instance = new HtmlNode { Start = 5, End = 10 };
+            var intersections = new HtmlNode[]
+            {
+                new HtmlNode { Start = 0, End = 6 },
+                new HtmlNode { Start = 4, End = 11 },
+                new HtmlNode { Start = 9, End = 11 }
+            };
+
+            foreach(var node in intersections)
+            {
+                Assert.IsTrue(instance.HasIntersection(node));
+                Assert.IsTrue(node.HasIntersection(instance));
+            }
+        }
+
+        [TestMethod]
+        public void HasIntersection_FalseTest()
+        {
+            var instance = new HtmlNode { Start = 5, End = 10 };
+            var notIntersections = new HtmlNode[]
+            {
+                new HtmlNode { Start = 0, End = 5 },
+                new HtmlNode { Start = 5, End = 10 },
+                new HtmlNode { Start = 10, End = 12 }
+            };
+
+            foreach(var node in notIntersections)
+            {
+                Assert.IsFalse(instance.HasIntersection(node));
+                Assert.IsFalse(node.HasIntersection(instance));
+            }
+        }
     }
 }

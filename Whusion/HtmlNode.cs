@@ -14,8 +14,14 @@ namespace Whusion
             Z = int.MinValue;
         }
 
+        public int Start { get; set; }
+
+        public int End { get; set; }
+
         public string Tag { get; set; }
+
         public int Z { get; set; }
+
         public IReadOnlyCollection<string> Classes
         {
             get
@@ -112,6 +118,34 @@ namespace Whusion
 
             _attributes[name] = value;
         }
-        
+
+        public override bool Equals(object obj)
+        {
+            var other = obj as HtmlNode;
+            if (other == null) return false;
+
+            return
+                other.Tag == Tag &&
+                other.Start == Start &&
+                other.End == End &&
+                other.Z == Z &&
+                other._attributes.SequenceEqual(_attributes);
+        }
+
+        public HtmlNode Clone() =>
+            new HtmlNode
+            {
+                Tag = Tag,
+                Start = Start,
+                End = End,
+                Z = Z,
+                _attributes = new Dictionary<string, string>(_attributes)
+            };
+
+        public bool HasIntersection(HtmlNode other) =>
+            (Start < other.Start && other.Start < End) ||
+            (Start < other.End && other.End < End) ||
+            (other.Start < Start && Start < other.End) ||
+            (other.Start < End && End < other.End);
     }
 }
