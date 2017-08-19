@@ -7,7 +7,7 @@ namespace Whusion.Core.Rendering
 {
     public static class HtmlNodeFlattern
     {
-        private class SingleLayerFlattern
+        abstract class IntersectionsHandler
         {
             private int _i = 0;
 
@@ -49,29 +49,93 @@ namespace Whusion.Core.Rendering
                 return node;
             }
 
-            private int[] FindIntersections(HtmlNode node)
+            protected abstract int[] FindIntersections(HtmlNode node);
+        }
+
+        class SingleLayerFlattern : IntersectionsHandler
+        {
+            protected override int[] FindIntersections(HtmlNode node) =>
+                Nodes
+                .SelectMany(n => new int[] { n.Start, n.End })
+                .Where(i => node.Start < i && i < node.End)
+                .Distinct()
+                .OrderBy(x => x)
+                .ToArray();
+        }
+
+        class CombineLayerFlattern : IntersectionsHandler
+        {
+            private List<HtmlNode> _upperLayer;
+            private int[] _potentialIntersections;
+
+            public List<HtmlNode> UpperLayer
             {
-                return Nodes
-                    .SelectMany(n => new int[] { n.Start, n.End })
-                    .Where(i => node.Start < i && i < node.End)
-                    .Distinct()
-                    .OrderBy(x => x)
-                    .ToArray();
+                get => _upperLayer;
+                set
+                {
+                    _upperLayer = value;
+                    _potentialIntersections =
+                        _upperLayer
+                        .SelectMany(n => new int[] { n.Start, n.End })
+                        .Distinct()
+                        .OrderBy(x => x)
+                        .ToArray();
+                }
             }
+
+            protected override int[] FindIntersections(HtmlNode node) =>
+                _potentialIntersections
+                .Where(i => node.Start < i && i < node.End)
+                .ToArray();
         }
 
         public static List<HtmlNode> Flattern(List<HtmlNode> nodes)
         {
-            // Sort in order;
-            var singleLayerFlattern = new SingleLayerFlattern();
-            singleLayerFlattern.Nodes = nodes;
-            singleLayerFlattern.HandleIntersections();
+            List<HtmlNode> results = new List<HtmlNode>();
+            List<List<HtmlNode>> layers = GroupByLayer(nodes);
 
-            return nodes;
+            foreach (var layer in layers)
+            {
+                var flatLayer = FlatternLayer(layer);
+                var combinedLayer = CombineFlatternedLayer(results, flatLayer);
+
+                results.AddRange(combinedLayer);
+            }
+
+            results.Sort(SortNodesByStartEnd);
+            return results;
         }
 
-        private static int SortNodesByStartEnd(HtmlNode a, HtmlNode b)
+        private static List<List<HtmlNode>> GroupByLayer(List<HtmlNode> nodes)
         {
+            return nodes
+                .GroupBy(x => x.Z)
+                .OrderByDescending(x => x.Key)
+                .Select(x => x.ToList())
+                .ToList();
+        }
+
+        private static List<HtmlNode> FlatternLayer(List<HtmlNode> layer)
+        {
+            var singleLayerFlattern = new SingleLayerFlattern();
+            singleLayerFlattern.Nodes = layer;
+            singleLayerFlattern.HandleIntersections();
+            return singleLayerFlattern.Nodes;
+        }
+
+        private static List<HtmlNode> CombineFlatternedLayer(List<HtmlNode> upperLayer, List<HtmlNode> flatLayer)
+        {
+            var combineLayerFlattern = new CombineLayerFlattern();
+            combineLayerFlattern.UpperLayer = upperLayer;
+            combineLayerFlattern.Nodes = flatLayer;
+            combineLayerFlattern.HandleIntersections();
+            return combineLayerFlattern.Nodes;
+        }
+
+        static int SortNodesByStartEnd(HtmlNode a, HtmlNode b)
+        {
+            if (a.Z > b.Z) return -1;
+            if (b.Z > a.Z) return 1;
             if (a.Start < b.Start) return -1;
             if (b.Start < a.Start) return 1;
             if (a.End > b.End) return -1;
