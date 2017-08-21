@@ -20,7 +20,7 @@ namespace Doc2web.Core.Rendering
 
         public string Name { get; set; }
 
-        public Dictionary<string, string> Attributes { get; set; }
+        public IReadOnlyDictionary<string, string> Attributes { get; set; }
 
         public virtual int RelatedIndex => Index;
 
