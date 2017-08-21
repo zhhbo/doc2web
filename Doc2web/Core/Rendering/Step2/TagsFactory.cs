@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Doc2web.Core.Rendering
 {
-    static public class TagFactory
+    static public class TagsFactory
     {
         public static ITag[] Build(List<HtmlNode> nodes)
         {

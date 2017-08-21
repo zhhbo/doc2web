@@ -8,7 +8,7 @@ using System.Text;
 namespace Doc2web.Tests.Core.Rendering
 {
     [TestClass]
-    public class TagFactoryTests
+    public class TagsFactoryTests
     {
         private static List<HtmlNode> InputOpenClose => new List<HtmlNode>
         {
@@ -124,8 +124,8 @@ namespace Doc2web.Tests.Core.Rendering
 
         private void Test((int, ITag)[] expectedConfig, List<HtmlNode> sample)
         {
-            ITag[] expected = BuildExpected(expectedConfig);
-            var result = TagFactory.Build(sample);
+            ITag[] expected = Utils.SetRelatedTag(expectedConfig);
+            var result = TagsFactory.Build(sample);
             Assert.AreEqual(expected.Length, result.Length);
 
             for (int i = 0; i < result.Length; i++)
@@ -136,36 +136,6 @@ namespace Doc2web.Tests.Core.Rendering
                 AssertTagsAreEquals(e, r);
             }
 
-        }
-
-        private ITag[] BuildExpected((int, ITag)[] expectedConfig)
-        {
-            var results = expectedConfig.Select(x => x.Item2).ToArray();
-
-            for (int i = 0; i < results.Length; i++)
-            {
-                var related = results[expectedConfig[i].Item1];
-                var upgradeTarget = results[i];
-                AssociateRelated(related, upgradeTarget);
-            }
-
-            return results;
-        }
-
-        private static void AssociateRelated(ITag related, ITag upgradeTarget)
-        {
-            switch (upgradeTarget)
-            {
-                case OpeningTag t:
-                    t.Related = (ClosingTag)related;
-                    break;
-
-                case ClosingTag t:
-                    t.Related = (OpeningTag)related;
-                    break;
-
-                default: break;
-            }
         }
 
         private void AssertTagsAreEquals(ITag e, ITag r)

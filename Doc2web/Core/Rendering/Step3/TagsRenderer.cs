@@ -8,7 +8,14 @@ namespace Doc2web.Core.Rendering
     {
         public static void RenderInto(ITag[] tags, StringBuilder sb)
         {
-            throw new NotImplementedException();
+            int offset = 0;
+
+            foreach(var tag in tags)
+            {
+                var html = tag.Render();
+                sb.Insert(tag.Index + offset, html);
+                offset += html.Length;
+            }
         }
     }
 }
