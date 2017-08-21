@@ -10,7 +10,7 @@ namespace Doc2web.Core.Rendering
         public static ITag[] Build(List<HtmlNode> nodes)
         {
             var tags = BuildTags(nodes).ToArray();
-
+            Array.Sort(tags, new TagComparer());
             return tags;
         }
 
