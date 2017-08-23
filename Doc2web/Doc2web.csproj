@@ -16,9 +16,7 @@
   <ItemGroup>
     <Folder Include="Plugins\TrackChanges\" />
     <Folder Include="Plugins\Numbering\" />
-    <Folder Include="Plugins\Run\" />
     <Folder Include="Plugins\Style\" />
-    <Folder Include="Plugins\Paragraph\" />
   </ItemGroup>
 
   <ItemGroup>

@@ -18,6 +18,7 @@ namespace Doc2web
             _conversionTaskFactory = new ConversionTaskFactory();
             _conversionTaskFactory.EngineContainer = new ContainerBuilder().Build();
             _conversionTaskFactory.Processor = _processor;
+            _conversionTaskFactory.ContextRenderer = new Core.Rendering.ContextRenderer();
         }
 
         public void Dispose()
