@@ -93,6 +93,29 @@ namespace Doc2web.Tests.Core.Rendering.Step2
            (5, new SelfClosingTag { Index = 10, Z = 100, Name = "hr" }),
         };
 
+        private static List<HtmlNode> InputSorting4 => new List<HtmlNode>
+        {
+            new HtmlNode { Start = 0, End = 0, Z = 0, Tag="a" },
+            new HtmlNode { Start = 0, End = 0, Z = 0, Tag="b" },
+            new HtmlNode { Start = 0, End = 1, Z = 0, Tag="w" },
+            new HtmlNode { Start = 0, End = 1, Z = 0, Tag="x" },
+            new HtmlNode { Start = 0, End = 1, Z = 0, Tag="y" },
+            new HtmlNode { Start = 1, End = 1, Z = 0, Tag="z" },
+        };
+
+        private static (int, ITag)[] ExpectedSorting4 => new(int, ITag)[]
+        {
+           (0, new SelfClosingTag { Index = 0, Z = 0, Name = "a" }),
+           (1, new SelfClosingTag { Index = 0, Z = 0, Name = "b" }),
+           (7, new OpeningTag     { Index = 0, Z = 0, Name = "w" }),
+           (6, new OpeningTag     { Index = 0, Z = 0, Name = "x" }),
+           (5, new OpeningTag     { Index = 0, Z = 0, Name = "y" }),
+           (4, new ClosingTag     { Index = 1 }),
+           (3, new ClosingTag     { Index = 1 }),
+           (2, new ClosingTag     { Index = 1 }),
+           (8, new SelfClosingTag { Index = 1, Z = 100, Name = "z" }),
+        };
+
         [TestMethod]
         public void Build_OpenCloseTest()
         {
@@ -121,6 +144,18 @@ namespace Doc2web.Tests.Core.Rendering.Step2
         public void Build_SortingTest3()
         {
             Test(ExpectedSorting3, InputSorting3);
+        }
+
+        [TestMethod]
+        public void Build_SortingTest4()
+        {
+            var random = new Random();
+            var expected = ExpectedSorting4;
+            for(int i=0; i<100; i++)
+            {
+                var shuffledInput = InputSorting4.OrderBy(x => random.Next()).ToList();
+                Test(expected, shuffledInput);
+            }
         }
 
         private void Test((int, ITag)[] expectedConfig, List<HtmlNode> sample)

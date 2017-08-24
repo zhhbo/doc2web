@@ -2,6 +2,7 @@
 using Mono.Options;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -60,17 +61,22 @@ namespace Doc2web.CLI
 
         private static void ConvertDocument(string target)
         {
+            long ms = 0;
             string html;
             string fileName = Regex.Match(target, @"[^\\\/]+$").Value;
             string directory = target.Substring(0, fileName.Length - fileName.Length);
             Debug($"Starting {fileName}");
             using (var wpDoc = WordprocessingDocument.Open(target, false))
             {
+                var sw = Stopwatch.StartNew();
                 html = QuickAndEasy.ConvertCompleteDocument(wpDoc);
+                sw.Stop();
+                ms = sw.ElapsedMilliseconds;
             };
             if (cliArgs.OutputPath != "") directory = cliArgs.OutputPath;
             File.WriteAllText($"{directory}{fileName}.html", html);
             Debug($"Completed conversion of {fileName}");
+            Console.WriteLine($"Converted {fileName} in {ms} ms");
         }
 
         private static bool IsValid(string arg)

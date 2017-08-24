@@ -25,7 +25,7 @@ namespace Doc2web
 
         public void Dispose()
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
 
         public string Render(IEnumerable<OpenXmlElement> elements)

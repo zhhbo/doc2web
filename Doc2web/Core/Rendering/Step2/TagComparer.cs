@@ -59,7 +59,7 @@ namespace Doc2web.Core.Rendering.Step2
             if (y.RelatedIndex > x.RelatedIndex) return 1;
             if (x.Z > y.Z) return -1;
             if (y.Z > x.Z) return 1;
-            throw new InvalidOperationException();
+            return x.Name.CompareTo(y.Name);
         }
 
         private int CompareTwoClosing(ClosingTag x, ClosingTag y)
@@ -68,14 +68,14 @@ namespace Doc2web.Core.Rendering.Step2
             if (y.RelatedIndex > x.RelatedIndex) return -1;
             if (x.Z < y.Z) return -1;
             if (y.Z < x.Z) return 1;
-            throw new InvalidOperationException();
+            return x.Name.CompareTo(y.Name) * -1;
         }
 
         private int CompareTwoSelfClosing(SelfClosingTag x, SelfClosingTag y)
         {
             if (x.Z > y.Z) return -1;
             if (y.Z > x.Z) return 1;
-            throw new NotImplementedException();
+            return x.Name.CompareTo(y.Name);
         }
 
         private int CompareOpeningClosing(OpeningTag x, ClosingTag y)
@@ -87,14 +87,14 @@ namespace Doc2web.Core.Rendering.Step2
         {
             if (x.Z > y.Z) return -1;
             if (y.Z > x.Z) return 1;
-            throw new NotImplementedException();
+            return x.Name.CompareTo(y.Name);
         }
 
         private int CompareClosingSelfClosing(ClosingTag x, SelfClosingTag y)
         {
             if (x.Z > y.Z) return 1;
             if (y.Z > x.Z) return -1;
-            throw new NotImplementedException();
+            return x.Name.CompareTo(y.Name);
         }
     }
 }
