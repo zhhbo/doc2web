@@ -15,10 +15,12 @@ namespace Doc2web
         public ConversionEngine(params object[] plugins)
         {
             _processor = new ProcessorFactory().BuildMultiple(plugins);
-            _conversionTaskFactory = new ConversionTaskFactory();
-            _conversionTaskFactory.EngineContainer = new ContainerBuilder().Build();
-            _conversionTaskFactory.Processor = _processor;
-            _conversionTaskFactory.ContextRenderer = new Core.Rendering.ContextRenderer();
+            _conversionTaskFactory = new ConversionTaskFactory
+            {
+                Processor = _processor,
+                EngineContainer = new ContainerBuilder().Build(),
+                ContextRenderer = new Core.Rendering.ContextRenderer()
+            };
         }
 
         public void Dispose()

@@ -36,10 +36,10 @@ namespace Doc2web.Core
                 action(context);
         }
 
-        public void ProcessElement(IElementContext context, OpenXmlElement element)
+        public void ProcessElement(Doc2web.IElementContext context, OpenXmlElement element)
         {
             if (ElementRenderingActions.TryGetValue(element.GetType(), 
-                out List<Action<IElementContext, OpenXmlElement>> processorActions))
+                out List<Action<Doc2web.IElementContext, OpenXmlElement>> processorActions))
             {
                 foreach (var action in processorActions)
                     action(context, element);

@@ -5,16 +5,15 @@ using DocumentFormat.OpenXml;
 
 namespace Doc2web.Core
 {
-    public class ElementContext : IElementContext
+    public class RootElementContext : INestableElementContext
     {
         private List<HtmlNode> _nodes;
         private List<ITextTransformation> _transformations;
 
-        public ElementContext(IGlobalContext context, OpenXmlElement rootElement)
+        public RootElementContext(IGlobalContext context, OpenXmlElement rootElement)
         {
             GlobalContext = context;
             RootElement = rootElement;
-            RootElementText = RootElement.InnerText;
             _nodes = new List<HtmlNode>();
             _transformations = new List<ITextTransformation>();
         }
@@ -23,11 +22,15 @@ namespace Doc2web.Core
 
         public OpenXmlElement RootElement { get; private set; }
 
-        public string RootElementText { get; set; }
-
         public IEnumerable<HtmlNode> Nodes => _nodes;
 
         public IEnumerable<ITextTransformation> Transformations => _transformations;
+
+        public OpenXmlElement Element => RootElement;
+
+        public int TextIndex => 0;
+
+        public IContextNestingHandler NestingHandler { get; set; }
 
         public void AddNode(HtmlNode node) => _nodes.Add(node);
 
@@ -38,5 +41,21 @@ namespace Doc2web.Core
 
         public void AddMultipleTransformations(IEnumerable<ITextTransformation> transformations) =>
             _transformations.AddRange(transformations);
+
+        public void ProcessChilden()
+        {
+            int textIndex = 0;
+            foreach (var elem in Element.ChildElements)
+            {
+                var childContext = new ChildElementContext(this)
+                {
+                    Element = elem,
+                    TextIndex = textIndex
+                };
+                NestingHandler.QueueElementProcessing(childContext);
+                textIndex += elem.InnerText.Length;
+            }
+        }
+
     }
 }

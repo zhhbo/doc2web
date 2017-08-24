@@ -37,7 +37,7 @@ namespace Doc2web.Core
                     GlobalContext
                     .RootElements
                     .AsParallel()
-                    .Select(ConvertElement)
+                    .Select(ConvertRootElement)
                     .ToArray();
 
             foreach (var htmlElement in htmlElements)
@@ -56,11 +56,12 @@ namespace Doc2web.Core
             _result.AppendLine(GlobalContext.Html);
         }
 
-        private string ConvertElement(OpenXmlElement element)
+        private string ConvertRootElement(OpenXmlElement rootElement)
         {
-            var elementContext = new ElementContext(GlobalContext, element);
-            Processor.ProcessElement(elementContext, element);
-            return ContextRenderer.Render(elementContext);
+            var context = new RootElementContext(GlobalContext, rootElement);
+            var task = new ElementProcessingTask(context, Processor);
+            task.Execute();
+            return ContextRenderer.Render(context);
 
         }
 

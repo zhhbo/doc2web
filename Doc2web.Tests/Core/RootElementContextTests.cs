@@ -11,26 +11,27 @@ using Doc2web.Core;
 namespace Doc2web.Tests.Core
 {
     [TestClass]
-    public class ElementContextTests
+    public class RootElementContextTests
     {
         private OpenXmlElement _rootElement;
         private IGlobalContext _globalContext;
-        private ElementContext _instance;
+        private RootElementContext _instance;
 
         [TestInitialize]
         public void Initialize()
         {
             _rootElement = BuildParagraph();
             _globalContext = Substitute.For<IGlobalContext>();
-            _instance = new ElementContext(_globalContext, _rootElement);
+            _instance = new RootElementContext(_globalContext, _rootElement);
         }
 
         [TestMethod]
-        public void ElementContext_Test()
+        public void RootElementContext_Test()
         {
             Assert.AreSame(_globalContext, _instance.GlobalContext);
             Assert.AreSame(_rootElement, _instance.RootElement);
-            Assert.AreEqual(_rootElement.InnerText, _instance.RootElementText);
+            Assert.AreSame(_rootElement, _instance.Element);
+            Assert.IsNull(_instance.NestingHandler);
             Assert.AreEqual(0, _instance.Nodes.Count());
             Assert.AreEqual(0, _instance.Transformations.Count());
         }
@@ -82,6 +83,21 @@ namespace Doc2web.Tests.Core
             foreach (var transformation in transformations)
                 Assert.IsTrue(_instance.Transformations.Contains(transformation));
         }
+
+        [TestMethod]
+        public void ProcessChildren_Test()
+        {
+            var nestingHandler = Substitute.For<IContextNestingHandler>();
+
+            _instance.NestingHandler = nestingHandler;
+            _instance.ProcessChilden();
+
+            nestingHandler.Received(1).QueueElementProcessing(
+                Arg.Is<ChildElementContext>(context =>
+                    context.Element == _instance.Element.FirstChild
+                ));
+        }
+
         private static Paragraph BuildParagraph() =>
             new Paragraph(new Run(new Text("Sample text.")));
     }

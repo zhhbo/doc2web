@@ -1,11 +1,12 @@
 ﻿using Doc2web.Core.Rendering;
+using Doc2web.Core.Rendering.Step2;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Doc2web.Tests.Core.Rendering
+namespace Doc2web.Tests.Core.Rendering.Step2
 {
     [TestClass]
     public class TagsFactoryTests

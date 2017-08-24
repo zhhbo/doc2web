@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Doc2web.Core.Rendering
+namespace Doc2web.Core.Rendering.Step3
 {
     public static class TagsRenderer
     {

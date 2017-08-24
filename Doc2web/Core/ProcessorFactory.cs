@@ -128,8 +128,10 @@ namespace Doc2web.Core
                 container[type].Add(action);
             else
             {
-                var list = new List<Action<IElementContext, OpenXmlElement>>();
-                list.Add(action);
+                var list = new List<Action<IElementContext, OpenXmlElement>>
+                {
+                    action
+                };
                 container.Add(type, list);
             }
         }

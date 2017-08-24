@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Doc2web.Core.Rendering
+namespace Doc2web.Core.Rendering.Step2
 {
     public class TagComparer : IComparer<ITag>
     {

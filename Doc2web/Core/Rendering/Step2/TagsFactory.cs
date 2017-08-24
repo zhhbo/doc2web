@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Doc2web.Core.Rendering
+namespace Doc2web.Core.Rendering.Step2
 {
     static public class TagsFactory
     {

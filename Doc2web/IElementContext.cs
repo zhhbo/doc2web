@@ -11,11 +11,15 @@ namespace Doc2web
 
         OpenXmlElement RootElement { get; }
 
-        string RootElementText { get; }
+        OpenXmlElement Element { get; }
+
+        int TextIndex { get; }
         
         IEnumerable<HtmlNode> Nodes { get; }
 
         IEnumerable<ITextTransformation> Transformations { get; }
+
+        void ProcessChilden();
 
         void AddNode(HtmlNode node);
 
