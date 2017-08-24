@@ -64,7 +64,7 @@ namespace Doc2web.CLI
             long ms = 0;
             string html;
             string fileName = Regex.Match(target, @"[^\\\/]+$").Value;
-            string directory = target.Substring(0, fileName.Length - fileName.Length);
+            string directory = target.Substring(0, target.Length - fileName.Length);
             Debug($"Starting {fileName}");
             using (var wpDoc = WordprocessingDocument.Open(target, false))
             {

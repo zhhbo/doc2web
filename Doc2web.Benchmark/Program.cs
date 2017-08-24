@@ -1,38 +1,32 @@
 ﻿using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Attributes.Jobs;
 using BenchmarkDotNet.Running;
+using DocumentFormat.OpenXml.Packaging;
 using System;
 using System.Security.Cryptography;
 
 namespace Doc2web.Benchmark
 {
     [ClrJob, CoreJob]
-    public class Md5VsSha256
+    public class SimpleConversion
     {
-        private const int N = 10000;
-        private readonly byte[] data;
+        WordprocessingDocument wpDoc = WordprocessingDocument.Open(@"C:\Users\osasseville\OneDrive - TermLynx\Desktop\Docs\transaction-formatted.docx", false);
 
-        private readonly SHA256 sha256 = SHA256.Create();
-        private readonly MD5 md5 = MD5.Create();
-
-        public Md5VsSha256()
+        public SimpleConversion()
         {
-            data = new byte[N];
-            new Random(42).NextBytes(data);
         }
 
         [Benchmark]
-        public byte[] Sha256() => sha256.ComputeHash(data);
+        public string Convert() =>
+            QuickAndEasy.ConvertCompleteDocument(wpDoc);
 
-        [Benchmark]
-        public byte[] Md5() => md5.ComputeHash(data);
     }
 
     public class Program
     {
         public static void Main(string[] args)
         {
-            var summary = BenchmarkRunner.Run<Md5VsSha256>();
+            var summary = BenchmarkRunner.Run<SimpleConversion>();
         }
     }
 }

@@ -16,7 +16,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Doc2web.CLI", "Doc2web.CLI\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Doc2web.Tests", "Doc2web.Tests\Doc2web.Tests.csproj", "{989C5117-46AA-4B24-A153-D61F50954625}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Doc2web.Benchmark", "Doc2web.Benchmark\Doc2web.Benchmark.csproj", "{79F67BBB-5E33-402B-8D69-C87A45E6AEF1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Doc2web.Benchmark", "Doc2web.Benchmark\Doc2web.Benchmark.csproj", "{79F67BBB-5E33-402B-8D69-C87A45E6AEF1}"
+	ProjectSection(ProjectDependencies) = postProject
+		{0CF6B9B7-4856-46BB-A59A-01A08198FB82} = {0CF6B9B7-4856-46BB-A59A-01A08198FB82}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
