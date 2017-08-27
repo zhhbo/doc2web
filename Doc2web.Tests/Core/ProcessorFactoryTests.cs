@@ -17,10 +17,16 @@ namespace Doc2web.Tests.Core
         private ContainerBuilder _containerBuilder;
         private IElementContext _elementContext;
 
+        public class InitializeProcessorConfig
+        {
+            [InitializeProcessing]
+            public virtual void Initialize(ContainerBuilder x) { }
+        }
+
         public class PreProcessorConfig
         {
             [PreProcessing]
-            public virtual void PreProcess(IGlobalContext ctx, ContainerBuilder containerBuilder) { }
+            public virtual void PreProcess(IGlobalContext ctx) { }
         }
 
         public class PostProcessorConfig
@@ -35,16 +41,28 @@ namespace Doc2web.Tests.Core
             public virtual void ProcessElement(IElementContext context, Paragraph p) { }
         }
 
+        public class InvalidInitializeProcessorConfig1
+        {
+            [InitializeProcessing]
+            public virtual void Initialize() { }
+        }
+
+        public class InvalidInitializeProcessorConfig2
+        {
+            [InitializeProcessing]
+            public virtual void Initialize(object something) { }
+        }
+
         public class InvalidPreProcessorConfig1
         {
             [PreProcessing]
-            public virtual void PreProccess(IGlobalContext ctx) { }
+            public virtual void PreProccess(IGlobalContext ctx, object something) { }
         }
 
         public class InvalidPreProcessorConfig2
         {
             [PreProcessing]
-            public virtual void PreProccess(IGlobalContext ctx, object something) { }
+            public virtual void PreProccess(object something) { }
         }
 
         public class InvalidPostProcessorConfig1
@@ -87,15 +105,41 @@ namespace Doc2web.Tests.Core
         }
 
         [TestMethod]
+        public void BuildSingle_InitializeProcessing_Test()
+        {
+            var initProcessorConfig = Substitute.For<InitializeProcessorConfig>();
+
+            var processor = _instance.BuildSingle(initProcessorConfig);
+            processor.InitProcess(_containerBuilder);
+
+            Assert.AreEqual(1, processor.InitProcessActions.Count);
+            initProcessorConfig.Received(1).Initialize(_containerBuilder);
+        }
+
+        [TestMethod]
+        public void BuildSingle_InitializeProcessing_InvalidTest()
+        {
+            var initProcessorConfigs = new object[]
+            {
+                Substitute.For<InvalidInitializeProcessorConfig1>(),
+                Substitute.For<InvalidInitializeProcessorConfig2>()
+            };
+
+            foreach (var initProcessingConfig in initProcessorConfigs)
+                Assert.ThrowsException<ArgumentException>(() =>
+                    _instance.BuildSingle(initProcessingConfig));
+        }
+
+        [TestMethod]
         public void BuildSingle_PreProcessing_Test()
         {
             var preProcessorConfig = Substitute.For<PreProcessorConfig>();
 
             var processor = _instance.BuildSingle(preProcessorConfig);
-            processor.PreProcess(_globalContext, _containerBuilder);
+            processor.PreProcess(_globalContext);
 
-            Assert.AreEqual(1, processor.PreRenderingActions.Count);
-            preProcessorConfig.Received(1).PreProcess(_globalContext, _containerBuilder);
+            Assert.AreEqual(1, processor.PreProcessActions.Count);
+            preProcessorConfig.Received(1).PreProcess(_globalContext);
         }
 
         [TestMethod]
@@ -121,7 +165,7 @@ namespace Doc2web.Tests.Core
             var processor = _instance.BuildSingle(postProcessorConfig);
             processor.PostProcess(_globalContext);
 
-            Assert.AreEqual(1, processor.PostRenderingActions.Count);
+            Assert.AreEqual(1, processor.PostProcessActions.Count);
             postProcessorConfig.Received(1).PostProcessing(_globalContext);
         }
 

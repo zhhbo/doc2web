@@ -8,14 +8,16 @@ namespace Doc2web.Core
 {
     public class Processor : IProcessor
     {
-        public List<Action<IGlobalContext, ContainerBuilder>> PreRenderingActions { get; }
-        public List<Action<IGlobalContext>> PostRenderingActions { get; }
+        public List<Action<ContainerBuilder>> InitProcessActions { get; private set; }
+        public List<Action<IGlobalContext>> PreProcessActions { get; }
+        public List<Action<IGlobalContext>> PostProcessActions { get; }
         public Dictionary<Type, List<Action<IElementContext, OpenXmlElement>>> ElementRenderingActions { get; internal set; }
 
         public Processor()
         {
-            PreRenderingActions = new List<Action<IGlobalContext, ContainerBuilder>>();
-            PostRenderingActions = new List<Action<IGlobalContext>>();
+            InitProcessActions = new List<Action<ContainerBuilder>>();
+            PreProcessActions = new List<Action<IGlobalContext>>();
+            PostProcessActions = new List<Action<IGlobalContext>>();
             ElementRenderingActions = new Dictionary<Type, List<Action<IElementContext, OpenXmlElement>>>();
         }
 
@@ -24,15 +26,21 @@ namespace Doc2web.Core
             foreach (var plugin in plugins) Combine(plugin);
         }
 
-        public void PreProcess(IGlobalContext context, ContainerBuilder containerBuilder)
+        public void InitProcess(ContainerBuilder containerBuilder)
         {
-            foreach (var action in PreRenderingActions)
-                action(context, containerBuilder);
+            foreach (var action in InitProcessActions)
+                action(containerBuilder);
+        }
+
+        public void PreProcess(IGlobalContext context)
+        {
+            foreach (var action in PreProcessActions)
+                action(context);
         }
 
         public void PostProcess(IGlobalContext context)
         {
-            foreach (var action in PostRenderingActions)
+            foreach (var action in PostProcessActions)
                 action(context);
         }
 
@@ -49,13 +57,14 @@ namespace Doc2web.Core
         private void Combine(Processor other)
         {
             AddElementProcessingActionFromProcessor(other);
-            AddPrePostRenderingActionsFromProcessor(other);
+            AddInitPrePostActionsFromProcessor(other);
         }
 
-        private void AddPrePostRenderingActionsFromProcessor(Processor processor)
+        private void AddInitPrePostActionsFromProcessor(Processor processor)
         {
-            PreRenderingActions.AddRange(processor.PreRenderingActions);
-            PostRenderingActions.AddRange(processor.PostRenderingActions);
+            InitProcessActions.AddRange(processor.InitProcessActions);
+            PreProcessActions.AddRange(processor.PreProcessActions);
+            PostProcessActions.AddRange(processor.PostProcessActions);
         }
 
         private void AddElementProcessingActionFromProcessor(Processor processor)

@@ -8,8 +8,9 @@ namespace Doc2web.Core
 {
     public interface IProcessor
     {
-        void PreProcess(IGlobalContext context, ContainerBuilder containerBuilder);
-        void ProcessElement(Doc2web.IElementContext context, OpenXmlElement element);
+        void InitProcess(ContainerBuilder containerBuilder);
+        void PreProcess(IGlobalContext context);
+        void ProcessElement(IElementContext context, OpenXmlElement element);
         void PostProcess(IGlobalContext context);
     }
 }

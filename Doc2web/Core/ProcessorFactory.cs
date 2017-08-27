@@ -16,21 +16,51 @@ namespace Doc2web.Core
 
         public Processor BuildSingle(object processorConfig)
         {
+            var initProcessActions = GetInitializeProcessingActions(processorConfig);
             var preProcessingActions = GetPreProcessingActions(processorConfig);
             var postProcessingActions = GetPostProcessingActions(processorConfig);
             var elementProcessingActions = GetElementProcessingActions(processorConfig);
 
             var plugin = new Processor();
-            plugin.PreRenderingActions.AddRange(preProcessingActions);
-            plugin.PostRenderingActions.AddRange(postProcessingActions);
+            plugin.InitProcessActions.AddRange(initProcessActions);
+            plugin.PreProcessActions.AddRange(preProcessingActions);
+            plugin.PostProcessActions.AddRange(postProcessingActions);
             plugin.ElementRenderingActions = elementProcessingActions;
 
             return plugin;
         }
 
+        #region Initialize processing
+
+        private Action<ContainerBuilder>[] GetInitializeProcessingActions(object processorConfig) =>
+            processorConfig.GetType().GetMethods()
+            .Where(IsValidInitProcessingMethod)
+            .Select(x => BuildInitializeProcessingAction(processorConfig, x))
+            .ToArray();
+
+        private bool IsValidInitProcessingMethod(MethodInfo m) =>
+            (HasAttribute<InitializeProcessingAttribute>(m)) ? HasValidInitProcessingParameters(m) : false;
+
+        private bool HasValidInitProcessingParameters(MethodInfo methodInfo)
+        {
+            var parameters = methodInfo.GetParameters();
+            if (parameters.Length == 1 &&
+                parameters[0].ParameterType == typeof(ContainerBuilder))
+                return true;
+
+            throw new ArgumentException($"The {methodInfo.Name} an InitializeProcessing attribute with invalid parameters.");
+        }
+
+        private static Action<ContainerBuilder> BuildInitializeProcessingAction(object processorConfig, MethodInfo x) =>
+             new Action<ContainerBuilder>(
+                (containerBuilder) => x.Invoke(processorConfig, new object[] { containerBuilder }));
+
+
+        #endregion
+
         #region Pre processing
 
-        private Action<IGlobalContext, ContainerBuilder>[] GetPreProcessingActions(object processorConfig) =>
+        private Action<IGlobalContext>[] GetPreProcessingActions(object processorConfig) =>
             processorConfig.GetType().GetMethods()
             .Where(IsValidPreProcessingMethod)
             .Select(x => BuildPreProcessingAction(processorConfig, x))
@@ -42,18 +72,16 @@ namespace Doc2web.Core
         private bool HasValidPreProcessingParameters(MethodInfo methodInfo)
         {
             var parameters = methodInfo.GetParameters();
-            if (parameters.Length == 2 &&
-                parameters[0].ParameterType == typeof(IGlobalContext) &&
-                parameters[1].ParameterType == typeof(ContainerBuilder))
+            if (parameters.Length == 1 &&
+                parameters[0].ParameterType == typeof(IGlobalContext))
                 return true;
 
             throw new ArgumentException($"The {methodInfo.Name} an ElementProcessing attribute with invalid parameters.");
         }
 
-        private static Action<IGlobalContext, ContainerBuilder> BuildPreProcessingAction(object processorConfig, MethodInfo x) =>
-             new Action<IGlobalContext, ContainerBuilder>(
-                                (context, builder) =>
-                                    x.Invoke(processorConfig, new object[] { context, builder }));
+        private static Action<IGlobalContext> BuildPreProcessingAction(object processorConfig, MethodInfo x) =>
+             new Action<IGlobalContext>(
+                (context) => x.Invoke(processorConfig, new object[] { context }));
 
         #endregion
 
@@ -80,7 +108,7 @@ namespace Doc2web.Core
         private static Action<IGlobalContext> BuildPostProcessingAction(object processorConfig, MethodInfo x)
         {
             return new Action<IGlobalContext>(y =>
-                                x.Invoke(processorConfig, new object[] { y }));
+                x.Invoke(processorConfig, new object[] { y }));
         }
         #endregion
 

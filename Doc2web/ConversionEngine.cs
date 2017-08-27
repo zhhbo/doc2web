@@ -10,22 +10,24 @@ namespace Doc2web
     public class ConversionEngine : IDisposable
     {
         private ConversionTaskFactory _conversionTaskFactory;
+        private IContainer _container;
         private Processor _processor;
 
         public ConversionEngine(params object[] plugins)
         {
+            _container = new ContainerBuilder().Build();
             _processor = new ProcessorFactory().BuildMultiple(plugins);
             _conversionTaskFactory = new ConversionTaskFactory
             {
+                EngineContainer = _container,
                 Processor = _processor,
-                EngineContainer = new ContainerBuilder().Build(),
                 ContextRenderer = new Core.Rendering.ContextRenderer()
             };
         }
 
         public void Dispose()
         {
-            //throw new NotImplementedException();
+            _container.Dispose();
         }
 
         public string Render(IEnumerable<OpenXmlElement> elements)

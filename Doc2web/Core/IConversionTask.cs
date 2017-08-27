@@ -3,9 +3,14 @@
     public interface IConversionTask
     {
         void AssembleDocument();
-        void ConvertElements();
-        void PostProcess();
+
+        void Initialize();
+
         void PreProcess();
+
+        void ConvertElements();
+
+        void PostProcess();
 
         string Result { get; }
     }

@@ -41,12 +41,21 @@ namespace Doc2web.Tests.Core
         }
 
         [TestMethod]
+        public void Initialize_Test()
+        {
+            _instance.Initialize();
+
+            _processor.Received(1).InitProcess(Arg.Any<ContainerBuilder>());
+            _globalContext.Received(1).Container = Arg.Any<ILifetimeScope>();
+
+        }
+
+        [TestMethod]
         public void PreProcess_Test()
         {
             _instance.PreProcess();
 
-            _processor.Received(1).PreProcess(_globalContext, Arg.Any<ContainerBuilder>());
-            _globalContext.Received(1).Container = Arg.Any<ILifetimeScope>();
+            _processor.Received(1).PreProcess(_globalContext);
         }
 
         [TestMethod]
