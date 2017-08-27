@@ -14,29 +14,40 @@ namespace Doc2web.Core
             new Processor(inputObject.Select(BuildSingle).ToArray());
 
 
-        public Processor BuildSingle(object processorConfig)
+        public Processor BuildSingle(object plugin)
         {
-            var initProcessActions = GetInitializeProcessingActions(processorConfig);
-            var preProcessingActions = GetPreProcessingActions(processorConfig);
-            var postProcessingActions = GetPostProcessingActions(processorConfig);
-            var elementProcessingActions = GetElementProcessingActions(processorConfig);
+            var initEngineActions = GetInitializeEngineActions(plugin);
+            var initProcessActions = GetInitializeProcessingActions(plugin);
+            var preProcessingActions = GetPreProcessingActions(plugin);
+            var postProcessingActions = GetPostProcessingActions(plugin);
+            var elementProcessingActions = GetElementProcessingActions(plugin);
 
-            var plugin = new Processor();
-            plugin.InitProcessActions.AddRange(initProcessActions);
-            plugin.PreProcessActions.AddRange(preProcessingActions);
-            plugin.PostProcessActions.AddRange(postProcessingActions);
-            plugin.ElementRenderingActions = elementProcessingActions;
+            var processor = new Processor();
+            processor.InitEngineActions.AddRange(initEngineActions);
+            processor.InitProcessActions.AddRange(initProcessActions);
+            processor.PreProcessActions.AddRange(preProcessingActions);
+            processor.PostProcessActions.AddRange(postProcessingActions);
+            processor.ElementRenderingActions = elementProcessingActions;
 
-            return plugin;
+            return processor;
         }
 
-        #region Initialize processing
+        #region Initialize engine/processing
 
-        private Action<ContainerBuilder>[] GetInitializeProcessingActions(object processorConfig) =>
-            processorConfig.GetType().GetMethods()
-            .Where(IsValidInitProcessingMethod)
-            .Select(x => BuildInitializeProcessingAction(processorConfig, x))
+        private Action<ContainerBuilder>[] GetInitializeEngineActions(object plugin) =>
+            plugin.GetType().GetMethods()
+            .Where(IsValidInitEngineMethod)
+            .Select(x => BuildInitializeAction(plugin, x))
             .ToArray();
+
+        private Action<ContainerBuilder>[] GetInitializeProcessingActions(object plugin) =>
+            plugin.GetType().GetMethods()
+            .Where(IsValidInitProcessingMethod)
+            .Select(x => BuildInitializeAction(plugin, x))
+            .ToArray();
+
+        private bool IsValidInitEngineMethod(MethodInfo m) =>
+            (HasAttribute<InitializeEngineAttribute>(m)) ? HasValidInitProcessingParameters(m) : false;
 
         private bool IsValidInitProcessingMethod(MethodInfo m) =>
             (HasAttribute<InitializeProcessingAttribute>(m)) ? HasValidInitProcessingParameters(m) : false;
@@ -51,23 +62,33 @@ namespace Doc2web.Core
             throw new ArgumentException($"The {methodInfo.Name} an InitializeProcessing attribute with invalid parameters.");
         }
 
-        private static Action<ContainerBuilder> BuildInitializeProcessingAction(object processorConfig, MethodInfo x) =>
+        private static Action<ContainerBuilder> BuildInitializeAction(object processorConfig, MethodInfo x) =>
              new Action<ContainerBuilder>(
                 (containerBuilder) => x.Invoke(processorConfig, new object[] { containerBuilder }));
 
 
         #endregion
 
-        #region Pre processing
+        #region Pre/Post processing
 
-        private Action<IGlobalContext>[] GetPreProcessingActions(object processorConfig) =>
-            processorConfig.GetType().GetMethods()
+        private Action<IGlobalContext>[] GetPreProcessingActions(object plugin) =>
+            plugin.GetType().GetMethods()
             .Where(IsValidPreProcessingMethod)
-            .Select(x => BuildPreProcessingAction(processorConfig, x))
+            .Select(x => BuildProcessingAction(plugin, x))
+            .ToArray();
+
+        private Action<IGlobalContext>[] GetPostProcessingActions(object plugin) =>
+            plugin.GetType().GetMethods()
+            .Where(IsValidPostProcessingMethod)
+            .Select(x => BuildProcessingAction(plugin, x))
             .ToArray();
 
         private bool IsValidPreProcessingMethod(MethodInfo m) =>
             (HasAttribute<PreProcessingAttribute>(m)) ? HasValidPreProcessingParameters(m) : false;
+
+        private bool IsValidPostProcessingMethod(MethodInfo m) =>
+            (HasAttribute<PostProcessingAttribute>(m)) ? HasValidPostProcessingParameters(m) : false;
+
 
         private bool HasValidPreProcessingParameters(MethodInfo methodInfo)
         {
@@ -79,22 +100,6 @@ namespace Doc2web.Core
             throw new ArgumentException($"The {methodInfo.Name} an ElementProcessing attribute with invalid parameters.");
         }
 
-        private static Action<IGlobalContext> BuildPreProcessingAction(object processorConfig, MethodInfo x) =>
-             new Action<IGlobalContext>(
-                (context) => x.Invoke(processorConfig, new object[] { context }));
-
-        #endregion
-
-        #region Post processing
-        private Action<IGlobalContext>[] GetPostProcessingActions(object processorConfig) =>
-            processorConfig.GetType().GetMethods()
-            .Where(this.IsValidPostProcessingMethod)
-            .Select(x => BuildPostProcessingAction(processorConfig, x))
-            .ToArray();
-
-        private bool IsValidPostProcessingMethod(MethodInfo m) =>
-            (HasAttribute<PostProcessingAttribute>(m)) ? HasValidPostProcessingParameters(m) : false;
-
         private bool HasValidPostProcessingParameters(MethodInfo methodInfo)
         {
             var parameters = methodInfo.GetParameters();
@@ -105,33 +110,32 @@ namespace Doc2web.Core
             throw new ArgumentException($"{methodInfo.Name} has a Pre/Post Processing attribute with invalid parameters");
         }
 
-        private static Action<IGlobalContext> BuildPostProcessingAction(object processorConfig, MethodInfo x)
-        {
-            return new Action<IGlobalContext>(y =>
-                x.Invoke(processorConfig, new object[] { y }));
-        }
+        private static Action<IGlobalContext> BuildProcessingAction(object processorConfig, MethodInfo x) =>
+             new Action<IGlobalContext>(
+                (context) => x.Invoke(processorConfig, new object[] { context }));
+
         #endregion
 
         #region Element processing
 
-        private Dictionary<Type, List<Action<IElementContext, OpenXmlElement>>> GetElementProcessingActions(object processorConfig)
+        private Dictionary<Type, List<Action<IElementContext, OpenXmlElement>>> GetElementProcessingActions(object plugin)
         {
             var elementProcessingAction = new Dictionary<Type, List<Action<IElementContext, OpenXmlElement>>>();
-            foreach (var (type, action) in BuildElementProcessingActions(processorConfig))
+            foreach (var (type, action) in BuildElementProcessingActions(plugin))
                 AddElementProcessingAction(elementProcessingAction, type, action);
 
             return elementProcessingAction;
         }
 
-        private (Type, Action<IElementContext, OpenXmlElement>)[] BuildElementProcessingActions(object processorConfig) =>
-            processorConfig.GetType().GetMethods()
+        private (Type, Action<IElementContext, OpenXmlElement>)[] BuildElementProcessingActions(object plugin) =>
+            plugin.GetType().GetMethods()
                 .Where(IsValidElementProcessingMethod)
                 .Select(x =>
                 {
                     var elementType = x.GetParameters().Last().ParameterType;
                     var action =
                         new Action<IElementContext, OpenXmlElement>(
-                            (context, elem) => x.Invoke(processorConfig, new object[] { context, elem }));
+                            (context, elem) => x.Invoke(plugin, new object[] { context, elem }));
                     return (elementType, action);
                 })
                 .ToArray();

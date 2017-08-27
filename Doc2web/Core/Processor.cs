@@ -8,6 +8,7 @@ namespace Doc2web.Core
 {
     public class Processor : IProcessor
     {
+        public List<Action<ContainerBuilder>> InitEngineActions { get; private set; }
         public List<Action<ContainerBuilder>> InitProcessActions { get; private set; }
         public List<Action<IGlobalContext>> PreProcessActions { get; }
         public List<Action<IGlobalContext>> PostProcessActions { get; }
@@ -15,6 +16,7 @@ namespace Doc2web.Core
 
         public Processor()
         {
+            InitEngineActions = new List<Action<ContainerBuilder>>(); 
             InitProcessActions = new List<Action<ContainerBuilder>>();
             PreProcessActions = new List<Action<IGlobalContext>>();
             PostProcessActions = new List<Action<IGlobalContext>>();
@@ -24,6 +26,12 @@ namespace Doc2web.Core
         public Processor(params Processor[] plugins) : this()
         {
             foreach (var plugin in plugins) Combine(plugin);
+        }
+
+        public void InitEngine(ContainerBuilder containerBuilder)
+        {
+            foreach (var action in InitEngineActions)
+                action(containerBuilder);
         }
 
         public void InitProcess(ContainerBuilder containerBuilder)

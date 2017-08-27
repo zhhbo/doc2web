@@ -4,16 +4,13 @@ using System.Text;
 
 namespace Doc2web
 {
-    public class InitializeProcessingAttribute : Attribute
-    {
-    }
-    public class PreProcessingAttribute : Attribute
-    {
-    }
-    public class ElementProcessingAttribute : Attribute
-    {
-    }
-    public class PostProcessingAttribute : Attribute
-    {
-    }
+    public class InitializeEngineAttribute : Attribute { }
+
+    public class InitializeProcessingAttribute : Attribute { }
+
+    public class PreProcessingAttribute : Attribute { }
+
+    public class ElementProcessingAttribute : Attribute { }
+
+    public class PostProcessingAttribute : Attribute { }
 }

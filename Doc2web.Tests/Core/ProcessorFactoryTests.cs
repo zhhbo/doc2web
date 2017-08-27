@@ -16,6 +16,11 @@ namespace Doc2web.Tests.Core
         private IGlobalContext _globalContext;
         private ContainerBuilder _containerBuilder;
         private IElementContext _elementContext;
+        public class InitializeEngineConfig
+        {
+            [InitializeEngine]
+            public virtual void Initialize(ContainerBuilder x) { }
+        }
 
         public class InitializeProcessorConfig
         {
@@ -39,6 +44,17 @@ namespace Doc2web.Tests.Core
         {
             [ElementProcessing]
             public virtual void ProcessElement(IElementContext context, Paragraph p) { }
+        }
+        public class InvalidInitializeEngineConfig1
+        {
+            [InitializeEngine]
+            public virtual void Initialize() { }
+        }
+
+        public class InvalidInitializeEngineConfig2
+        {
+            [InitializeEngine]
+            public virtual void Initialize(object something) { }
         }
 
         public class InvalidInitializeProcessorConfig1
@@ -105,6 +121,33 @@ namespace Doc2web.Tests.Core
         }
 
         [TestMethod]
+        public void BuildSingle_InitializeEngine_Test()
+        {
+            var plugin = Substitute.For<InitializeEngineConfig>();
+
+            var processor = _instance.BuildSingle(plugin);
+            processor.InitEngine(_containerBuilder);
+
+            Assert.AreEqual(1, processor.InitEngineActions.Count);
+            plugin.Received(1).Initialize(_containerBuilder);
+        }
+
+        [TestMethod]
+        public void BuildSingle_InitializeEngine_InvalidTest()
+        {
+            var plugins = new object[]
+            {
+                Substitute.For<InvalidInitializeEngineConfig1>(),
+                Substitute.For<InvalidInitializeEngineConfig2>()
+            };
+
+            foreach (var plugin in plugins)
+                Assert.ThrowsException<ArgumentException>(() =>
+                    _instance.BuildSingle(plugin));
+        }
+
+
+        [TestMethod]
         public void BuildSingle_InitializeProcessing_Test()
         {
             var initProcessorConfig = Substitute.For<InitializeProcessorConfig>();
@@ -156,6 +199,39 @@ namespace Doc2web.Tests.Core
                     _instance.BuildSingle(preProcessorConfig));
         }
 
+        [TestMethod]
+        public void BuildSingle_ElementProcessing_Test()
+        {
+            var paragraph = new Paragraph();
+            var elementProcessingConfig = Substitute.For<ElementProcessorConfig>();
+
+            var processor = _instance.BuildSingle(elementProcessingConfig);
+            processor.ProcessElement(_elementContext, paragraph);
+
+            Assert.AreEqual(
+                1,
+                processor.ElementRenderingActions[typeof(Paragraph)].Count
+            );
+            elementProcessingConfig
+                .Received(1)
+                .ProcessElement(Arg.Is(_elementContext), Arg.Is(paragraph));
+        }
+
+        [TestMethod]
+        public void BuildSingle_ElementProcessing_InvalidTest()
+        {
+            object[] processorConfigs = new object[]
+            {
+                new InvalidElementProcessorConfig1(),
+                new InvalidElementProcessorConfig2(),
+                new InvalidElementProcessorConfig3(),
+            };
+
+            foreach (object processorConfig in processorConfigs)
+                Assert.ThrowsException<ArgumentException>(
+                    () => _instance.BuildSingle(processorConfig)
+                );
+        }
 
         [TestMethod]
         public void BuildSingle_PostProcessing_Test()
@@ -182,41 +258,5 @@ namespace Doc2web.Tests.Core
                 Assert.ThrowsException<ArgumentException>(() =>
                     _instance.BuildSingle(postProcessorConfig));
         }
-
-        [TestMethod]
-        public void BuildSingle_ElementProcessing_Test()
-        {
-            var paragraph = new Paragraph();
-            var elementProcessingConfig = Substitute.For<ElementProcessorConfig>();
-
-            var processor = _instance.BuildSingle(elementProcessingConfig);
-            processor.ProcessElement(_elementContext, paragraph);
-
-            Assert.AreEqual(
-                1,
-                processor.ElementRenderingActions[typeof(Paragraph)].Count
-            );
-            elementProcessingConfig
-                .Received(1)
-                .ProcessElement(Arg.Is(_elementContext), Arg.Is(paragraph));
-        }
-
-
-        [TestMethod]
-        public void BuildSingle_ElementProcessing_InvalidTest()
-        {
-            object[] processorConfigs = new object[]
-            {
-                new InvalidElementProcessorConfig1(),
-                new InvalidElementProcessorConfig2(),
-                new InvalidElementProcessorConfig3(),
-            };
-
-            foreach (object processorConfig in processorConfigs)
-                Assert.ThrowsException<ArgumentException>(
-                    () => _instance.BuildSingle(processorConfig)
-                );
-        }
-
     }
 }

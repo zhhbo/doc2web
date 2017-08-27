@@ -9,14 +9,22 @@ namespace Doc2web
 {
     public class ConversionEngine : IDisposable
     {
-        private ConversionTaskFactory _conversionTaskFactory;
         private IContainer _container;
+        private ConversionTaskFactory _conversionTaskFactory;
         private Processor _processor;
 
         public ConversionEngine(params object[] plugins)
         {
-            _container = new ContainerBuilder().Build();
             _processor = new ProcessorFactory().BuildMultiple(plugins);
+            Initialize();
+        }
+
+        private void Initialize()
+        {
+            var containerBuilder = new ContainerBuilder();
+            _processor.InitEngine(containerBuilder);
+            _container = containerBuilder.Build();
+
             _conversionTaskFactory = new ConversionTaskFactory
             {
                 EngineContainer = _container,
