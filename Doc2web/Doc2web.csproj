@@ -18,7 +18,6 @@
   <ItemGroup>
     <Folder Include="Plugins\TrackChanges\" />
     <Folder Include="Plugins\Numbering\" />
-    <Folder Include="Plugins\Style\" />
   </ItemGroup>
 
   <ItemGroup>
