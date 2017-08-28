@@ -8,9 +8,16 @@ namespace Doc2web.Plugins.Style.Properties
     public abstract class BaseCssProperty<T> : ICssProperty
         where T : OpenXmlElement
     {
-        public T Element { get; set; }
 
         public string Selector { get; set; }
+
+        public OpenXmlElement OpenXmlElement { get; set; }
+
+        public T Element
+        {
+            get => (T)OpenXmlElement;
+            set => OpenXmlElement = value;
+        }
 
         public abstract CssData AsCss();
 
@@ -18,8 +25,8 @@ namespace Doc2web.Plugins.Style.Properties
 
         public int CompareTo(object other)
         {
-            var otherProp = other as BaseCssProperty<T>;
-            if (otherProp != null) return CompareTo(otherProp.Element);
+            if (other is BaseCssProperty<T> otherProp)
+                return CompareTo(otherProp.Element);
             return -1;
         }
     }

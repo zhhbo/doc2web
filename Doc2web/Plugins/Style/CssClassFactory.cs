@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Text;
 using DocumentFormat.OpenXml.Wordprocessing;
+using DocumentFormat.OpenXml.Packaging;
 
 namespace Doc2web.Plugins.Style
 {
     public class CssClassFactory : ICssClassFactory
     {
-        public CssClassFactory(ICssPropertiesFactory cssPropertyFactory)
+        public CssClassFactory(WordprocessingDocument wpDoc, ICssPropertiesFactory cssPropertyFactory)
         {
 
         }
