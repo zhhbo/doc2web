@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Doc2web.Plugins.Style
 {
-    public class ParagraphCssClass
+    public class ParagraphCssClass : ICssClass
     {
         public ParagraphCssClass()
         {

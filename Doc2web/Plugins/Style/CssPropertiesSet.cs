@@ -20,6 +20,8 @@ namespace Doc2web.Plugins.Style
 
         public void Add(ICssProperty item) =>_set.Add(item);
 
+        public void AddMany(IEnumerable<ICssProperty> items) => _set.UnionWith(items);
+
         public void Clear() => _set.Clear();
 
         public int Compare(ICssProperty x, ICssProperty y)

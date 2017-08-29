@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Doc2web.Plugins.Style
 {
-    public class RunCssClass
+    public class RunCssClass : ICssClass
     {
         public RunCssClass()
         {

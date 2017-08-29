@@ -37,6 +37,21 @@ namespace Doc2web.Tests.Plugins.Style
         }
 
         [TestMethod]
+        public void AddMany_Test()
+        {
+            var props = new ICssProperty[]
+            {
+                new MockProp1(),
+                new MockProp2()
+            };
+
+            _instance.AddMany(props);
+
+            foreach (var prop in props)
+                Assert.IsTrue(_instance.Contains(prop));
+        }
+
+        [TestMethod]
         public void Remove_Test()
         {
             var prop = Substitute.For<ICssProperty>();
