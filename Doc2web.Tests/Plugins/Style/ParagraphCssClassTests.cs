@@ -1,0 +1,84 @@
+﻿using Doc2web.Plugins.Style;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NSubstitute;
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace Doc2web.Tests.Plugins.Style
+{
+    [TestClass]
+    public class ParagraphCssClassTests
+    {
+        [TestMethod]
+        public void ParagraphCssClass_Test()
+        {
+            var instance = new ParagraphCssClass();
+
+            Assert.IsNull(instance.Selector);
+            Assert.IsNull(instance.BasedOn);
+            Assert.IsNotNull(instance.RunProps);
+            Assert.IsNotNull(instance.ParagraphProps);
+        }
+
+        [TestMethod]
+        public void AsCss_Test()
+        {
+            var expectedCssData = new CssData();
+            expectedCssData.AddAttribute("p.test-class", "background", "gray");
+            expectedCssData.AddAttribute("p.test-class span", "font-weight", "bold");
+
+            var instance = new ParagraphCssClass();
+            instance.ParagraphProps.Add(new MockProp1{ Out = ("p.test-class", "background", "gray")});
+            instance.RunProps.Add(new MockProp2{ Out = ("p.test-class span", "font-weight", "bold")});
+
+            var cssData = instance.AsCss();
+
+            Assert.AreEqual(expectedCssData, cssData);
+        }
+
+        [TestMethod]
+        public void AssCss_BasedOnCombineTest()
+        {
+            var expectedCssData = new CssData();
+            expectedCssData.AddAttribute("p.test-class", "background", "pale");
+            expectedCssData.AddAttribute("p.test-class", "border", "1px solid black");
+            expectedCssData.AddAttribute("p.test-class span", "text-transform", "uppercase");
+            expectedCssData.AddAttribute("p.test-class span", "font-weight", "bold");
+
+            var basedOn = new RunCssClass();
+            basedOn.RunProps.Add(new MockProp1{ Out = ("p.test-class", "background", "pale")});
+            basedOn.RunProps.Add(new MockProp2{ Out = ("p.test-class span", "text-transform", "uppercase")});
+
+            var instance = new RunCssClass();
+            instance.RunProps.Add(new MockProp3{ Out = ("p.test-class", "border", "1px solid black")});
+            instance.RunProps.Add(new MockProp4{ Out = ("p.test-class span", "font-weight", "bold")});
+
+            instance.BasedOn = basedOn;
+            var cssData = instance.AsCss();
+
+            Assert.AreEqual(expectedCssData, cssData);
+        }
+
+        [TestMethod]
+        public void AssCss_BasedOnOverrideTest()
+        {
+            var expectedCssData = new CssData();
+            expectedCssData.AddAttribute("p.test-class span", "font-weight", "bold");
+            expectedCssData.AddAttribute("p.test-class", "background", "pale");
+
+            var basedOn = new RunCssClass();
+            basedOn.RunProps.Add(new MockProp1{ Out = ("p.test-class", "some", "stuff")});
+            basedOn.RunProps.Add(new MockProp2{ Out = ("p.test-class span", "text-transform", "uppercase")});
+
+            var instance = new RunCssClass();
+            instance.RunProps.Add(new MockProp1{ Out = ("p.test-class span", "font-weight", "bold")});
+            instance.RunProps.Add(new MockProp2{ Out = ("p.test-class", "background", "pale")});
+
+            instance.BasedOn = basedOn;
+            var cssData = instance.AsCss();
+
+            Assert.AreEqual(expectedCssData, cssData);
+        }
+    }
+}

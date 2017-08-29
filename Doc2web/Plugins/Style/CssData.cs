@@ -7,11 +7,11 @@ namespace Doc2web.Plugins.Style
 {
     public class CssData 
     {
-        private Dictionary<string, Dictionary<string, string>> _data;
+        private SortedDictionary<string, SortedDictionary<string, string>> _data;
 
         public CssData()
         {
-            _data = new Dictionary<string, Dictionary<string, string>>();
+            _data = new SortedDictionary<string, SortedDictionary<string, string>>();
         }
 
         public string[] Selectors => _data.Keys.ToArray();
@@ -20,11 +20,18 @@ namespace Doc2web.Plugins.Style
 
         public void AddAttribute(string selector, string name, string value)
         {
-            if (_data.TryGetValue(selector, out Dictionary<string, string> props))
+            if (_data.TryGetValue(selector, out SortedDictionary<string, string> props))
                 props[name] = value;
             else
-                _data[selector] = new Dictionary<string, string> { { name, value } };
+                _data[selector] = new SortedDictionary<string, string> { { name, value } };
 
+        }
+
+        public void AddRange(CssData other)
+        {
+            foreach(var kv in other._data)
+                foreach (var prop in kv.Value)
+                    AddAttribute(kv.Key, prop.Key, prop.Value);
         }
 
         public override bool Equals(object obj)
@@ -43,7 +50,7 @@ namespace Doc2web.Plugins.Style
 
         private bool AreAttributeEquals(string selector, IDictionary<string, string> attributes)
         {
-            if (_data.TryGetValue(selector, out Dictionary<string, string> thisAttributes))
+            if (_data.TryGetValue(selector, out SortedDictionary<string, string> thisAttributes))
             {
                 if (!thisAttributes.SequenceEqual(attributes))
                 {

@@ -13,17 +13,17 @@ namespace Doc2web.Plugins.Style
 
         }
 
-        public CssClass Build(string styleId)
+        public ICssClass Build(string styleId)
         {
             throw new NotImplementedException();
         }
 
-        public CssClass Build(ParagraphProperties pPr)
+        public ICssClass Build(ParagraphProperties pPr)
         {
             throw new NotImplementedException();
         }
 
-        public CssClass Build(RunProperties rPr)
+        public ICssClass Build(RunProperties rPr)
         {
             throw new NotImplementedException();
         }

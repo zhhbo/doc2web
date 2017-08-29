@@ -58,5 +58,26 @@ namespace Doc2web.Tests.Plugins.Style
 
             Assert.AreEqual("bold", cssData["span"]["font"]);
         }
+
+        [TestMethod]
+        public void AddRange_Test()
+        {
+            var expected = new CssData();
+            expected.AddAttribute("span", "color", "red");
+            expected.AddAttribute("span", "font", "bold");
+            expected.AddAttribute("p", "margin-top", "20px");
+
+            var cssData1 = new CssData();
+            cssData1.AddAttribute("span", "color", "blue");
+            cssData1.AddAttribute("span", "font", "bold");
+
+            var cssData2 = new CssData();
+            cssData2.AddAttribute("span", "color", "red");
+            cssData2.AddAttribute("p", "margin-top", "20px");
+
+            cssData1.AddRange(cssData2);
+
+            Assert.AreEqual(expected, cssData1);
+        }
     }
-}
+} 

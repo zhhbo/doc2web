@@ -7,10 +7,10 @@ namespace Doc2web.Plugins.Style
 {
     public interface ICssClassFactory
     {
-        CssClass Build(string styleId);
+        ICssClass Build(string styleId);
 
-        CssClass Build(ParagraphProperties pPr);
+        ICssClass Build(ParagraphProperties pPr);
 
-        CssClass Build(RunProperties rPr);
+        ICssClass Build(RunProperties rPr);
     }
 }
