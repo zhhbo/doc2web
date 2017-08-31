@@ -65,5 +65,27 @@ namespace Doc2web.Plugins.Style
         }
 
         public override int GetHashCode() => _data.GetHashCode();
+
+        public void RenderInto(StringBuilder sb)
+        {
+            foreach (var selector in _data)
+            {
+                sb.Append(selector.Key);
+                sb.Append(" {");
+                RenderPropsInto(sb, selector.Value);
+                sb.Append("}");
+            }
+        }
+
+        private static void RenderPropsInto(StringBuilder sb, IEnumerable<KeyValuePair<string, string>> props)
+        {
+            foreach (var prop in props)
+            {
+                sb.Append(prop.Key);
+                sb.Append(": ");
+                sb.Append(prop.Value);
+                sb.Append(";");
+            }
+        }
     }
 }

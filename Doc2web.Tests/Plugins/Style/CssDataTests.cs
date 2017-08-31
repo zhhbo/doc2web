@@ -79,5 +79,23 @@ namespace Doc2web.Tests.Plugins.Style
 
             Assert.AreEqual(expected, cssData1);
         }
+
+        [TestMethod]
+        public void RenderInto_Test()
+        {
+            string expectedCss = 
+                @".test {color: blue;font-weigth: light;}p {color: red;font-weigth: bold;}";
+            var cssData = new CssData();
+            cssData.AddAttribute("p", "font-weigth", "bold");
+            cssData.AddAttribute("p", "color", "red");
+            cssData.AddAttribute(".test", "font-weigth", "light");
+            cssData.AddAttribute(".test", "color", "blue");
+
+            var sb = new StringBuilder();
+            cssData.RenderInto(sb);
+            var result = sb.ToString().Trim();
+
+            Assert.AreEqual(expectedCss, result);
+        }
     }
 } 

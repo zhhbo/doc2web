@@ -32,9 +32,9 @@ namespace Doc2web.Plugins.Style
                 .RegisterType<CssPropertiesFactory>()
                 .As<ICssPropertiesFactory>();
             builder
-                .RegisterType<CssManager>()
+                .RegisterType<CssRegistrator>()
                 .InstancePerLifetimeScope()
-                .As<ICssManager>();
+                .As<ICssRegistrator>();
         }
     }
 }
