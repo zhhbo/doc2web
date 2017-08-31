@@ -67,11 +67,8 @@ namespace Doc2web.Plugins.Style.Properties
             var other = new ColorCssProperty(_themeColorProvider) { Element = element };
             return other.Color == Color;
         }
-        
 
-        protected override short GetSpecificHashcode()
-        {
-            throw new NotImplementedException();
-        }
+
+        public override short GetSpecificHashcode() => (short)Color.Substring(1).GetHashCode();
     }
 }

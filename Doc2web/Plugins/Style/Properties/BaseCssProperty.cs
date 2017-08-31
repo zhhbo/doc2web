@@ -34,7 +34,7 @@ namespace Doc2web.Plugins.Style.Properties
             return 0 | t | (int)GetSpecificHashcode();
         }
 
-        protected abstract short GetSpecificHashcode();
+        public abstract short GetSpecificHashcode();
         public abstract bool HaveSameOuput(T element);
     }
 }

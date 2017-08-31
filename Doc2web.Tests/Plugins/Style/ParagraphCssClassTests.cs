@@ -27,14 +27,17 @@ namespace Doc2web.Tests.Plugins.Style
             var expectedCssData = new CssData();
             expectedCssData.AddAttribute("p.test-class", "background", "gray");
             expectedCssData.AddAttribute("p.test-class span", "font-weight", "bold");
-
-            var instance = new ParagraphCssClass();
-            instance.ParagraphProps.Add(new MockProp1 { Out = ("p.test-class", "background", "gray") });
-            instance.RunProps.Add(new MockProp2 { Out = ("p.test-class span", "font-weight", "bold") });
+            var pCssProp = new MockProp1 { Out = ("p.test-class", "background", "gray") };
+            var rCssProp = new MockProp2 { Out = ("p.test-class span", "font-weight", "bold") };
+            var instance = new ParagraphCssClass { Selector = "p.test-class" };
+            instance.ParagraphProps.Add(pCssProp);
+            instance.RunProps.Add(rCssProp);
 
             var cssData = instance.AsCss();
 
             Assert.AreEqual(expectedCssData, cssData);
+            Assert.AreEqual("p.test-class", pCssProp.Selector);
+            Assert.AreEqual("p.test-class span", rCssProp.Selector);
         }
 
         [TestMethod]
@@ -46,15 +49,18 @@ namespace Doc2web.Tests.Plugins.Style
             expectedCssData.AddAttribute("p.test-class span", "text-transform", "uppercase");
             expectedCssData.AddAttribute("p.test-class span", "font-weight", "bold");
 
-            var basedOn = new RunCssClass();
-            basedOn.RunProps.Add(new MockProp1 { Out = ("p.test-class", "background", "pale") });
+            var defaults = new ParagraphCssClass();
+            defaults.ParagraphProps.Add(new MockProp1 { Out = ("p.test-class", "background", "pale") });
+
+            var basedOn = new ParagraphCssClass();
             basedOn.RunProps.Add(new MockProp2 { Out = ("p.test-class span", "text-transform", "uppercase") });
+            basedOn.BasedOn = defaults;
 
-            var instance = new RunCssClass();
-            instance.RunProps.Add(new MockProp3 { Out = ("p.test-class", "border", "1px solid black") });
+            var instance = new ParagraphCssClass();
+            instance.ParagraphProps.Add(new MockProp3 { Out = ("p.test-class", "border", "1px solid black") });
             instance.RunProps.Add(new MockProp4 { Out = ("p.test-class span", "font-weight", "bold") });
-
             instance.BasedOn = basedOn;
+
             var cssData = instance.AsCss();
 
             Assert.AreEqual(expectedCssData, cssData);
@@ -67,11 +73,11 @@ namespace Doc2web.Tests.Plugins.Style
             expectedCssData.AddAttribute("p.test-class span", "font-weight", "bold");
             expectedCssData.AddAttribute("p.test-class", "background", "pale");
 
-            var basedOn = new RunCssClass();
+            var basedOn = new ParagraphCssClass();
             basedOn.RunProps.Add(new MockProp1 { Out = ("p.test-class", "some", "stuff") });
             basedOn.RunProps.Add(new MockProp2 { Out = ("p.test-class span", "text-transform", "uppercase") });
 
-            var instance = new RunCssClass();
+            var instance = new ParagraphCssClass();
             instance.RunProps.Add(new MockProp1 { Out = ("p.test-class span", "font-weight", "bold") });
             instance.RunProps.Add(new MockProp2 { Out = ("p.test-class", "background", "pale") });
 
@@ -103,7 +109,34 @@ namespace Doc2web.Tests.Plugins.Style
 
             Assert.AreNotEqual(cls1, cls2);
         }
+
+        [TestMethod]
+        public void IsEmpty_TrueTest()
+        {
+            var cls = new ParagraphCssClass();
+
+            Assert.IsTrue(cls.IsEmpty);
+        }
+
+        [TestMethod]
+        public void IsEmpty_FalseTest()
+        {
+            var cls1 = new ParagraphCssClass();
+            cls1.ParagraphProps.Add(new MockProp1());
+            var cls2 = new ParagraphCssClass();
+            cls2.RunProps.Add(new MockProp1());
+
+            Assert.IsFalse(cls1.IsEmpty);
+            Assert.IsFalse(cls2.IsEmpty);
+        }
+
+        [TestMethod]
+        public void Hashcode_ColisionTest()
+        {
+            var cls1a = new ParagraphCssClass();
+            var cls1b = new ParagraphCssClass();
+
+            Assert.AreEqual(cls1a.GetHashCode(), cls1b.GetHashCode());
+        }
     }
-
-
 }

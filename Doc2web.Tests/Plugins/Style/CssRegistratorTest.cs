@@ -42,6 +42,7 @@ namespace Doc2web.Tests.Plugins.Style
             Assert.AreEqual(expectedStyle1Css.Length + expectedStyle2Css.Length, output.Length);
         }
 
+
         [TestMethod]
         public void RenderInto_NewDynamicClsTest()
         {
@@ -104,6 +105,21 @@ namespace Doc2web.Tests.Plugins.Style
             Assert.AreEqual(expectedStyle1Css, output);
             cls.Received(1).Selector = "p." + rClsName;
         }
+
+        [TestMethod]
+        public void Register_DynamicEmtpyTest()
+        {
+            var pPr = new ParagraphProperties();
+            var rPr = new RunProperties();
+            var cls = Substitute.For<ICssClass>();
+            cls.IsEmpty.Returns(true);
+            _clsFactory.Build(Arg.Is(pPr)).Returns(cls);
+            _clsFactory.Build(Arg.Is(rPr)).Returns(cls);
+
+            Assert.AreEqual("", _instance.Register(pPr));
+            Assert.AreEqual("", _instance.Register(rPr));
+        }
+
 
         private string TestRender()
         {

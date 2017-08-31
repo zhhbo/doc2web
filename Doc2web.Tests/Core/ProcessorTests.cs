@@ -133,6 +133,7 @@ namespace Doc2web.Tests.Core
             processor.InitEngineActions.Add(c => { });
             processor.InitProcessActions.Add(c => { });
             processor.PreProcessActions.Add((c) => { });
+            processor.PreProcessActions.Add((c) => { });
             processor.ElementRenderingActions
                 .Add(typeof(Paragraph), new List<Action<IElementContext, OpenXmlElement>>()
             {
@@ -148,6 +149,7 @@ namespace Doc2web.Tests.Core
             var processor = new Processor();
             processor.InitEngineActions.Add(c => { });
             processor.InitProcessActions.Add(c => { });
+            processor.PreProcessActions.Add(c => { });
             processor.PostProcessActions.Add(c => { });
             processor.ElementRenderingActions
                 .Add(typeof(Paragraph), new List<Action<IElementContext, OpenXmlElement>>()
@@ -179,8 +181,8 @@ namespace Doc2web.Tests.Core
 
         private void AssertContainsAllInitEngineActions(Processor child)
         {
-            foreach (var initializeAction in child.InitProcessActions)
-                Assert.IsTrue(_instance.InitProcessActions.Contains(initializeAction));
+            foreach (var initializeAction in child.InitEngineActions)
+                Assert.IsTrue(_instance.InitEngineActions.Contains(initializeAction));
         }
 
         private void AssertContainsAllPreProcessingActions(Processor child)

@@ -70,6 +70,7 @@ namespace Doc2web.Core
 
         private void AddInitPrePostActionsFromProcessor(Processor processor)
         {
+            InitEngineActions.AddRange(processor.InitEngineActions);
             InitProcessActions.AddRange(processor.InitProcessActions);
             PreProcessActions.AddRange(processor.PreProcessActions);
             PostProcessActions.AddRange(processor.PostProcessActions);

@@ -102,9 +102,10 @@ namespace Doc2web.Tests.Plugins.Style
         public void SetEquals_TrueTest()
         {
             var prop = Substitute.For<ICssProperty>();
-            var other = new CssPropertiesSet();
-
-            other.Add(prop);
+            var other = new CssPropertiesSet
+            {
+                prop
+            };
             _instance.Add(prop);
 
             Assert.IsTrue(_instance.SetEquals(other));
@@ -114,11 +115,24 @@ namespace Doc2web.Tests.Plugins.Style
         public void SetEquals_FalseTest()
         {
             var prop = Substitute.For<ICssProperty>();
-            var other = new CssPropertiesSet();
-
-            other.Add(prop);
+            var other = new CssPropertiesSet { prop };
 
             Assert.IsFalse(_instance.SetEquals(other));
+        }
+
+        [TestMethod]
+        public void GetHashCode_Colision()
+        {
+            var a = new CssPropertiesSet();
+            var b = new CssPropertiesSet();
+            var prop1 = new MockProp1();
+            var prop2 = new MockProp2();
+            a.Add(prop1);
+            a.Add(prop2);
+            b.Add(prop1);
+            b.Add(prop2);
+
+            Assert.AreEqual(a.GetHashCode(), b.GetHashCode());
         }
     }
 }

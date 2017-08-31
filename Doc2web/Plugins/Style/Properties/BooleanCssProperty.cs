@@ -38,7 +38,7 @@ namespace Doc2web.Plugins.Style.Properties
             return data;
         }
 
-        protected override short GetSpecificHashcode()
+        public override short GetSpecificHashcode()
         {
             if (ExplicitVal.HasValue)
             {

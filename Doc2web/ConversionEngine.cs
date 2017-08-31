@@ -42,6 +42,7 @@ namespace Doc2web
         {
             var conversionTask = _conversionTaskFactory.Build(elements);
 
+            conversionTask.Initialize();
             conversionTask.PreProcess();
             conversionTask.ConvertElements();
             conversionTask.PostProcess();

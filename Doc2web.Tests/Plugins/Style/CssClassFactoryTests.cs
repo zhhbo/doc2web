@@ -84,17 +84,20 @@ namespace Doc2web.Tests.Plugins.Style
         [TestMethod]
         public void Build_FromParagraphPropsTest()
         {
-            var mockProps = new ICssProperty[] { Substitute.For<ICssProperty>() };
-            var pPr = new ParagraphProperties();
-            _propsFac.Build(Arg.Is(pPr)).Returns(mockProps);
+            var mockProps1 = new ICssProperty[] { new MockProp1() };
+            var mockProps2 = new ICssProperty[] { new MockProp2() };
+            var rPr = new RunProperties();
+            var pPr = new ParagraphProperties(rPr);
+            _propsFac.Build(Arg.Is(rPr)).Returns(mockProps1);
+            _propsFac.Build(Arg.Is(pPr)).Returns(mockProps2);
 
             var cls = _instance.Build(pPr);
             Assert.IsNotNull(cls);
 
             var pCssClass = cls as ParagraphCssClass;
             Assert.IsNotNull(pCssClass);
-            Assert.AreEqual(mockProps[0], pCssClass.ParagraphProps.Single());
-            Assert.AreEqual(0, pCssClass.RunProps.Count);
+            Assert.AreEqual(mockProps1[0], pCssClass.RunProps.Single());
+            Assert.AreEqual(mockProps2[0], pCssClass.ParagraphProps.Single());
         }
 
         private ICssProperty MockParagraphCssProps(string styleName) =>

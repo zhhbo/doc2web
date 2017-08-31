@@ -43,13 +43,17 @@ namespace Doc2web.Plugins.Style
 
         private string TryGetDynamicClass(ICssClass cls, string selectorPrefix)
         {
-            if (_dynamicClassesUIDs.TryGetValue(cls, out string uid))
-                return uid;
+            if (cls.IsEmpty) return "";
+            lock (_dynamicClassesUIDs)
+            {
+                if (_dynamicClassesUIDs.TryGetValue(cls, out string uid))
+                    return uid;
 
-            uid = Guid.NewGuid().ToString().Replace("-", "");
-            cls.Selector = $"{selectorPrefix}.{uid}";
-            _dynamicClassesUIDs.Add(cls, uid);
-            return uid;
+                uid = Guid.NewGuid().ToString().Replace("-", "");
+                cls.Selector = $"{selectorPrefix}.{uid}";
+                _dynamicClassesUIDs.Add(cls, uid);
+                return uid;
+            }
         }
 
 

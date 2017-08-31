@@ -23,17 +23,18 @@ namespace Doc2web.Plugins.Style
 
         public CssData AsCss()
         {
-            var cssPropertySet = new CssPropertiesSet();
+            var cssData = new CssData();
+            var cssPropertySet = new CssPropertiesSet { Selector = Selector };
 
-            foreach (var prop in RunProps)
-                cssPropertySet.Add(prop);
+            var target = this;
+            while (target != null)
+            {
+                cssPropertySet.AddMany(target.RunProps);
+                target = target.BasedOn;
+            }
 
-            if (BasedOn != null)
-                foreach (var prop in BasedOn.RunProps)
-                    cssPropertySet.Add(prop);
-
-            cssPropertySet.Selector = Selector;
-            return cssPropertySet.AsCss();
+            cssData.AddRange(cssPropertySet.AsCss());
+            return cssData;
         }
 
         public override bool Equals(object obj)
@@ -45,10 +46,9 @@ namespace Doc2web.Plugins.Style
 
         public override int GetHashCode()
         {
-            var hashCode = -1025857227;
-            hashCode = hashCode * -1521134295 + EqualityComparer<RunCssClass>.Default.GetHashCode(BasedOn);
-            hashCode = hashCode * -1521134295 + EqualityComparer<CssPropertiesSet>.Default.GetHashCode(RunProps);
-            return hashCode;
+            return (BasedOn?.GetHashCode(), RunProps.GetHashCode()).GetHashCode();
         }
+
+        public bool IsEmpty => RunProps.Count == 0;
     }
 }

@@ -29,13 +29,15 @@ namespace Doc2web.Tests.Plugins.Style
             expectedCssData.AddAttribute("span.test-class", "text-transform", "uppercase");
             expectedCssData.AddAttribute("span.test-class", "font-weight", "bold");
 
-            var instance = new RunCssClass();
+            var instance = new RunCssClass { Selector = "span.test-class" };
             instance.RunProps.Add(new MockProp1{ Out = ("span.test-class", "font-weight", "bold")});
             instance.RunProps.Add(new MockProp2{ Out = ("span.test-class", "text-transform", "uppercase")});
 
             var cssData = instance.AsCss();
 
             Assert.AreEqual(expectedCssData, cssData);
+            foreach(var prop in instance.RunProps)
+                Assert.AreEqual("span.test-class", prop.Selector);
         }
 
         [TestMethod]
@@ -47,14 +49,16 @@ namespace Doc2web.Tests.Plugins.Style
             expectedCssData.AddAttribute("span.test-class", "text-transform", "uppercase");
             expectedCssData.AddAttribute("span.test-class", "font-weight", "bold");
 
+            var defaults = new RunCssClass();
+            defaults.RunProps.Add(new MockProp2{ Out = ("span.test-class", "background", "pale")});
+
             var basedOn = new RunCssClass();
             basedOn.RunProps.Add(new MockProp1{ Out = ("span.test-class", "border", "1 px solid")});
-            basedOn.RunProps.Add(new MockProp2{ Out = ("span.test-class", "background", "pale")});
+            basedOn.BasedOn = defaults;
 
             var instance = new RunCssClass();
             instance.RunProps.Add(new MockProp3{ Out = ("span.test-class", "font-weight", "bold")});
             instance.RunProps.Add(new MockProp4{ Out = ("span.test-class", "text-transform", "uppercase")});
-
             instance.BasedOn = basedOn;
             var cssData = instance.AsCss();
 
@@ -105,6 +109,23 @@ namespace Doc2web.Tests.Plugins.Style
             cls1.RunProps.Add(prop);
 
             Assert.AreNotEqual(cls1, cls2);
+        }
+
+        [TestMethod]
+        public void IsEmpty_TrueTest()
+        {
+            var cls = new RunCssClass();
+
+            Assert.IsTrue(cls.IsEmpty);
+        }
+
+        [TestMethod]
+        public void IsEmpty_FalseTest()
+        {
+            var cls1 = new RunCssClass();
+            cls1.RunProps.Add(new MockProp1());
+
+            Assert.IsFalse(cls1.IsEmpty);
         }
     }
 }

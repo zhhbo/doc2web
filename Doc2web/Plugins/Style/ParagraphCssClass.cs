@@ -18,7 +18,7 @@ namespace Doc2web.Plugins.Style
             set
             {
                 ParagraphProps.Selector = value;
-                RunProps.Selector = value = " span";
+                RunProps.Selector = value + " span";
             }
         }
 
@@ -28,41 +28,27 @@ namespace Doc2web.Plugins.Style
 
         public CssPropertiesSet RunProps { get; private set; }
 
+
         public CssData AsCss()
         {
+            var pCssProps = new CssPropertiesSet { Selector = ParagraphProps.Selector };
+            var rCssProps = new CssPropertiesSet { Selector = RunProps.Selector };
+
+            pCssProps.AddMany(ParagraphProps);
+            rCssProps.AddMany(RunProps);
+
+            var basedOn = BasedOn;
+            while (basedOn != null)
+            {
+                pCssProps.AddMany(basedOn.ParagraphProps);
+                rCssProps.AddMany(basedOn.RunProps);
+                basedOn = basedOn.BasedOn;
+            }
+
             var cssData = new CssData();
-            cssData.AddRange(BuildParagraphCssData());
-            cssData.AddRange(BuildRunCssData());
+            cssData.AddRange(pCssProps.AsCss());
+            cssData.AddRange(rCssProps.AsCss());
             return cssData;
-        }
-        private CssData BuildParagraphCssData()
-        {
-            var cssPropertySet = new CssPropertiesSet();
-
-            foreach (var prop in ParagraphProps)
-                cssPropertySet.Add(prop);
-
-            if (BasedOn != null)
-                foreach (var prop in BasedOn.ParagraphProps)
-                    cssPropertySet.Add(prop);
-
-            cssPropertySet.Selector = Selector;
-            return cssPropertySet.AsCss();
-        }
-
-        private CssData BuildRunCssData()
-        {
-            var cssPropertySet = new CssPropertiesSet();
-
-            foreach (var prop in RunProps)
-                cssPropertySet.Add(prop);
-
-            if (BasedOn != null)
-                foreach (var prop in BasedOn.RunProps)
-                    cssPropertySet.Add(prop);
-
-            cssPropertySet.Selector = RunProps.Selector;
-            return cssPropertySet.AsCss();
         }
 
         public override bool Equals(object obj)
@@ -75,11 +61,9 @@ namespace Doc2web.Plugins.Style
 
         public override int GetHashCode()
         {
-            var hashCode = -770375014;
-            hashCode = hashCode * -1521134295 + EqualityComparer<ParagraphCssClass>.Default.GetHashCode(BasedOn);
-            hashCode = hashCode * -1521134295 + EqualityComparer<CssPropertiesSet>.Default.GetHashCode(ParagraphProps);
-            hashCode = hashCode * -1521134295 + EqualityComparer<CssPropertiesSet>.Default.GetHashCode(RunProps);
-            return hashCode;
+            return (BasedOn?.GetHashCode(), ParagraphProps.GetHashCode(), RunProps.GetHashCode()).GetHashCode();
         }
+
+        public bool IsEmpty => ParagraphProps.Count == 0 && RunProps.Count == 0;
     }
 }

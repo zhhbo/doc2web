@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Doc2web.Plugins.Style
@@ -59,6 +60,12 @@ namespace Doc2web.Plugins.Style
         public bool SetEquals(CssPropertiesSet other)
         {
             return _set.SetEquals(other._set);
+        }
+
+        public override int GetHashCode()
+        {
+            return this.Select(x => x.GetHashCode())
+                .Sum();
         }
     }
 }

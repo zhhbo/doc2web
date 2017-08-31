@@ -21,9 +21,11 @@ namespace Doc2web.Tests.Plugins.Style.Properties
         public void Initialize()
         {
             _themeColorProvider = Substitute.For<IThemeColorProvider>();
-            _instance = new ColorCssProperty(_themeColorProvider);
-            _instance.Element = new Color();
-            _instance.Selector = "p";
+            _instance = new ColorCssProperty(_themeColorProvider)
+            {
+                Element = new Color(),
+                Selector = "p"
+            };
         }
 
         [TestMethod]
@@ -84,6 +86,17 @@ namespace Doc2web.Tests.Plugins.Style.Properties
             _instance.Element = elem.CloneNode(true) as Color;
 
             Assert.IsTrue(_instance.HaveSameOuput(elem));
+        }
+
+        [TestMethod]
+        public void HashCode_Test()
+        {
+            var elem = new Color { Val = new StringValue("123456") };
+            _instance.Element = elem.CloneNode(true) as Color;
+
+            var result = _instance.GetSpecificHashcode();
+
+            Assert.AreEqual((short)"123456".GetHashCode(), result);
         }
     }
 }
