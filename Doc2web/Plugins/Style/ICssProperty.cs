@@ -6,7 +6,7 @@ using System.Text;
 namespace Doc2web.Plugins.Style
 {
 
-    public interface ICssProperty : IComparable
+    public interface ICssProperty
     {
         string Selector { get; set; }
         OpenXmlElement OpenXmlElement { get; set; }

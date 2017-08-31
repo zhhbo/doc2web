@@ -1,4 +1,5 @@
 ﻿using Doc2web.Plugins.Style;
+using DocumentFormat.OpenXml.Wordprocessing;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 using System;
@@ -23,7 +24,8 @@ namespace Doc2web.Tests.Plugins.Style
         [TestMethod]
         public void RenderInto_StylesTest()
         {
-            string expectedCss = @"span {font-weight: bold;}span.test {color: red;}p {font-weight: light;}span.test {text-decoration: underline;}";
+            string expectedStyle1Css = @"span {font-weight: bold;}span.test {color: red;}";
+            string expectedStyle2Css = @"p {font-weight: light;}span.test {text-decoration: underline;}";
             RegisterMockCssClass("style1",
                 ("span", "font-weight", "bold"),
                 ("span.test", "color", "red"));
@@ -35,7 +37,72 @@ namespace Doc2web.Tests.Plugins.Style
             _instance.Register("style2");
             var output = TestRender();
 
-            Assert.AreEqual(expectedCss, output);
+            Assert.IsTrue(output.Contains(expectedStyle1Css));
+            Assert.IsTrue(output.Contains(expectedStyle2Css));
+            Assert.AreEqual(expectedStyle1Css.Length + expectedStyle2Css.Length, output.Length);
+        }
+
+        [TestMethod]
+        public void RenderInto_NewDynamicClsTest()
+        {
+            var pProp = new ParagraphProperties();
+            var rProp = new RunProperties();
+            string expectedStyle1Css = @"span {font-weight: bold;}span.test {color: red;}";
+            string expectedStyle2Css = @"p {font-weight: light;}span.test {text-decoration: underline;}";
+            RegisterMockCssClass(rProp,
+                ("span", "font-weight", "bold"),
+                ("span.test", "color", "red"));
+            RegisterMockCssClass(pProp,
+                ("p", "font-weight", "light"),
+                ("span.test", "text-decoration", "underline"));
+
+            var rClsName = _instance.Register(rProp);
+            var pClsName = _instance.Register(pProp);
+            var output = TestRender();
+
+            Assert.AreNotEqual("", rClsName);
+            Assert.AreNotEqual("", pClsName);
+            Assert.IsTrue(output.Contains(expectedStyle1Css));
+            Assert.IsTrue(output.Contains(expectedStyle2Css));
+            Assert.AreEqual(expectedStyle1Css.Length + expectedStyle2Css.Length, output.Length);
+        }
+
+        [TestMethod]
+        public void RenderInto_ReuseDynamicClsRunTest()
+        {
+            var rProp = new RunProperties();
+            string expectedStyle1Css = @"span {font-weight: bold;}span.test {color: red;}";
+            RegisterMockCssClass(rProp,
+                ("span", "font-weight", "bold"),
+                ("span.test", "color", "red"));
+            var cls = _clsFactory.Build(rProp);
+
+            var rClsName = _instance.Register(rProp);
+            var rClsName2 = _instance.Register(rProp);
+            var output = TestRender();
+
+            Assert.AreEqual(rClsName2, rClsName);
+            Assert.AreEqual(expectedStyle1Css, output);
+            cls.Received(1).Selector = "span." + rClsName;
+        }
+
+        [TestMethod]
+        public void RenderInto_ReuseDynamicClsParagraphTest()
+        {
+            var pProp = new ParagraphProperties();
+            string expectedStyle1Css = @"p {font-weight: light;}span.test {text-decoration: underline;}";
+            RegisterMockCssClass(pProp,
+                ("p", "font-weight", "light"),
+                ("span.test", "text-decoration", "underline"));
+            var cls = _clsFactory.Build(pProp);
+
+            var rClsName = _instance.Register(pProp);
+            var rClsName2 = _instance.Register(pProp);
+            var output = TestRender();
+
+            Assert.AreEqual(rClsName2, rClsName);
+            Assert.AreEqual(expectedStyle1Css, output);
+            cls.Received(1).Selector = "p." + rClsName;
         }
 
         private string TestRender()
@@ -47,9 +114,26 @@ namespace Doc2web.Tests.Plugins.Style
 
         private void RegisterMockCssClass(string styleId, params (string, string, string)[] stubCssData)
         {
+            var data = MockCssClass(stubCssData);
             _clsFactory
                 .Build(Arg.Is(styleId))
-                .Returns(x => MockCssClass(stubCssData));
+                .Returns(data);
+        }
+
+        private void RegisterMockCssClass(RunProperties rProp, params (string, string, string)[] stubCssData)
+        {
+            var data = MockCssClass(stubCssData);
+            _clsFactory
+                .Build(Arg.Is(rProp))
+                .Returns(data);
+        }
+
+        private void RegisterMockCssClass(ParagraphProperties pProp, params (string, string, string)[] stubCssData)
+        {
+            var data = MockCssClass(stubCssData);
+            _clsFactory
+                .Build(Arg.Is(pProp))
+                .Returns(data);
         }
 
         private ICssClass MockCssClass(params (string, string, string)[] stubCssData)

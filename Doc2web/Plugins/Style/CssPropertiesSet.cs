@@ -55,5 +55,10 @@ namespace Doc2web.Plugins.Style
             }
             return cssData;
         }
+
+        public bool SetEquals(CssPropertiesSet other)
+        {
+            return _set.SetEquals(other._set);
+        }
     }
 }

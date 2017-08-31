@@ -26,7 +26,7 @@ namespace Doc2web.Tests.Plugins.Style
         }
 
         [TestMethod]
-        public void BuildFromStyleId_RunTest()
+        public void Build_FromRunStyleIdTest()
         {
             var mockBasedOn = MockRunCssProps("RunStyle1");
             var mockProp = MockRunCssProps("RunStyle2");
@@ -44,7 +44,7 @@ namespace Doc2web.Tests.Plugins.Style
         }
 
         [TestMethod]
-        public void BuildFromStyleId_ParagraphTest()
+        public void Build_FromParagraphStyleIdTest()
         {
             var mockBasedOnPara = MockParagraphCssProps("ParagraphStyle1");
             var mockBasedOnRun = MockRunCssProps("ParagraphStyle1");
@@ -66,6 +66,36 @@ namespace Doc2web.Tests.Plugins.Style
             Assert.AreEqual(mockBasedOnPara, basedOnCls.ParagraphProps.Single());
         }
 
+        [TestMethod]
+        public void Build_FromRunPropsTest()
+        {
+            var mockProps = new ICssProperty[] { Substitute.For<ICssProperty>() };
+            var runProps = new RunProperties();
+            _propsFac.Build(Arg.Is(runProps)).Returns(mockProps);
+
+            var cls = _instance.Build(runProps);
+            Assert.IsNotNull(cls);
+
+            var runCssClass = cls as RunCssClass;
+            Assert.IsNotNull(runCssClass);
+            Assert.AreEqual(mockProps[0], runCssClass.RunProps.Single());
+        }
+
+        [TestMethod]
+        public void Build_FromParagraphPropsTest()
+        {
+            var mockProps = new ICssProperty[] { Substitute.For<ICssProperty>() };
+            var pPr = new ParagraphProperties();
+            _propsFac.Build(Arg.Is(pPr)).Returns(mockProps);
+
+            var cls = _instance.Build(pPr);
+            Assert.IsNotNull(cls);
+
+            var pCssClass = cls as ParagraphCssClass;
+            Assert.IsNotNull(pCssClass);
+            Assert.AreEqual(mockProps[0], pCssClass.ParagraphProps.Single());
+            Assert.AreEqual(0, pCssClass.RunProps.Count);
+        }
 
         private ICssProperty MockParagraphCssProps(string styleName) =>
             MockGenCssProps( styleName, s => s.StyleParagraphProperties);

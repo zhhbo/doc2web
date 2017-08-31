@@ -76,5 +76,14 @@ namespace Doc2web.Tests.Plugins.Style.Properties
 
             Assert.AreEqual(expectedCss, result);
         }
+
+        [TestMethod]
+        public void HasSameOutput_TrueTest()
+        {
+            var elem = new Color { Val = new StringValue("000000") };
+            _instance.Element = elem.CloneNode(true) as Color;
+
+            Assert.IsTrue(_instance.HaveSameOuput(elem));
+        }
     }
 }

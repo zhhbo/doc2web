@@ -2,6 +2,7 @@
 using Doc2web.Plugins.Style.Properties;
 using DocumentFormat.OpenXml.Wordprocessing;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NSubstitute;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -80,6 +81,30 @@ namespace Doc2web.Tests.Plugins.Style
             var cssData = instance.AsCss();
 
             Assert.AreEqual(expectedCssData, cssData);
+        }
+
+
+        [TestMethod]
+        public void Equals_TrueTest()
+        {
+            var prop = Substitute.For<ICssProperty>();
+            var cls1 = new RunCssClass();
+            var cls2 = new RunCssClass();
+            cls1.RunProps.Add(prop);
+            cls2.RunProps.Add(prop);
+
+            Assert.AreEqual(cls1, cls2);
+        }
+
+        [TestMethod]
+        public void Equals_FalseTest()
+        {
+            var prop = Substitute.For<ICssProperty>();
+            var cls1 = new RunCssClass();
+            var cls2 = new RunCssClass();
+            cls1.RunProps.Add(prop);
+
+            Assert.AreNotEqual(cls1, cls2);
         }
     }
 }

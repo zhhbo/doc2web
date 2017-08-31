@@ -10,7 +10,7 @@ using System.Text;
 namespace Doc2web.Tests.Plugins.Style.Properties
 {
     [TestClass]
-    public class BoldCssPropertyTests
+    public class BoldBooleanCssPropertyTests
     {
         private BoldCssProperty _instance;
         private BoldCssProperty _instance2;
@@ -65,49 +65,49 @@ namespace Doc2web.Tests.Plugins.Style.Properties
         }
 
         [TestMethod]
-        public void CompareTo_TrueTest1()
+        public void Equals_TrueTest1()
         {
 
-            Assert.AreEqual(0, _instance.CompareTo(_instance2));
+            Assert.IsTrue(_instance.Equals(_instance2));
         }
 
         [TestMethod]
-        public void CompareTo_TrueTest2()
+        public void Equals_TrueTest2()
         {
             _instance.Element.Val = new OnOffValue(false);
             _instance2.Element.Val = new OnOffValue(false);
 
-            Assert.AreEqual(0, _instance.CompareTo(_instance2));
+            Assert.IsTrue(_instance.Equals(_instance2));
 
             _instance.Element.Val = new OnOffValue(true);
             _instance2.Element.Val = new OnOffValue(true);
 
-            Assert.AreEqual(0, _instance.CompareTo(_instance2));
+            Assert.IsTrue(_instance.Equals(_instance2));
            
         }
 
         [TestMethod]
-        public void CompareTo_TrueTest3()
+        public void Equals_TrueTest3()
         {
             _instance2.Element.Val = new OnOffValue(true);
-            Assert.AreNotEqual(0, _instance.CompareTo(_instance2));
+            Assert.IsFalse(_instance.Equals(_instance2));
         }
 
         [TestMethod]
-        public void CompareTo_FalseTest1()
+        public void Equals_FalseTest1()
         {
             _instance2.Element.Val = new OnOffValue(false);
 
-            Assert.AreNotEqual(0, _instance.CompareTo(_instance2));
+            Assert.IsFalse(_instance.Equals(_instance2));
         }
 
         [TestMethod]
-        public void CompareTo_FalseTest2()
+        public void Equals_FalseTest2()
         {
             _instance.Element.Val = new OnOffValue(false);
             _instance2.Element.Val = new OnOffValue(true);
 
-            Assert.AreNotEqual(0, _instance.CompareTo(_instance2));
+            Assert.IsFalse(_instance.Equals(_instance2));
         }
     }
 }

@@ -97,5 +97,28 @@ namespace Doc2web.Tests.Plugins.Style
             Assert.AreEqual(prop1CssData, r);
             prop1.Received(1).Selector = ".test";
         }
+
+        [TestMethod]
+        public void SetEquals_TrueTest()
+        {
+            var prop = Substitute.For<ICssProperty>();
+            var other = new CssPropertiesSet();
+
+            other.Add(prop);
+            _instance.Add(prop);
+
+            Assert.IsTrue(_instance.SetEquals(other));
+        }
+
+        [TestMethod]
+        public void SetEquals_FalseTest()
+        {
+            var prop = Substitute.For<ICssProperty>();
+            var other = new CssPropertiesSet();
+
+            other.Add(prop);
+
+            Assert.IsFalse(_instance.SetEquals(other));
+        }
     }
 }

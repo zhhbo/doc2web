@@ -90,12 +90,16 @@ namespace Doc2web.Plugins.Style
 
         public ICssClass Build(ParagraphProperties pPr)
         {
-            throw new NotImplementedException();
+            var cls = new ParagraphCssClass();
+            cls.ParagraphProps.AddMany(_propsFac.Build(pPr));
+            return cls;
         }
 
         public ICssClass Build(RunProperties rPr)
         {
-            throw new NotImplementedException();
+            var cls = new RunCssClass();
+            cls.RunProps.AddMany(_propsFac.Build(rPr));
+            return cls;
         }
     }
 }

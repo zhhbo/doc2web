@@ -35,7 +35,6 @@ namespace Doc2web.Plugins.Style
             cssData.AddRange(BuildRunCssData());
             return cssData;
         }
-
         private CssData BuildParagraphCssData()
         {
             var cssPropertySet = new CssPropertiesSet();
@@ -64,6 +63,23 @@ namespace Doc2web.Plugins.Style
 
             cssPropertySet.Selector = RunProps.Selector;
             return cssPropertySet.AsCss();
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is ParagraphCssClass other)
+                return ParagraphProps.SetEquals(other.ParagraphProps) &&
+                       RunProps.SetEquals(other.RunProps);
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            var hashCode = -770375014;
+            hashCode = hashCode * -1521134295 + EqualityComparer<ParagraphCssClass>.Default.GetHashCode(BasedOn);
+            hashCode = hashCode * -1521134295 + EqualityComparer<CssPropertiesSet>.Default.GetHashCode(ParagraphProps);
+            hashCode = hashCode * -1521134295 + EqualityComparer<CssPropertiesSet>.Default.GetHashCode(RunProps);
+            return hashCode;
         }
     }
 }

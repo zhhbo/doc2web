@@ -16,46 +16,32 @@ namespace Doc2web.Tests.Plugins.Style.Properties
         [TestInitialize]
         public void Initialize()
         {
-            _instance = new CapsCssProperty { Element = new Caps() };
+            _instance = new CapsCssProperty();
             _instance.Selector = "span.test-cls";
         }
 
-
         [TestMethod]
-        public void AssCss_DefaultTest()
+        public void AssCss_OnTest()
         {
             var expectedCssData = new CssData();
             expectedCssData.AddAttribute("span.test-cls", "text-transform", "uppercase");
 
-            var cssData = _instance.AsCss();
+            var cssData = new CssData();
+            _instance.SetOn(cssData);
 
             Assert.AreEqual(expectedCssData, cssData);
         }
 
         [TestMethod]
-        public void AssCss_CapsTest()
+        public void AssCss_OffTest()
         {
-            _instance.Element.Val = new DocumentFormat.OpenXml.OnOffValue(true);
-            var expectedCssData = new CssData();
-            expectedCssData.AddAttribute("span.test-cls", "text-transform", "uppercase");
-
-            var cssData = _instance.AsCss();
-
-            Assert.AreEqual(expectedCssData, cssData);
-        }
-
-        [TestMethod]
-        public void AssCss_NoCapsTest()
-        {
-            _instance.Element.Val = new DocumentFormat.OpenXml.OnOffValue(false);
             var expectedCssData = new CssData();
             expectedCssData.AddAttribute("span.test-cls", "text-transform", "lowercase");
 
-            var cssData = _instance.AsCss();
+            var cssData = new CssData();
+            _instance.SetOff(cssData);
 
             Assert.AreEqual(expectedCssData, cssData);
-
         }
-
     }
 }

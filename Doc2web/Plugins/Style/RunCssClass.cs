@@ -35,5 +35,20 @@ namespace Doc2web.Plugins.Style
             cssPropertySet.Selector = Selector;
             return cssPropertySet.AsCss();
         }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is RunCssClass other)
+                return RunProps.SetEquals(other.RunProps);
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            var hashCode = -1025857227;
+            hashCode = hashCode * -1521134295 + EqualityComparer<RunCssClass>.Default.GetHashCode(BasedOn);
+            hashCode = hashCode * -1521134295 + EqualityComparer<CssPropertiesSet>.Default.GetHashCode(RunProps);
+            return hashCode;
+        }
     }
 }

@@ -22,7 +22,7 @@ namespace Doc2web.Plugins.Style.Properties
             _themeColorProvider = themeColorProvider;
         }
 
-        private string ThemeColor
+        private string ColorTheme
         {
             get
             {
@@ -41,22 +41,35 @@ namespace Doc2web.Plugins.Style.Properties
             return rawColor;
         }
 
+        private string Color
+        {
+            get
+            {
+                if (ColorTheme != null) return ParseColor(ColorTheme);
+                if (ColorVal != null) return ParseColor(ColorVal);
+                return null;
+            }
+        }
+
         public override CssData AsCss()
         {
             var cssData = new CssData();
-            var themeColor = ThemeColor;
-            if (themeColor != null)
+            string color = Color;
+            if (color != null)
             {
-                cssData.AddAttribute(Selector, "color", ParseColor(themeColor));
-            }
-            else if (ColorVal != null) 
-            {
-                cssData.AddAttribute(Selector, "color", ParseColor(ColorVal));
+                cssData.AddAttribute(Selector, "color", color);
             }
             return cssData;
         }
 
-        public override int CompareTo(Color element)
+        public override bool HaveSameOuput(Color element)
+        {
+            var other = new ColorCssProperty(_themeColorProvider) { Element = element };
+            return other.Color == Color;
+        }
+        
+
+        protected override short GetSpecificHashcode()
         {
             throw new NotImplementedException();
         }

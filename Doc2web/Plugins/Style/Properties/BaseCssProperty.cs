@@ -21,13 +21,20 @@ namespace Doc2web.Plugins.Style.Properties
 
         public abstract CssData AsCss();
 
-        public abstract int CompareTo(T element);
-
-        public int CompareTo(object other)
+        public override bool Equals(object obj)
         {
-            if (other is BaseCssProperty<T> otherProp)
-                return CompareTo(otherProp.Element);
-            return -1;
+            if (obj is BaseCssProperty<T> prop)
+                return HaveSameOuput(prop.Element);
+            return false;
         }
+
+        public override int GetHashCode()
+        {
+            var t = GetType().GetHashCode() + short.MaxValue;
+            return 0 | t | (int)GetSpecificHashcode();
+        }
+
+        protected abstract short GetSpecificHashcode();
+        public abstract bool HaveSameOuput(T element);
     }
 }
