@@ -7,6 +7,8 @@ namespace Doc2web.Plugins.Style
 {
     public interface ICssClassFactory
     {
+        List<ICssClass> BuildDefaults();
+
         ICssClass Build(string styleId);
 
         ICssClass Build(ParagraphProperties pPr);

@@ -10,6 +10,7 @@ namespace Doc2web.Plugins.Style
     public class CssClassFactory : ICssClassFactory
     {
         private Dictionary<string, DocumentFormat.OpenXml.Wordprocessing.Style> _styleDictionary;
+        private DocDefaults _docDefaults;
         private Dictionary<string, ParagraphCssClass> _pClassesChache;
         private Dictionary<string, RunCssClass> _rClassesCache;
         private ICssPropertiesFactory _propsFac;
@@ -17,6 +18,7 @@ namespace Doc2web.Plugins.Style
         public CssClassFactory(Styles styles, ICssPropertiesFactory cssPropertyFactory)
         {
             InitStyleDictionnary(styles);
+            _docDefaults = styles.DocDefaults;
             _pClassesChache = new Dictionary<string, ParagraphCssClass>();
             _rClassesCache = new Dictionary<string, RunCssClass>();
             _propsFac = cssPropertyFactory;
@@ -29,6 +31,39 @@ namespace Doc2web.Plugins.Style
                 .Elements<DocumentFormat.OpenXml.Wordprocessing.Style>()
                 .Where(x => x.StyleId?.Value != null)
                 .ToDictionary(x => x.StyleId.Value);
+        }
+
+        public List<ICssClass> BuildDefaults()
+        {
+            var cls = new List<ICssClass>(2);
+            TryAddDefaultParagraph(cls);
+            TryAddDefaultRun(cls);
+            return cls;
+        }
+
+        private void TryAddDefaultParagraph(List<ICssClass> cls)
+        {
+            var pDefaults =
+                _docDefaults
+                .ParagraphPropertiesDefault?
+                .ParagraphPropertiesBaseStyle;
+            if (pDefaults != null)
+            {
+                var pCls = new ParagraphCssClass { Selector = "p" };
+                pCls.ParagraphProps.AddMany(_propsFac.Build(pDefaults));
+                cls.Add(pCls);
+            }
+        }
+
+        private void TryAddDefaultRun(List<ICssClass> cls)
+        {
+            var rDefaults = _docDefaults.RunPropertiesDefault?.RunPropertiesBaseStyle;
+            if (rDefaults != null)
+            {
+                var rCls = new RunCssClass { Selector = "span" };
+                rCls.RunProps.AddMany(_propsFac.Build(rDefaults));
+                cls.Add(rCls);
+            }
         }
 
         public ICssClass Build(string styleId)

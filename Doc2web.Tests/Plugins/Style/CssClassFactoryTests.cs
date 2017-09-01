@@ -100,6 +100,44 @@ namespace Doc2web.Tests.Plugins.Style
             Assert.AreEqual(mockProps2[0], pCssClass.ParagraphProps.Single());
         }
 
+        [TestMethod]
+        public void BuildDefault_Test()
+        {
+            var pDocDefaults = _styles.DocDefaults.ParagraphPropertiesDefault;
+            var pCssProp = new MockProp1();
+            _propsFac
+                .Build(Arg.Is(pDocDefaults.ParagraphPropertiesBaseStyle))
+                .Returns(new ICssProperty[] { pCssProp });
+            var rDocDefaults = _styles.DocDefaults.RunPropertiesDefault;
+            var rCssProp = new MockProp2();
+            _propsFac
+                .Build(Arg.Is(rDocDefaults.RunPropertiesBaseStyle))
+                .Returns(new ICssProperty[] { rCssProp });
+
+            var defaults = _instance.BuildDefaults();
+
+            Assert.AreEqual(2, defaults.Count);
+            AssertContainsSinglePProps(pCssProp, defaults[0]);
+            AssertContainsSingleRProp(rCssProp, defaults[1]);
+        }
+
+        private static void AssertContainsSingleRProp(MockProp2 rCssProp, ICssClass cls)
+        {
+            var rClsDefault = cls as RunCssClass;
+            Assert.IsNotNull(rClsDefault);
+            Assert.AreEqual("span", rClsDefault.Selector);
+            Assert.AreEqual(rCssProp, rClsDefault.RunProps.Single());
+        }
+
+        private static void AssertContainsSinglePProps(MockProp1 pCssProp, ICssClass cls)
+        {
+            var pClsDefault = cls as ParagraphCssClass;
+            Assert.IsNotNull(pClsDefault);
+            Assert.AreEqual("p", pClsDefault.Selector);
+            Assert.AreEqual(pCssProp, pClsDefault.ParagraphProps.Single());
+            Assert.AreEqual(0, pClsDefault.RunProps.Count);
+        }
+
         private ICssProperty MockParagraphCssProps(string styleName) =>
             MockGenCssProps( styleName, s => s.StyleParagraphProperties);
 

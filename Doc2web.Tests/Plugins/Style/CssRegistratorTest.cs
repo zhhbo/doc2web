@@ -11,13 +11,16 @@ namespace Doc2web.Tests.Plugins.Style
     [TestClass]
     public class CssRegistratorTest
     {
+        private List<ICssClass> _defaultCls;
         private ICssClassFactory _clsFactory;
         private CssRegistrator _instance;
 
         [TestInitialize]
         public void Initialize()
         {
+            _defaultCls = new List<ICssClass>();
             _clsFactory = Substitute.For<ICssClassFactory>();
+            _clsFactory.BuildDefaults().Returns(_defaultCls);
             _instance = new CssRegistrator(_clsFactory);
         }
 
@@ -120,6 +123,18 @@ namespace Doc2web.Tests.Plugins.Style
             Assert.AreEqual("", _instance.Register(rPr));
         }
 
+        [TestMethod]
+        public void RenderInto_DefaultsTest()
+        {
+            var expectedCss = @"p {margin-bottom: 22px;}span {font-famility: arial;}";
+            _defaultCls.Add(MockCssClass(
+                ("p", "margin-bottom", "22px"),
+                ("span", "font-famility", "arial")));
+
+            var css = TestRender();
+
+            Assert.AreEqual(expectedCss, css);
+        }
 
         private string TestRender()
         {

@@ -62,7 +62,8 @@ namespace Doc2web.Plugins.Style
             Parallel.ForEach(
                 _classesToRender
                     .Select(_classFactory.Build)
-                    .Concat(_dynamicClassesUIDs.Keys),
+                    .Concat(_dynamicClassesUIDs.Keys)
+                    .Concat(_classFactory.BuildDefaults()),
                 () => new CssData(),
                 (cssClass, state, cssData) =>
                 {
