@@ -54,7 +54,7 @@ namespace Doc2web.Plugins.Style
                 .As<ICssRegistrator>()
                 .InstancePerLifetimeScope();
         }
-        
+
         [PostProcessing]
         public void InjectCss(IGlobalContext context)
         {
