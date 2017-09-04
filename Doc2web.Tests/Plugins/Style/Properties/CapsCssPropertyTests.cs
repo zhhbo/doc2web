@@ -16,8 +16,7 @@ namespace Doc2web.Tests.Plugins.Style.Properties
         [TestInitialize]
         public void Initialize()
         {
-            _instance = new CapsCssProperty();
-            _instance.Selector = "span.test-cls";
+            _instance = new CapsCssProperty { Selector = "span.test-cls" };
         }
 
         [TestMethod]

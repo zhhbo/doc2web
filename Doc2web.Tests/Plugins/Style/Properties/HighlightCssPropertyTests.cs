@@ -18,7 +18,7 @@ namespace Doc2web.Tests.Plugins.Style.Properties
         {
             set
             {
-                _instance.Element.Val = new DocumentFormat.OpenXml.EnumValue<HighlightColorValues>(value);
+                _instance.Element.Val = new EnumValue<HighlightColorValues>(value);
             }
             get => _instance.Element.Val.Value;
         }
@@ -26,9 +26,11 @@ namespace Doc2web.Tests.Plugins.Style.Properties
         [TestInitialize]
         public void Initialize()
         {
-            _instance = new HighlightCssProperty();
-            _instance.Selector = "span.test";
-            _instance.Element = new Highlight();
+            _instance = new HighlightCssProperty
+            {
+                Selector = "span.test",
+                Element = new Highlight()
+            };
         }
 
         [TestMethod]
