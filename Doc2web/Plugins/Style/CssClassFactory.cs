@@ -127,8 +127,6 @@ namespace Doc2web.Plugins.Style
         {
             var cls = new ParagraphCssClass();
             cls.ParagraphProps.AddMany(_propsFac.Build(pPr));
-            var rPr = pPr.Elements<RunProperties>().SingleOrDefault();
-            if (rPr != null) cls.RunProps.AddMany(_propsFac.Build(rPr));
             return cls;
         }
 

@@ -47,7 +47,7 @@ namespace Doc2web.Tests.Plugins.Style.Properties
         {
             FontSize = "35";
 
-            Assert.AreEqual((short)17.5, _instance.GetSpecificHashcode());
+            Assert.AreEqual(35, _instance.GetSpecificHashcode());
         }
 
         [TestMethod]

@@ -27,14 +27,14 @@ namespace Doc2web.Tests.Plugins.Style
         [TestMethod]
         public void RenderInto_StylesTest()
         {
-            string expectedStyle1Css = @"span {font-weight: bold;}span.test {color: red;}";
-            string expectedStyle2Css = @"p {font-weight: light;}span.test {text-decoration: underline;}";
+            string expectedStyle1Css = @"span.test {color: red;font-weight: bold;}";
+            string expectedStyle2Css = @"p.test {font-weight: light;text-decoration: underline;}";
             RegisterMockCssClass("style1",
-                ("span", "font-weight", "bold"),
+                ("span.test", "font-weight", "bold"),
                 ("span.test", "color", "red"));
             RegisterMockCssClass("style2",
-                ("p", "font-weight", "light"),
-                ("span.test", "text-decoration", "underline"));
+                ("p.test", "font-weight", "light"),
+                ("p.test", "text-decoration", "underline"));
 
             _instance.Register("style1");
             _instance.Register("style2");
@@ -51,14 +51,10 @@ namespace Doc2web.Tests.Plugins.Style
         {
             var pProp = new ParagraphProperties();
             var rProp = new RunProperties();
-            string expectedStyle1Css = @"span {font-weight: bold;}span.test {color: red;}";
-            string expectedStyle2Css = @"p {font-weight: light;}span.test {text-decoration: underline;}";
-            RegisterMockCssClass(rProp,
-                ("span", "font-weight", "bold"),
-                ("span.test", "color", "red"));
-            RegisterMockCssClass(pProp,
-                ("p", "font-weight", "light"),
-                ("span.test", "text-decoration", "underline"));
+            string expectedStyle1Css = @"span.asdf {color: red;}";
+            string expectedStyle2Css = @"p.asdf1 {font-weight: light;}";
+            RegisterMockCssClass(rProp, ("span.asdf", "color", "red"));
+            RegisterMockCssClass(pProp, ("p.asdf1", "font-weight", "light"));
 
             var rClsName = _instance.Register(rProp);
             var pClsName = _instance.Register(pProp);

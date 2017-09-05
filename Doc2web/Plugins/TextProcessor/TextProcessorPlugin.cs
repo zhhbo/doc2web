@@ -42,6 +42,7 @@ namespace Doc2web.Plugins.TextProcessor
         [ElementProcessing]
         public void ProcessRun(IElementContext context, Run r)
         {
+            if (r.InnerText.Length == 0) return;
             var node = new HtmlNode
             {
                 Start = context.TextIndex,
@@ -57,6 +58,10 @@ namespace Doc2web.Plugins.TextProcessor
                 var dynamicStyle = cssRegistrator.Register(rPr);
                 if (dynamicStyle != "")
                     node.AddClass(dynamicStyle);
+
+                var styleId = rPr.RunStyle?.Val?.Value;
+                if (styleId != null)
+                    node.AddClass(cssRegistrator.Register(styleId));
             }
 
             context.AddNode(node);

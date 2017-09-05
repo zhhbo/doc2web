@@ -37,7 +37,7 @@ namespace Doc2web.Tests.Plugins.Style
 
             Assert.AreEqual(expectedCssData, cssData);
             Assert.AreEqual("p.test-class", pCssProp.Selector);
-            Assert.AreEqual("p.test-class span", rCssProp.Selector);
+            Assert.AreEqual("p.test-class", rCssProp.Selector);
         }
 
         [TestMethod]

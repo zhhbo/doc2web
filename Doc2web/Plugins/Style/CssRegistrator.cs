@@ -24,7 +24,8 @@ namespace Doc2web.Plugins.Style
 
         public string Register(string styleId)
         {
-            lock (_lockObj) {
+            lock (_lockObj)
+            {
                 _classesToRender.Add(styleId);
             }
             return styleId;
@@ -33,12 +34,12 @@ namespace Doc2web.Plugins.Style
         public string Register(ParagraphProperties pPr)
         {
             var cls = _classFactory.Build(pPr);
-            return TryGetDynamicClass(cls, "p");
+            return TryGetDynamicClass(cls, "p.{0}");
         }
         public string Register(RunProperties rPr)
         {
             var cls = _classFactory.Build(rPr);
-            return TryGetDynamicClass(cls, "span");
+            return TryGetDynamicClass(cls, "span.{0}");
         }
 
         private string TryGetDynamicClass(ICssClass cls, string selectorPrefix)
@@ -49,8 +50,8 @@ namespace Doc2web.Plugins.Style
                 if (_dynamicClassesUIDs.TryGetValue(cls, out string uid))
                     return uid;
 
-                uid = Guid.NewGuid().ToString().Replace("-", "");
-                cls.Selector = $"{selectorPrefix}.{uid}";
+                uid = "dyn-" + Guid.NewGuid().ToString().Replace("-", "");
+                cls.Selector = String.Format(selectorPrefix, uid);
                 _dynamicClassesUIDs.Add(cls, uid);
                 return uid;
             }
@@ -59,24 +60,18 @@ namespace Doc2web.Plugins.Style
 
         public void RenderInto(StringBuilder sb)
         {
-            Parallel.ForEach(
+            var cssData = new CssData();
+            var defaults = _classFactory.BuildDefaults();
+            var clsToRender =
                 _classesToRender
                     .Select(_classFactory.Build)
                     .Concat(_dynamicClassesUIDs.Keys)
-                    .Concat(_classFactory.BuildDefaults()),
-                () => new CssData(),
-                (cssClass, state, cssData) =>
-                {
-                    cssData.AddRange(cssClass.AsCss());
-                    return cssData;
-                },
-                x =>
-                {
-                    lock (sb)
-                    {
-                        x.RenderInto(sb);
-                    }
-                });
+                    .Concat(defaults)
+                    .ToArray();
+            foreach (var cls in clsToRender)
+                cssData.AddRange(cls.AsCss());
+
+            cssData.RenderInto(sb);
         }
     }
 }

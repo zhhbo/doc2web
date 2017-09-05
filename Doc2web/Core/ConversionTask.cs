@@ -42,12 +42,16 @@ namespace Doc2web.Core
                     GlobalContext
                     .RootElements
                     .AsParallel()
-                    .Select(ConvertRootElement)
+                    .Select((elem, i) => (ConvertRootElement(elem), i))
                     .ToArray();
 
+            int sort((string, int i) x, (string, int i) y) => x.i - y.i;
+            Array.Sort(htmlElements, sort);
+
             foreach (var htmlElement in htmlElements)
-                _result.AppendLine(htmlElement);
+                _result.AppendLine(htmlElement.Item1);
         }
+
 
         public void PostProcess()
         {

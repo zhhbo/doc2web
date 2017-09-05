@@ -32,7 +32,7 @@ namespace Doc2web.Plugins.Style
         public CssData AsCss()
         {
             var pCssProps = new CssPropertiesSet { Selector = ParagraphProps.Selector };
-            var rCssProps = new CssPropertiesSet { Selector = RunProps.Selector };
+            var rCssProps = new CssPropertiesSet { Selector = ParagraphProps.Selector };
 
             pCssProps.AddMany(ParagraphProps);
             rCssProps.AddMany(RunProps);
