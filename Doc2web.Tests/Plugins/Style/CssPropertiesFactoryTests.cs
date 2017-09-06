@@ -18,10 +18,10 @@ namespace Doc2web.Tests.Plugins.Style
             var containerBuilder = new ContainerBuilder();
             containerBuilder
                 .RegisterType<BoldCssProperty>()
-                .As<BaseCssProperty<Bold>>();
+                .As<CssProperty<Bold>>();
             containerBuilder
                 .RegisterType<CapsCssProperty>()
-                .As<BaseCssProperty<Caps>>();
+                .As<CssProperty<Caps>>();
             var container = containerBuilder.Build();
             var lifetimeScope = container.BeginLifetimeScope();
             return lifetimeScope;

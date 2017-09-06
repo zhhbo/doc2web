@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Doc2web.Plugins.Style.Properties
 {
-    public class HighlightCssProperty : BaseCssProperty<Highlight>
+    public class HighlightCssProperty : CssProperty<Highlight>
     {
         public override CssData AsCss()
         {

@@ -14,13 +14,13 @@ namespace Doc2web.Tests.Plugins.Style.Properties
     [TestClass]
     public class UnderlineCssPropertyTests
     {
-        private IThemeColorProvider _themeColorProvider;
+        private IThemeColorsProvider _themeColorProvider;
         private UnderlineCssProperty _instance;
 
         [TestInitialize]
         public void Initialize()
         {
-            _themeColorProvider = Substitute.For<IThemeColorProvider>();
+            _themeColorProvider = Substitute.For<IThemeColorsProvider>();
             _instance = new UnderlineCssProperty(_themeColorProvider)
             {
                 Element = new Underline(),

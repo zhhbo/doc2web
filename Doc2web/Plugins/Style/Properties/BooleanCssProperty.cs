@@ -6,7 +6,7 @@ using DocumentFormat.OpenXml.Wordprocessing;
 
 namespace Doc2web.Plugins.Style.Properties
 {
-    public abstract class BooleanCssProperty<T> : BaseCssProperty<T>
+    public abstract class BooleanCssProperty<T> : CssProperty<T>
         where T : OnOffType
     {
         protected bool? ExplicitVal => Convert(Element);

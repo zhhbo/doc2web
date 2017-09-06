@@ -5,11 +5,11 @@ using System.Text;
 
 namespace Doc2web.Plugins.Style.Properties
 {
-    public class UnderlineCssProperty : BaseCssProperty<Underline>
+    public class UnderlineCssProperty : CssProperty<Underline>
     {
-        private IThemeColorProvider _themeColorProvider;
+        private IThemeColorsProvider _themeColorProvider;
 
-        public UnderlineCssProperty(IThemeColorProvider themeColorProvider) : base()
+        public UnderlineCssProperty(IThemeColorsProvider themeColorProvider) : base()
         {
             _themeColorProvider = themeColorProvider;
         }

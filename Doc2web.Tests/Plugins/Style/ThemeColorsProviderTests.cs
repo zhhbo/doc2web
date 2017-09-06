@@ -12,7 +12,7 @@ namespace Doc2web.Tests.Plugins
     [TestClass]
     public class ThemeColorProviderTests
     {
-        private ThemeColorProvider _instance;
+        private ThemeColorsProvider _instance;
 
         private ColorScheme GenerateColorScheme()
         {
@@ -108,7 +108,7 @@ namespace Doc2web.Tests.Plugins
         [TestInitialize]
         public void Initialize()
         {
-            _instance = new ThemeColorProvider(GenerateTheme());
+            _instance = new ThemeColorsProvider(GenerateTheme());
         }
 
         [TestMethod]

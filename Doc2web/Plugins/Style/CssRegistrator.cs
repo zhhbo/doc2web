@@ -4,30 +4,26 @@ using System.Text;
 using DocumentFormat.OpenXml.Wordprocessing;
 using System.Threading.Tasks;
 using System.Linq;
+using System.Collections.Concurrent;
 
 namespace Doc2web.Plugins.Style
 {
     public class CssRegistrator : ICssRegistrator
     {
         private ICssClassFactory _classFactory;
-        private object _lockObj;
         private HashSet<string> _classesToRender;
-        private Dictionary<ICssClass, string> _dynamicClassesUIDs;
+        private ConcurrentDictionary<ICssClass, string> _dynamicClassesUIDs;
 
         public CssRegistrator(ICssClassFactory classFactory)
         {
-            _lockObj = new object();
             _classFactory = classFactory;
             _classesToRender = new HashSet<string>();
-            _dynamicClassesUIDs = new Dictionary<ICssClass, string>();
+            _dynamicClassesUIDs = new ConcurrentDictionary<ICssClass, string>();
         }
 
         public string Register(string styleId)
         {
-            lock (_lockObj)
-            {
-                _classesToRender.Add(styleId);
-            }
+            _classesToRender.Add(styleId);
             return styleId;
         }
 
@@ -45,16 +41,13 @@ namespace Doc2web.Plugins.Style
         private string TryGetDynamicClass(ICssClass cls, string selectorPrefix)
         {
             if (cls.IsEmpty) return "";
-            lock (_dynamicClassesUIDs)
-            {
-                if (_dynamicClassesUIDs.TryGetValue(cls, out string uid))
-                    return uid;
-
-                uid = "dyn-" + Guid.NewGuid().ToString().Replace("-", "");
-                cls.Selector = String.Format(selectorPrefix, uid);
-                _dynamicClassesUIDs.Add(cls, uid);
+            string uid = "dyn-" + Guid.NewGuid().ToString().Replace("-", "");
+            cls.Selector = String.Format(selectorPrefix, uid);
+            if (_dynamicClassesUIDs.TryAdd(cls, uid))
                 return uid;
-            }
+            else if (_dynamicClassesUIDs.TryGetValue(cls, out uid))
+                return uid;
+            throw new InvalidOperationException();
         }
 
 
@@ -68,6 +61,7 @@ namespace Doc2web.Plugins.Style
                     .Concat(_dynamicClassesUIDs.Keys)
                     .Concat(defaults)
                     .ToArray();
+
             foreach (var cls in clsToRender)
                 cssData.AddRange(cls.AsCss());
 

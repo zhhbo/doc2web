@@ -11,13 +11,13 @@ namespace Doc2web.Plugins.Style.Properties
      * Not supported attributes:
      * themeTint, themeShade */
 
-    public class ColorCssProperty : BaseCssProperty<Color>
+    public class ColorCssProperty : CssProperty<Color>
     {
         private static Regex hexadecimalRegex = new Regex(@"^[0-9a-f]{6}|[0-9A-F]{6}$", RegexOptions.Compiled);
 
-        private IThemeColorProvider _themeColorProvider;
+        private IThemeColorsProvider _themeColorProvider;
 
-        public ColorCssProperty(IThemeColorProvider themeColorProvider)
+        public ColorCssProperty(IThemeColorsProvider themeColorProvider)
         {
             _themeColorProvider = themeColorProvider;
         }

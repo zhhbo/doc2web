@@ -14,6 +14,19 @@ namespace Doc2web.Plugins.Style
     public class StyleProcessorPlugin
     {
         private WordprocessingDocument _wpDoc;
+        private static string[] restricted = new string[]
+        {
+            //"Bold",
+            //"Caps",
+            //"Color",
+            //"FontSize",
+            //"Highlight",
+            //"Italic",
+            //"Justification",
+            //"RunFonts",
+            //"SmallCaps",
+            //"Underline"
+        };
 
         public StyleProcessorPlugin(WordprocessingDocument wpDoc)
         {
@@ -28,13 +41,23 @@ namespace Doc2web.Plugins.Style
         {
             builder.RegisterAssemblyTypes(Assembly.GetExecutingAssembly())
                 .Where(t => t.Name.EndsWith("CssProperty") && !t.IsAbstract)
+                .Where(t =>
+                {
+                    foreach (var r in restricted)
+                        if (t.Name.StartsWith(r)) return false;
+                    return true;
+                })
                 .As(x => {
-                    var t = typeof(BaseCssProperty<>);
+                    var t = typeof(CssProperty<>);
                     return t.MakeGenericType(x.BaseType.GetGenericArguments());
                 });
             builder
-                .Register(r => new ThemeColorProvider(Theme))
-                .As<IThemeColorProvider>()
+                .Register(r => new ThemeColorsProvider(Theme))
+                .As<IThemeColorsProvider>()
+                .InstancePerLifetimeScope();
+            builder
+                .Register(r => new ThemeFontsProvider(Theme))
+                .As<IThemeFontsProvider>()
                 .InstancePerLifetimeScope();
             builder
                 .RegisterType<CssPropertiesFactory>()

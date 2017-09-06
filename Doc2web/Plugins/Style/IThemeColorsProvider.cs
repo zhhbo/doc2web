@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Doc2web.Plugins
 {
-    public interface IThemeColorProvider
+    public interface IThemeColorsProvider
     {
         string GetColor(ThemeColorValues value);
     }

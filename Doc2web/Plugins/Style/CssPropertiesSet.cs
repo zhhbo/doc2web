@@ -59,7 +59,13 @@ namespace Doc2web.Plugins.Style
 
         public bool SetEquals(CssPropertiesSet other)
         {
-            return _set.SetEquals(other._set);
+            if (other.Count != Count) return false;
+            foreach (var (a, b) in other.Zip(this, (a, b) => (a, b)))
+            {
+                if (a.GetHashCode() != b.GetHashCode() || !a.Equals(b))
+                    return false;
+            }
+            return true;
         }
 
         public override int GetHashCode()

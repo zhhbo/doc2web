@@ -8,11 +8,11 @@ using System.Linq;
 
 namespace Doc2web.Plugins.Style
 {
-    public class ThemeColorProvider : IThemeColorProvider
+    public class ThemeColorsProvider : IThemeColorsProvider
     {
         private Theme _theme;
 
-        public ThemeColorProvider(Theme theme)
+        public ThemeColorsProvider(Theme theme)
         {
             _theme = theme;
         }

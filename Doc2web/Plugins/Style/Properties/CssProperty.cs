@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Doc2web.Plugins.Style.Properties
 {
-    public abstract class BaseCssProperty<T> : ICssProperty
+    public abstract class CssProperty<T> : ICssProperty
         where T : OpenXmlElement
     {
 
@@ -23,8 +23,8 @@ namespace Doc2web.Plugins.Style.Properties
 
         public override bool Equals(object obj)
         {
-            if (obj is BaseCssProperty<T> prop)
-                return HaveSameOuput(prop.Element);
+            if (obj.GetType() == GetType())
+                return HaveSameOuput(((CssProperty<T>)obj).Element);
             return false;
         }
 

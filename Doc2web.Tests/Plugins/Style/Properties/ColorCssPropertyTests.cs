@@ -14,13 +14,13 @@ namespace Doc2web.Tests.Plugins.Style.Properties
     [TestClass]
     public class ColorCssPropertyTests
     {
-        private IThemeColorProvider _themeColorProvider;
+        private IThemeColorsProvider _themeColorProvider;
         private ColorCssProperty _instance;
 
         [TestInitialize]
         public void Initialize()
         {
-            _themeColorProvider = Substitute.For<IThemeColorProvider>();
+            _themeColorProvider = Substitute.For<IThemeColorsProvider>();
             _instance = new ColorCssProperty(_themeColorProvider)
             {
                 Element = new Color(),

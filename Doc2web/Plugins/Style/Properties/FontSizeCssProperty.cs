@@ -5,7 +5,7 @@ using DocumentFormat.OpenXml.Wordprocessing;
 
 namespace Doc2web.Plugins.Style.Properties
 {
-    public class FontSizeCssProperty : BaseCssProperty<FontSize>
+    public class FontSizeCssProperty : CssProperty<FontSize>
     {
         public override CssData AsCss()
         {

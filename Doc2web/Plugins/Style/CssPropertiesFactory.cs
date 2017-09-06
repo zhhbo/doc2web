@@ -29,7 +29,7 @@ namespace Doc2web.Plugins.Style
 
         private void TryAddCssProperty(List<ICssProperty> container, OpenXmlElement elem)
         {
-            var expectedType = typeof(BaseCssProperty<>).MakeGenericType(elem.GetType());
+            var expectedType = typeof(CssProperty<>).MakeGenericType(elem.GetType());
             if (_lifetimeScope.TryResolve(expectedType, out object prop)) {
                 var cssProp = (ICssProperty)prop;
                 cssProp.OpenXmlElement = elem;
