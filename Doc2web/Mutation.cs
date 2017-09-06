@@ -6,7 +6,7 @@ namespace Doc2web
 {
     public abstract class Mutation
     {
-        public abstract void MutateNodes(List<HtmlNode> nodes);
-        public abstract void MutateText(StringBuilder text);
+        public virtual void MutateNodes(List<HtmlNode> nodes) { }
+        public virtual void MutateText(StringBuilder text) { }
     }
 }
