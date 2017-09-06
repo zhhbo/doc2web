@@ -27,27 +27,35 @@ namespace Doc2web.Tests.Mutations
             new HtmlNode { Start = 11, End = 16, Z = 00, Tag = "n4" },
         };
 
-        [TestMethod]
-        public void MutateNode_Test()
+        public static List<HtmlNode> NodeTest2_Input => new List<HtmlNode>
         {
-            var mutation = new TextDeletion
-            {
-                Index = 8,
-                Length = 9
-            };
+            new HtmlNode { Start = 00, End = 10, Z = 10, Tag = "np" },
+        };
 
+        public static List<HtmlNode> NodesTest2_Expected => new List<HtmlNode>
+        {
+            new HtmlNode { Start = 00, End = 05, Z = 10, Tag = "np" },
+        };
+
+        [TestMethod]
+        public void MutateNode_Test1()
+        {
+            var mutation = new TextDeletion { Index = 8, Length = 9 };
             TestNodes(mutation, NodeTest1_Input, NodesTest1_Expected);
+        }
+
+        [TestMethod]
+        public void MutateNode_Test2()
+        {
+            var mutation = new TextDeletion { Index = 3, Length = 5 };
+            TestNodes(mutation, NodeTest2_Input, NodesTest2_Expected);
         }
 
         [TestMethod]
         public void MutateText_Test()
         {
             var input = new StringBuilder("........123456789.........");
-            var mutation = new TextDeletion
-            {
-                Index = 8,
-                Length = 9,
-            };
+            var mutation = new TextDeletion { Index = 8, Length = 9, };
 
             mutation.MutateText(input);
 
