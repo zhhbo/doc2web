@@ -51,7 +51,7 @@ namespace Doc2web.Tests.Mutations
             Assert.AreEqual(".....123..........", input.ToString());
         }
 
-        private void TestNodes(TextInsertion mutation,List<HtmlNode> input, List<HtmlNode> expected)
+        private void TestNodes(Mutation mutation,List<HtmlNode> input, List<HtmlNode> expected)
         {
             mutation.MutateNodes(input);
             var result = input;
