@@ -27,7 +27,7 @@ namespace Doc2web.Tests.Core
             _parent.RootElement.Returns(BuildParagraph());
             _parent.Element.Returns(_parent.RootElement);
             _parent.Nodes.Returns(Enumerable.Empty<HtmlNode>());
-            _parent.Transformations.Returns(Enumerable.Empty<ITextTransformation>());
+            _parent.Mutations.Returns(Enumerable.Empty<Mutation>());
             _parent.NestingHandler.Returns(_nestingHandler);
 
             _instance = new ChildElementContext(_parent);
@@ -41,7 +41,7 @@ namespace Doc2web.Tests.Core
             Assert.AreEqual(0, _instance.TextIndex);
             Assert.AreSame(_parent.RootElement, _instance.RootElement);
             Assert.AreSame(_parent.Nodes, _instance.Nodes);
-            Assert.AreSame(_parent.Transformations, _instance.Transformations);
+            Assert.AreSame(_parent.Mutations, _instance.Mutations);
             Assert.AreSame(_parent.NestingHandler, _instance.NestingHandler);
             Assert.AreNotSame(_parent.Element, _instance.Element);
         }
@@ -59,12 +59,12 @@ namespace Doc2web.Tests.Core
         [TestMethod]
         public void AddMultipleTransformations_Test()
         {
-            var transfortions = new ITextTransformation[] { };
+            var transfortions = new Mutation[] { };
 
-            _instance.AddMultipleTransformations(transfortions);
+            _instance.AddMutations(transfortions);
 
-            _parent.Received(1).AddMultipleTransformations(
-                Arg.Is<IEnumerable<ITextTransformation>>(transfortions));
+            _parent.Received(1).AddMutations(
+                Arg.Is<IEnumerable<Mutation>>(transfortions));
         }
 
         [TestMethod]
@@ -80,11 +80,11 @@ namespace Doc2web.Tests.Core
         [TestMethod]
         public void AddTransformation_Test()
         {
-            var transformation = Substitute.For<ITextTransformation>();
+            var transformation = Substitute.For<Mutation>();
 
-            _instance.AddTranformation(transformation);
+            _instance.AddMutation(transformation);
 
-            _parent.Received(1).AddTranformation(Arg.Is(transformation));
+            _parent.Received(1).AddMutation(Arg.Is(transformation));
         }
 
         [TestMethod]

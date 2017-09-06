@@ -8,14 +8,14 @@ namespace Doc2web.Core
     public class RootElementContext : INestableElementContext
     {
         private List<HtmlNode> _nodes;
-        private List<ITextTransformation> _transformations;
+        private List<Mutation> _transformations;
 
         public RootElementContext(IGlobalContext context, OpenXmlElement rootElement)
         {
             GlobalContext = context;
             RootElement = rootElement;
             _nodes = new List<HtmlNode>();
-            _transformations = new List<ITextTransformation>();
+            _transformations = new List<Mutation>();
         }
 
         public IGlobalContext GlobalContext { get; private set; }
@@ -24,7 +24,7 @@ namespace Doc2web.Core
 
         public IEnumerable<HtmlNode> Nodes => _nodes;
 
-        public IEnumerable<ITextTransformation> Transformations => _transformations;
+        public IEnumerable<Mutation> Mutations => _transformations;
 
         public OpenXmlElement Element => RootElement;
 
@@ -36,10 +36,10 @@ namespace Doc2web.Core
 
         public void AddMultipleNodes(IEnumerable<HtmlNode> nodes) => _nodes.AddRange(nodes);
 
-        public void AddTranformation(ITextTransformation transformation) =>
+        public void AddMutation(Mutation transformation) =>
             _transformations.Add(transformation);
 
-        public void AddMultipleTransformations(IEnumerable<ITextTransformation> transformations) =>
+        public void AddMutations(IEnumerable<Mutation> transformations) =>
             _transformations.AddRange(transformations);
 
         public void ProcessChilden()

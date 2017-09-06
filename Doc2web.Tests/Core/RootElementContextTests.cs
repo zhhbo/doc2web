@@ -33,7 +33,7 @@ namespace Doc2web.Tests.Core
             Assert.AreSame(_rootElement, _instance.Element);
             Assert.IsNull(_instance.NestingHandler);
             Assert.AreEqual(0, _instance.Nodes.Count());
-            Assert.AreEqual(0, _instance.Transformations.Count());
+            Assert.AreEqual(0, _instance.Mutations.Count());
         }
 
         [TestMethod]
@@ -62,26 +62,26 @@ namespace Doc2web.Tests.Core
         [TestMethod]
         public void AddTransformation_Test()
         {
-            var transformation = Substitute.For<ITextTransformation>();
+            var transformation = Substitute.For<Mutation>();
 
-            _instance.AddTranformation(transformation);
+            _instance.AddMutation(transformation);
 
-            Assert.AreSame(transformation, _instance.Transformations.Single());
+            Assert.AreSame(transformation, _instance.Mutations.Single());
         }
 
         [TestMethod]
         public void AddMultipleTransformations_Test()
         {
-            var transformations = new ITextTransformation[] {
-                Substitute.For<ITextTransformation>(),
-                Substitute.For<ITextTransformation>()
+            var transformations = new Mutation[] {
+                Substitute.For<Mutation>(),
+                Substitute.For<Mutation>()
             };
 
-            _instance.AddMultipleTransformations(transformations);
+            _instance.AddMutations(transformations);
 
-            Assert.AreEqual(transformations.Length, _instance.Transformations.Count());
+            Assert.AreEqual(transformations.Length, _instance.Mutations.Count());
             foreach (var transformation in transformations)
-                Assert.IsTrue(_instance.Transformations.Contains(transformation));
+                Assert.IsTrue(_instance.Mutations.Contains(transformation));
         }
 
         [TestMethod]

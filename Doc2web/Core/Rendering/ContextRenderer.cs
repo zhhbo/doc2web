@@ -10,13 +10,38 @@ namespace Doc2web.Core.Rendering
 {
     public class ContextRenderer : IContextRenderer
     {
-        public string Render(Doc2web.IElementContext elementContext)
+        public string Render(IElementContext elementContext)
         {
-            var nodes = FlatternHtmlNodes.Flattern(elementContext.Nodes.ToList());
-            var tags = TagsFactory.Build(nodes);
-            var result = new StringBuilder(elementContext.RootElement.InnerText);
-            TagsRenderer.RenderInto(tags, result);
-            return result.ToString();
+            List<HtmlNode> nodes = BuildNodes(elementContext);
+            ITag[] tags = BuildTags(nodes);
+            return Render(elementContext, tags);
         }
+
+        public static List<HtmlNode> BuildNodes(IElementContext elementContext)
+        {
+            var nodes = elementContext.Nodes.ToList();
+
+            foreach (var m in elementContext.Mutations)
+                m.MutateNodes(nodes);
+
+            return FlatternHtmlNodes.Flattern(nodes);
+        }
+
+        public static ITag[] BuildTags(List<HtmlNode> nodes)
+        {
+            return TagsFactory.Build(nodes);
+        }
+
+        public static string Render(IElementContext elementContext, ITag[] tags)
+        {
+            var html = new StringBuilder(elementContext.RootElement.InnerText);
+
+            foreach (var m in elementContext.Mutations)
+                m.MutateText(html);
+
+            TagsRenderer.RenderInto(tags, html);
+            return html.ToString();
+        }
+
     }
 }

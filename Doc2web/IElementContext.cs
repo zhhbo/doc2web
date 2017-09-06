@@ -17,7 +17,7 @@ namespace Doc2web
         
         IEnumerable<HtmlNode> Nodes { get; }
 
-        IEnumerable<ITextTransformation> Transformations { get; }
+        IEnumerable<Mutation> Mutations { get; }
 
         void ProcessChilden();
 
@@ -25,8 +25,8 @@ namespace Doc2web
 
         void AddMultipleNodes(IEnumerable<HtmlNode> nodes);
 
-        void AddTranformation(ITextTransformation transformation);
+        void AddMutation(Mutation mutation);
 
-        void AddMultipleTransformations(IEnumerable<ITextTransformation> transformations);
+        void AddMutations(IEnumerable<Mutation> mutations);
     }
 }
