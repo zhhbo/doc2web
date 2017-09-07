@@ -95,25 +95,42 @@ namespace Doc2web.Tests.Core.Rendering.Step2
 
         private static List<HtmlNode> InputSorting4 => new List<HtmlNode>
         {
-            new HtmlNode { Start = 0, End = 0, Z = 0, Tag="a" },
-            new HtmlNode { Start = 0, End = 0, Z = 0, Tag="b" },
-            new HtmlNode { Start = 0, End = 1, Z = 0, Tag="w" },
-            new HtmlNode { Start = 0, End = 1, Z = 0, Tag="x" },
-            new HtmlNode { Start = 0, End = 1, Z = 0, Tag="y" },
-            new HtmlNode { Start = 1, End = 1, Z = 0, Tag="z" },
+            new HtmlNode { Start = 0, End = 0, Z = 0, Tag="br" },
+            new HtmlNode { Start = 0, End = 0, Z = 0, Tag="hr" },
+            new HtmlNode { Start = 0, End = 1, Z = 0, Tag="q" },
+            new HtmlNode { Start = 0, End = 1, Z = 0, Tag="r" },
+            new HtmlNode { Start = 0, End = 1, Z = 0, Tag="s" },
+            new HtmlNode { Start = 1, End = 1, Z = 0, Tag="track" },
         };
 
         private static (int, ITag)[] ExpectedSorting4 => new(int, ITag)[]
         {
-           (0, new SelfClosingTag { Index = 0, Z = 0, Name = "a" }),
-           (1, new SelfClosingTag { Index = 0, Z = 0, Name = "b" }),
-           (7, new OpeningTag     { Index = 0, Z = 0, Name = "w" }),
-           (6, new OpeningTag     { Index = 0, Z = 0, Name = "x" }),
-           (5, new OpeningTag     { Index = 0, Z = 0, Name = "y" }),
+           (0, new SelfClosingTag { Index = 0, Z = 0, Name = "br" }),
+           (1, new SelfClosingTag { Index = 0, Z = 0, Name = "hr" }),
+           (7, new OpeningTag     { Index = 0, Z = 0, Name = "q" }),
+           (6, new OpeningTag     { Index = 0, Z = 0, Name = "r" }),
+           (5, new OpeningTag     { Index = 0, Z = 0, Name = "s" }),
            (4, new ClosingTag     { Index = 1 }),
            (3, new ClosingTag     { Index = 1 }),
            (2, new ClosingTag     { Index = 1 }),
-           (8, new SelfClosingTag { Index = 1, Z = 100, Name = "z" }),
+           (8, new SelfClosingTag { Index = 1, Z = 100, Name = "track" }),
+        };
+
+        private static List<HtmlNode> InputSorting5 => new List<HtmlNode>
+        {
+            new HtmlNode { Start = 0, End = 0, Z = 3, Tag="z" },
+            new HtmlNode { Start = 0, End = 0, Z = 2, Tag="y" },
+            new HtmlNode { Start = 0, End = 0, Z = 1, Tag="x" },
+        };
+
+        private static (int, ITag)[] ExpectedSorting5 => new(int, ITag)[]
+        {
+           (5, new OpeningTag { Index = 0, Z = 3, Name = "z" }),
+           (4, new OpeningTag { Index = 0, Z = 2, Name = "y" }),
+           (3, new OpeningTag { Index = 0, Z = 1, Name = "x" }),
+           (2, new ClosingTag { Index = 0 }),
+           (1, new ClosingTag { Index = 0 }),
+           (0, new ClosingTag { Index = 0 }),
         };
 
         [TestMethod]
@@ -157,6 +174,19 @@ namespace Doc2web.Tests.Core.Rendering.Step2
                 Test(expected, shuffledInput);
             }
         }
+
+        [TestMethod]
+        public void Build_SortingTest5()
+        {
+            var random = new Random();
+            var expected = ExpectedSorting5;
+            for(int i=0; i<100; i++)
+            {
+                var shuffledInput = InputSorting5.OrderBy(x => random.Next()).ToList();
+                Test(expected, shuffledInput);
+            }
+        }
+
 
         private void Test((int, ITag)[] expectedConfig, List<HtmlNode> sample)
         {
