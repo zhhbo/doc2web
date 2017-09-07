@@ -7,11 +7,28 @@ namespace Doc2web
     public class TextDeletion : Mutation
     {
 
-        public int Index { get; set; }
-
         public int Length { get; set; }
 
         private int End => Index + Length;
+
+        public override void UpdateOtherMutations(List<Mutation> mutations)
+        {
+            int i = 0;
+            while (i < mutations.Count)
+            {
+                var m = mutations[i];
+                if (m.Index >= Index)
+                {
+                    m.Index -= Length;
+                    if (m.Index < 0)
+                    {
+                        mutations.RemoveAt(i);
+                        continue;
+                    }
+                }
+                i++;
+            }
+        }
 
         public override void MutateText(StringBuilder text)
         {

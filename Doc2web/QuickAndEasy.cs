@@ -1,4 +1,5 @@
-﻿using Doc2web.Plugins.Style;
+﻿using Doc2web.Plugins.CrossReferences;
+using Doc2web.Plugins.Style;
 using Doc2web.Plugins.TextProcessor;
 using DocumentFormat.OpenXml.Packaging;
 using System;
@@ -13,7 +14,8 @@ namespace Doc2web
         {
             using (var conversionEngine = new ConversionEngine(
                 new StyleProcessorPlugin(wpDoc),
-                new TextProcessorPlugin()))
+                new TextProcessorPlugin(),
+                new CrossReferencesCleanupPlugin()))
             {
                 return conversionEngine.Render(wpDoc.MainDocumentPart.Document.Body.Elements());
             }

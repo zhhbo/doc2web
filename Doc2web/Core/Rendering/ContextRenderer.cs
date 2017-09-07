@@ -12,19 +12,19 @@ namespace Doc2web.Core.Rendering
     {
         public string Render(IElementContext elementContext)
         {
-            List<HtmlNode> nodes = BuildNodes(elementContext);
+            (List<HtmlNode> nodes, Mutation[] mutations) = BuildNodes(elementContext);
             ITag[] tags = BuildTags(nodes);
-            return Render(elementContext, tags);
+            return Render(elementContext.RootElement.InnerText, mutations, tags);
         }
 
-        public static List<HtmlNode> BuildNodes(IElementContext elementContext)
+        public static (List<HtmlNode>, Mutation[]) BuildNodes(IElementContext elementContext)
         {
             var nodes = elementContext.Nodes.ToList();
+            var mutations = elementContext.Mutations.ToList();
 
-            foreach (var m in elementContext.Mutations)
-                m.MutateNodes(nodes);
+            MutationsApplier.Apply(nodes, mutations);
 
-            return FlatternHtmlNodes.Flattern(nodes);
+            return (FlatternHtmlNodes.Flattern(nodes), mutations.ToArray());
         }
 
         public static ITag[] BuildTags(List<HtmlNode> nodes)
@@ -32,14 +32,15 @@ namespace Doc2web.Core.Rendering
             return TagsFactory.Build(nodes);
         }
 
-        public static string Render(IElementContext elementContext, ITag[] tags)
+        public static string Render(string text, Mutation[] mutations, ITag[] tags)
         {
-            var html = new StringBuilder(elementContext.RootElement.InnerText);
+            var html = new StringBuilder(text);
 
-            foreach (var m in elementContext.Mutations)
-                m.MutateText(html);
+            for(int i=0; i<mutations.Length; i++)
+                mutations[i].MutateText(html);
 
             TagsRenderer.RenderInto(tags, html);
+
             return html.ToString();
         }
 

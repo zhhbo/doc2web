@@ -6,9 +6,16 @@ namespace Doc2web
 {
     public class TextInsertion : Mutation
     {
-        public int Index { get; set; }
-
         public string Text { get; set; }
+
+        public override void UpdateOtherMutations(List<Mutation> mutations)
+        {
+            foreach(var m in mutations)
+            {
+                if (m.Index > Index)
+                    m.Index += Text.Length;
+            }
+        }
 
         public override void MutateNodes(List<HtmlNode> nodes)
         {

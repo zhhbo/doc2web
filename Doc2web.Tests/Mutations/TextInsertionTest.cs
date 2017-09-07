@@ -25,6 +25,22 @@ namespace Doc2web.Tests.Mutations
         };
 
         [TestMethod]
+        public void UpdateOtherMutations_Test()
+        {
+            var others = new List<Mutation>
+            {
+                new TextInsertion { Index = 0 },
+                new TextInsertion { Index = 10},
+            };
+            var mutation = new TextInsertion { Index = 5, Text = "12345" };
+
+            mutation.UpdateOtherMutations(others);
+
+            Assert.AreEqual(0, others[0].Index);
+            Assert.AreEqual(15, others[1].Index);
+        }
+
+        [TestMethod]
         public void MutateNode_Test()
         {
             var mutation = new TextInsertion

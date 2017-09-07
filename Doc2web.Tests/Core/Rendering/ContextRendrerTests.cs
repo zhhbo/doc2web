@@ -42,8 +42,8 @@ namespace Doc2web.Tests.Core.Rendering
 
             var result = ContextRenderer.BuildNodes(_elementContext);
 
-            Assert.IsTrue(_elementContext.Nodes.Count() < result.Count);
-            foreach (var m in _elementContext.Mutations)
+            Assert.IsTrue(_elementContext.Nodes.Count() < result.Item1.Count);
+            foreach (var m in result.Item2)
                 m.Received(1).MutateNodes(Arg.Any<List<HtmlNode>>());
         }
 
@@ -60,17 +60,22 @@ namespace Doc2web.Tests.Core.Rendering
         [TestMethod]
         public void Render_Test()
         {
-            string expectedHtml = $"<p>{_elementContext.RootElement.InnerText}</p>"; 
+            string expectedHtml = $"<p>{_elementContext.RootElement.InnerText}</p>";
+            var m1 = Substitute.For<Mutation>();
+            var m2 = Substitute.For<Mutation>();
             var openingTag = new OpeningTag { Index = 0, Name = "p" };
             var closingTag = new ClosingTag { Index = _elementContext.RootElement.InnerText.Length };
             closingTag.Related = openingTag;
             openingTag.Related = closingTag;
 
-            var r = ContextRenderer.Render(_elementContext, new ITag[] { openingTag, closingTag });
+            var r = ContextRenderer.Render(
+                _elementContext.RootElement.InnerText, 
+                new Mutation[] { m1, m2 },
+                new ITag[] { openingTag, closingTag });
 
             Assert.AreEqual(expectedHtml, r.ToString());
-            foreach (var m in _elementContext.Mutations)
-                m.Received(1).MutateText(Arg.Any<StringBuilder>());
+            m1.Received(1).MutateText(Arg.Any<StringBuilder>());
+            m2.Received(1).MutateText(Arg.Any<StringBuilder>());
         }
     }
 }

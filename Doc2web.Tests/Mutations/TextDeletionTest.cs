@@ -38,6 +38,26 @@ namespace Doc2web.Tests.Mutations
         };
 
         [TestMethod]
+        public void UpdateOtherMutations_Test()
+        {
+            var others = new List<Mutation>
+            {
+                new TextDeletion { Index = 00 },
+                new TextDeletion { Index = 05 },
+                new TextDeletion { Index = 10 },
+                new TextDeletion { Index = 15 },
+            };
+            var mutation = new TextDeletion { Index = 5, Length = 10 };
+
+            mutation.UpdateOtherMutations(others);
+
+            Assert.AreEqual(3, others.Count);
+            Assert.AreEqual(0, others[0].Index);
+            Assert.AreEqual(0, others[1].Index);
+            Assert.AreEqual(5, others[2].Index);
+        }
+
+        [TestMethod]
         public void MutateNode_Test1()
         {
             var mutation = new TextDeletion { Index = 8, Length = 9 };
