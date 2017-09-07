@@ -20,7 +20,7 @@ namespace Doc2web
                 if (m.Index >= Index)
                 {
                     m.Index -= Length;
-                    if (m.Index < 0)
+                    if (m.Index < Index)
                     {
                         mutations.RemoveAt(i);
                         continue;
