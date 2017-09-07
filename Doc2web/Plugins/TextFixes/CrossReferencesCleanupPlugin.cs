@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace Doc2web.Plugins.CrossReferences
+namespace Doc2web.Plugins.TextFixes
 {
     public class CrossReferencesCleanupPlugin
     {
@@ -15,13 +15,13 @@ namespace Doc2web.Plugins.CrossReferences
 
 
         [ElementProcessing]
-        public void RemoveCrossRef(IElementContext context, Paragraph p)
+        public void RemoveCrossRefs(IElementContext context, Paragraph p)
         {
             foreach(Match match in crossReferenceRegex.Matches(p.InnerText))
             {
                 context.AddMutation(new TextDeletion
                 {
-                    Index = match.Index,
+                    Index = context.TextIndex + match.Index,
                     Length = match.Length
                 });
             }

@@ -65,6 +65,7 @@ namespace Doc2web.Plugins.TextProcessor
             }
 
             context.AddNode(node);
+            context.ProcessChilden();
         }
     }
 }
