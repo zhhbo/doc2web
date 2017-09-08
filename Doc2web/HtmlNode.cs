@@ -147,5 +147,14 @@ namespace Doc2web
             (Start < other.End && other.End < End) ||
             (other.Start < Start && Start < other.End) ||
             (other.Start < End && End < other.End);
+
+        public override int GetHashCode()
+        {
+            var hashCode = -1757873924;
+            hashCode = hashCode * -1521134295 + Start.GetHashCode();
+            hashCode = hashCode * -1521134295 + End.GetHashCode();
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Tag);
+            return hashCode;
+        }
     }
 }

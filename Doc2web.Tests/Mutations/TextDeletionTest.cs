@@ -51,10 +51,9 @@ namespace Doc2web.Tests.Mutations
 
             mutation.UpdateOtherMutations(others);
 
-            Assert.AreEqual(3, others.Count);
+            Assert.AreEqual(2, others.Count);
             Assert.AreEqual(0, others[0].Index);
-            Assert.AreEqual(0, others[1].Index);
-            Assert.AreEqual(5, others[2].Index);
+            Assert.AreEqual(5, others[1].Index);
         }
 
         [TestMethod]

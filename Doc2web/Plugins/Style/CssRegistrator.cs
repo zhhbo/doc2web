@@ -11,19 +11,19 @@ namespace Doc2web.Plugins.Style
     public class CssRegistrator : ICssRegistrator
     {
         private ICssClassFactory _classFactory;
-        private HashSet<string> _classesToRender;
+        private ConcurrentDictionary<string, byte> _classesToRender;
         private ConcurrentDictionary<ICssClass, string> _dynamicClassesUIDs;
 
         public CssRegistrator(ICssClassFactory classFactory)
         {
             _classFactory = classFactory;
-            _classesToRender = new HashSet<string>();
+            _classesToRender = new ConcurrentDictionary<string, byte>();
             _dynamicClassesUIDs = new ConcurrentDictionary<ICssClass, string>();
         }
 
         public string Register(string styleId)
         {
-            _classesToRender.Add(styleId);
+            _classesToRender.TryAdd(styleId, 0);
             return styleId;
         }
 
@@ -57,6 +57,7 @@ namespace Doc2web.Plugins.Style
             var defaults = _classFactory.BuildDefaults();
             var clsToRender =
                 _classesToRender
+                    .Keys
                     .Select(_classFactory.Build)
                     .Concat(_dynamicClassesUIDs.Keys)
                     .Concat(defaults)

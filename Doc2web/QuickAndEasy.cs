@@ -18,7 +18,8 @@ namespace Doc2web
                 new CrossReferencesCleanupPlugin(),
                 new HyphenInsertionPlugin(),
                 new BreakInsertionPlugin(),
-                new EscapeHtmlPlugin()))
+                new EscapeHtmlPlugin()
+                ))
             {
                 return conversionEngine.Render(wpDoc.MainDocumentPart.Document.Body.Elements());
             }
