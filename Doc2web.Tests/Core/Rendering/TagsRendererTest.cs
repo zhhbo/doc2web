@@ -44,9 +44,7 @@ namespace Doc2web.Tests.Core.Rendering.Step3
         {
             var tags = Utils.SetRelatedTag(tagsConfig);
             var stringBuilder = new StringBuilder(input);
-            TagsRenderer.RenderInto(tags, stringBuilder);
-
-            var result = stringBuilder.ToString();
+            var result = TagsRenderer.Render(tags, stringBuilder);
 
             Assert.AreEqual(expected, result);
         }

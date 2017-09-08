@@ -36,12 +36,10 @@ namespace Doc2web.Core.Rendering
         {
             var html = new StringBuilder(text);
 
-            for(int i=0; i<mutations.Length; i++)
+            for (int i = 0; i < mutations.Length; i++)
                 mutations[i].MutateText(html);
 
-            TagsRenderer.RenderInto(tags, html);
-
-            return html.ToString();
+            return TagsRenderer.Render(tags, html);
         }
 
     }
