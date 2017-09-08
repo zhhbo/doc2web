@@ -14,7 +14,7 @@ using BenchmarkDotNet.Attributes.Jobs;
 
 namespace Doc2web.Benchmark
 {
-    [ClrJob]
+    [CoreJob]
     public class RenderingBenchmark
     {
         const int NodeCount = 500;

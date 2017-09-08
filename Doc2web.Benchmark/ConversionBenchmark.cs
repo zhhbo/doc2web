@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace Doc2web.Benchmark
 {
-    [ClrJob]
+    [CoreJob]
     public class ConversionBenchmark
     {
         public ConversionEngine BuildConversionEngine()

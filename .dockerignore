@@ -1,0 +1,8 @@
+.git
+.vs
+BenchmarkDotNet.Artifacts
+packages
+*/bin/*
+*/obj/*
+Doc2web.CLI
+Doc2web.Tests

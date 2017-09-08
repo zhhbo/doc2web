@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.26730.12
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{51AB3729-FF3A-41ED-887F-BBD3D589A805}"
 	ProjectSection(SolutionItems) = preProject
+		.dockerignore = .dockerignore
+		DOCKERFILE = DOCKERFILE
 		LICENSE.md = LICENSE.md
 		logo.png = logo.png
 		README.md = README.md
@@ -16,7 +18,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Doc2web.CLI", "Doc2web.CLI\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Doc2web.Tests", "Doc2web.Tests\Doc2web.Tests.csproj", "{989C5117-46AA-4B24-A153-D61F50954625}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Doc2web.Benchmark", "Doc2web.Benchmark\Doc2web.Benchmark.csproj", "{30AABA21-FE31-48B4-93C6-44BC28AC563D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Doc2web.Benchmark", "Doc2web.Benchmark\Doc2web.Benchmark.csproj", "{30AABA21-FE31-48B4-93C6-44BC28AC563D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

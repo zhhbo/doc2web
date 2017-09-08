@@ -1,0 +1,5 @@
+FROM microsoft/dotnet
+WORKDIR /app
+ADD . .
+RUN dotnet build --framework netcoreapp2.0 --configuration Release Doc2web.Benchmark
+ENTRYPOINT dotnet run --framework netcoreapp2.0  --configuration Release --project Doc2web.Benchmark
