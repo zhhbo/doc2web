@@ -16,8 +16,8 @@ namespace Doc2web.Benchmark
     {
         public static void Main(string[] args)
         {
-            var summary = BenchmarkRunner.Run<ConversionBenchmark>();
-            //var summary = BenchmarkRunner.Run<RenderingBenchmark>();
+            //var summary = BenchmarkRunner.Run<ConversionBenchmark>();
+            var summary = BenchmarkRunner.Run<RenderingBenchmark>();
             Console.ReadLine();
         }
     }

@@ -30,7 +30,7 @@ namespace Doc2web.Core.Rendering.Step1
             return results;
         }
 
-        private static List<HtmlNode> FlatternLayer(List<HtmlNode> layer)
+        public static List<HtmlNode> FlatternLayer(List<HtmlNode> layer)
         {
             var singleLayerFlattern = new SingleLayerFlatterner();
             singleLayerFlattern.Nodes = layer;

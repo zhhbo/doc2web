@@ -49,12 +49,12 @@ namespace Doc2web.Benchmark
 
         private double SizeRatio() => ((double)NodeCount / _nodes.Count);
 
-        //[IterationSetup(Target = nameof(Flattern))]
-        //public void CopyNodes()
-        //{
-        //    _tempNodes = new List<HtmlNode>(NodeCount);
-        //    _tempNodes.AddRange(_nodes.Take(NodeCount).Select(x => x.Clone()));
-        //}
+        [IterationSetup(Target = nameof(Flattern) + "," + nameof(FlatternSingleLayer))]
+        public void CopyNodes()
+        {
+            _tempNodes = new List<HtmlNode>(NodeCount);
+            _tempNodes.AddRange(_nodes.Take(NodeCount).Select(x => x.Clone()));
+        }
 
         [IterationSetup(Target = nameof(RenderTags))]
         public void ResetStringBuilder()
@@ -64,11 +64,14 @@ namespace Doc2web.Benchmark
             for (int i = 1; i < maxI; i++) _tempStringBuilder.Append(i);
         }
 
-        //[Benchmark]
-        //public List<HtmlNode> Flattern() => FlatternHtmlNodes.Flattern(_tempNodes);
+        [Benchmark]
+        public List<HtmlNode> FlatternSingleLayer () => FlatternHtmlNodes.FlatternLayer(_tempNodes);
 
-        //[Benchmark]
-        //public ITag[] BuildTags() => TagsFactory.Build(_tempNodes);
+        [Benchmark]
+        public List<HtmlNode> Flattern() => FlatternHtmlNodes.Flattern(_tempNodes);
+
+        [Benchmark]
+        public ITag[] BuildTags() => TagsFactory.Build(_tempNodes);
 
         [Benchmark]
         public void RenderTags() => TagsRenderer.Render(_tempsTags, _tempStringBuilder);
