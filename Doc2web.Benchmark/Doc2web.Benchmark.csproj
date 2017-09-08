@@ -10,6 +10,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Assets\transaction-formatted.docx" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Assets\transaction-formatted.docx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="BenchmarkDotNet" Version="0.10.9" />
     <PackageReference Include="DocumentFormat.OpenXml" Version="2.7.2" />
   </ItemGroup>
