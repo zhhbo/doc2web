@@ -21,6 +21,7 @@ namespace Doc2web.Benchmark
             var switcher = new BenchmarkSwitcher(new[] {
                 typeof(ConversionBenchmark),
                 typeof(RenderingBenchmark),
+                typeof(StyleBenchmark),
             });
             switcher.Run(args);
         }

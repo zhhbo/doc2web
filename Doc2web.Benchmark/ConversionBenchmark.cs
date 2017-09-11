@@ -36,7 +36,7 @@ namespace Doc2web.Benchmark
         [GlobalSetup]
         public void GlobalSetup()
         {
-            _wpDoc = WordprocessingDocument.Open(Utils.GetAssetPath("transaction-formatted.docx"), false);
+            _wpDoc = WordprocessingDocument.Open(Utils.GetAssetPath("shareholders.docx"), false);
             _paragraphs = _wpDoc.MainDocumentPart.Document.Body.Elements<Paragraph>().ToArray();
             _shortestParagraph =
                 _paragraphs.Where(x => x.InnerText.Length > 0)

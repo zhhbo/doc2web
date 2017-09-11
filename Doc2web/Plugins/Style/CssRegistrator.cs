@@ -12,13 +12,15 @@ namespace Doc2web.Plugins.Style
     {
         private ICssClassFactory _classFactory;
         private ConcurrentDictionary<string, byte> _classesToRender;
-        private ConcurrentDictionary<ICssClass, string> _dynamicClassesUIDs;
+        private Dictionary<ICssClass, string> _dynamicParagraphClassesUIDs;
+        private Dictionary<ICssClass, string> _dynamicRunClassesUIDs;
 
         public CssRegistrator(ICssClassFactory classFactory)
         {
             _classFactory = classFactory;
             _classesToRender = new ConcurrentDictionary<string, byte>();
-            _dynamicClassesUIDs = new ConcurrentDictionary<ICssClass, string>();
+            _dynamicParagraphClassesUIDs = new Dictionary<ICssClass, string>();
+            _dynamicRunClassesUIDs = new Dictionary<ICssClass, string>();
         }
 
         public string Register(string styleId)
@@ -30,24 +32,34 @@ namespace Doc2web.Plugins.Style
         public string Register(ParagraphProperties pPr)
         {
             var cls = _classFactory.Build(pPr);
-            return TryGetDynamicClass(cls, "p.{0}");
+            return TryGetDynamicClass(cls, "p.{0}", _dynamicParagraphClassesUIDs);
         }
         public string Register(RunProperties rPr)
         {
             var cls = _classFactory.Build(rPr);
-            return TryGetDynamicClass(cls, "span.{0}");
+            return TryGetDynamicClass(cls, "span.{0}",_dynamicRunClassesUIDs);
         }
 
-        private string TryGetDynamicClass(ICssClass cls, string selectorPrefix)
+        private string TryGetDynamicClass(ICssClass cls, string selectorPrefix, Dictionary<ICssClass, string> dict)
         {
             if (cls.IsEmpty) return "";
-            string uid = "dyn-" + Guid.NewGuid().ToString().Replace("-", "");
+            if (dict.TryGetValue(cls, out string uid)) return uid;
+
+            uid = "dyn-" + Guid.NewGuid().ToString().Replace("-", "");
+
+            try
+            {
+                lock (dict)
+                {
+                    dict.Add(cls, uid);
+                }
+            } catch
+            {
+                uid = dict[cls];
+            }
+
             cls.Selector = String.Format(selectorPrefix, uid);
-            if (_dynamicClassesUIDs.TryAdd(cls, uid))
-                return uid;
-            else if (_dynamicClassesUIDs.TryGetValue(cls, out uid))
-                return uid;
-            throw new InvalidOperationException();
+            return uid;
         }
 
 
@@ -59,7 +71,8 @@ namespace Doc2web.Plugins.Style
                 _classesToRender
                     .Keys
                     .Select(_classFactory.Build)
-                    .Concat(_dynamicClassesUIDs.Keys)
+                    .Concat(_dynamicParagraphClassesUIDs.Keys)
+                    .Concat(_dynamicRunClassesUIDs.Keys)
                     .Concat(defaults)
                     .ToArray();
 

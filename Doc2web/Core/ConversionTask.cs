@@ -38,18 +38,17 @@ namespace Doc2web.Core
         }
 
         public void ConvertElements() {
-            var htmlElements =
-                    GlobalContext
-                    .RootElements
-                    .AsParallel()
-                    .Select((elem, i) => (ConvertRootElement(elem), i))
-                    .ToArray();
+            var tasks =
+                GlobalContext
+                .RootElements
+                .Select(elem => Task.Factory.StartNew(() => ConvertRootElement(elem)))
+                .ToArray();
 
-            int sort((string, int i) x, (string, int i) y) => x.i - y.i;
-            Array.Sort(htmlElements, sort);
-
-            foreach (var htmlElement in htmlElements)
-                _result.AppendLine(htmlElement.Item1);
+            for(int i = 0; i < tasks.Length; i++)
+            {
+                tasks[i].Wait();
+                _result.AppendLine(tasks[i].Result);
+            }
         }
 
 
