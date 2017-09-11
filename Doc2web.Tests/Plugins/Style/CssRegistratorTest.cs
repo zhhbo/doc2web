@@ -165,11 +165,16 @@ namespace Doc2web.Tests.Plugins.Style
 
         private ICssClass MockCssClass(params (string, string, string)[] stubCssData)
         {
-            var cssData = new CssData();
-            foreach (var stubData in stubCssData)
-                cssData.AddAttribute(stubData.Item1, stubData.Item2, stubData.Item3);
             var cls = Substitute.For<ICssClass>();
-            cls.InsertCss().Returns(cssData);
+            cls
+                .When(x => x.InsertCss(Arg.Any<CssData>()))
+                .Do(x =>
+                {
+                    var cssData = x.ArgAt<CssData>(0);
+                    foreach (var stubData in stubCssData)
+                        cssData.AddAttribute(stubData.Item1, stubData.Item2, stubData.Item3);
+
+                });
             return cls;
         }
 

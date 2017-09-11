@@ -23,7 +23,10 @@ namespace Doc2web.Tests.Plugins.Style
         public string Selector { get; set; }
         public OpenXmlElement OpenXmlElement { get; set; }
 
-        public CssData AsCss() => _cssData;
+        public void InsertCss(CssData cssData)
+        {
+            cssData.AddRange(_cssData);
+        } 
 
         public int CompareTo(object obj)
         {

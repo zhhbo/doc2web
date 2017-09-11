@@ -1,4 +1,5 @@
 ﻿using Doc2web.Plugins.Style;
+using Doc2web.Plugins.Style.Properties;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 using System;

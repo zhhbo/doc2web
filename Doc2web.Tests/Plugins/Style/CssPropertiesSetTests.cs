@@ -88,11 +88,14 @@ namespace Doc2web.Tests.Plugins.Style
             prop1CssData.AddAttribute(".test", "color", "red");
             prop1CssData.AddAttribute(".test", "", "red");
             var prop1 = Substitute.For<ICssProperty>();
-            prop1.AsCss().Returns(prop1CssData);
+            prop1
+                .When(x => x.InsertCss(Arg.Any<CssData>()))
+                .Do(x => x.ArgAt<CssData>(0).AddRange(prop1CssData));
 
             _instance.Add(prop1);
             _instance.Selector = ".test";
-            var r = _instance.AsCss();
+            var r = new CssData();
+            _instance.InsertCss(r);
 
             Assert.AreEqual(prop1CssData, r);
             prop1.Received(1).Selector = ".test";
