@@ -29,7 +29,7 @@ namespace Doc2web.Plugins.Style
         public CssPropertiesSet RunProps { get; private set; }
 
 
-        public CssData AsCss()
+        public void InsertCss(CssData cssData)
         {
             var pCssProps = new CssPropertiesSet { Selector = ParagraphProps.Selector };
             var rCssProps = new CssPropertiesSet { Selector = ParagraphProps.Selector };
@@ -45,10 +45,8 @@ namespace Doc2web.Plugins.Style
                 basedOn = basedOn.BasedOn;
             }
 
-            var cssData = new CssData();
-            cssData.AddRange(pCssProps.AsCss());
-            cssData.AddRange(rCssProps.AsCss());
-            return cssData;
+            pCssProps.InsertCss(cssData);
+            rCssProps.InsertCss(cssData);
         }
 
         public override bool Equals(object obj)

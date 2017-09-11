@@ -19,7 +19,7 @@ namespace Doc2web.Plugins.Style.Properties
             set => OpenXmlElement = value;
         }
 
-        public abstract CssData AsCss();
+        public abstract void InsertCss(CssData cssData);
 
         public override bool Equals(object obj)
         {

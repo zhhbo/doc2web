@@ -51,15 +51,13 @@ namespace Doc2web.Plugins.Style.Properties
             }
         }
 
-        public override CssData AsCss()
+        public override void InsertCss(CssData cssData)
         {
-            var cssData = new CssData();
             string color = Color;
             if (color != null)
             {
                 cssData.AddAttribute(Selector, "color", color);
             }
-            return cssData;
         }
 
         public override bool HaveSameOuput(Color element)

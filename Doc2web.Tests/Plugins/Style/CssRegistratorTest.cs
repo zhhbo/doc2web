@@ -169,7 +169,7 @@ namespace Doc2web.Tests.Plugins.Style
             foreach (var stubData in stubCssData)
                 cssData.AddAttribute(stubData.Item1, stubData.Item2, stubData.Item3);
             var cls = Substitute.For<ICssClass>();
-            cls.AsCss().Returns(cssData);
+            cls.InsertCss().Returns(cssData);
             return cls;
         }
 

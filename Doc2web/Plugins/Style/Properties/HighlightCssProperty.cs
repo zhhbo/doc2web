@@ -7,13 +7,11 @@ namespace Doc2web.Plugins.Style.Properties
 {
     public class HighlightCssProperty : CssProperty<Highlight>
     {
-        public override CssData AsCss()
+        public override void InsertCss(CssData cssData)
         {
-            var data = new CssData();
             var i = GetColorCode(Element);
             if (i > -1)
-                data.AddAttribute(Selector, "background-color", ColorAssociation[i]);
-            return data;
+                cssData.AddAttribute(Selector, "background-color", ColorAssociation[i]);
         }
 
         public override short GetSpecificHashcode() => GetColorCode(Element);

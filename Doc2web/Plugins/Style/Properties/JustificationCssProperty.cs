@@ -15,13 +15,11 @@ namespace Doc2web.Plugins.Style.Properties
             "justify"
         };
 
-        public override CssData AsCss()
+        public override void InsertCss(CssData cssData)
         {
-            var data = new CssData();
             short i = JustifyContent;
-            if (i == -1) return data;
-            data.AddAttribute(Selector, "text-align", MapJusitfyValues[i]);
-            return data;
+            if (i != -1)
+                cssData.AddAttribute(Selector, "text-align", MapJusitfyValues[i]);
         }
 
         public override short GetSpecificHashcode() => JustifyContent;

@@ -10,6 +10,6 @@ namespace Doc2web.Plugins.Style
     {
         string Selector { get; set; }
         OpenXmlElement OpenXmlElement { get; set; }
-        CssData AsCss();
+        void InsertCss(CssData cssData);
     }
 }

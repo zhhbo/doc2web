@@ -28,14 +28,12 @@ namespace Doc2web.Plugins.Style.Properties
         public abstract void SetOff(CssData data);
 
 
-        public override CssData AsCss()
+        public override void InsertCss(CssData cssData)
         {
-            var data = new CssData();
             if (ExplicitVal.HasValue)
-                if (ExplicitVal.Value) SetOn(data);
-                else SetOff(data);
-            else SetDefault(data);
-            return data;
+                if (ExplicitVal.Value) SetOn(cssData);
+                else SetOff(cssData);
+            else SetDefault(cssData);
         }
 
         public override short GetSpecificHashcode()

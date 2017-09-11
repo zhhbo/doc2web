@@ -38,7 +38,7 @@ namespace Doc2web.Benchmark
             _container = _containerBuilder.Build();
         }
 
-        [IterationSetup(Target = nameof(RenderDynamics))]
+        [IterationSetup(Target = nameof(RegisterDynamics))]
         public void SetupDynamic()
         {
             _lts = _container.BeginLifetimeScope();
@@ -47,7 +47,7 @@ namespace Doc2web.Benchmark
         }
 
         [Benchmark]
-        public void RenderDynamics()
+        public void RegisterDynamics()
         {
             var t1 =
                 _paragraphProperties
@@ -63,5 +63,30 @@ namespace Doc2web.Benchmark
             Task.WaitAll(t2);
         }
 
+        [GlobalSetup(Target = nameof(RenderStyles))]
+        public void AddAllStyles ()
+        {
+            var styles =
+                _wpDoc
+                .MainDocumentPart
+                .StyleDefinitionsPart
+                .Styles
+                .Elements<DocumentFormat.OpenXml.Wordprocessing.Style>()
+                .Where(x => x.StyleId?.Value != null)
+                .Select(x => x.StyleId.Value)
+                .Distinct()
+                .ToArray();
+
+            for (int i = 0; i < styles.Length; i++)
+                Registrator.Register(styles[i]);
+
+            (Registrator as CssRegistrator).RenderInto(new StringBuilder()); // make sure everything is cached...
+        }
+
+        [Benchmark]
+        public void RenderStyles()
+        {
+            (Registrator as CssRegistrator).RenderInto(new StringBuilder());
+        }
     }
 }

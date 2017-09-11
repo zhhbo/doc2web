@@ -21,9 +21,8 @@ namespace Doc2web.Plugins.Style
 
         public CssPropertiesSet RunProps { get; private set; }
 
-        public CssData AsCss()
+        public void InsertCss(CssData cssData)
         {
-            var cssData = new CssData();
             var cssPropertySet = new CssPropertiesSet { Selector = Selector };
 
             var target = this;
@@ -33,8 +32,7 @@ namespace Doc2web.Plugins.Style
                 target = target.BasedOn;
             }
 
-            cssData.AddRange(cssPropertySet.AsCss());
-            return cssData;
+            cssPropertySet.InsertCss(cssData);
         }
 
         public override bool Equals(object obj)

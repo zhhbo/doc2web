@@ -14,14 +14,12 @@ namespace Doc2web.Plugins.Style.Properties
             _themeColorProvider = themeColorProvider;
         }
 
-        public override CssData AsCss()
+        public override void InsertCss(CssData cssData)
         {
-            var data = new CssData();
-            data.AddAttribute(
+            cssData.AddAttribute(
                 Selector,
                 "text-decoration",
                 $"underline {Style} {Color}".TrimEnd());
-            return data;
         }
 
         public override short GetSpecificHashcode() => 

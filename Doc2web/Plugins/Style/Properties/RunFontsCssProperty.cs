@@ -15,13 +15,12 @@ namespace Doc2web.Plugins.Style.Properties
             _themeFontProvider = themeFontProvider;
         }
 
-        public override CssData AsCss()
+        public override void InsertCss(CssData cssData)
         {
             var fontFamilyList = BuildFontFamilyList();
-            var cssData = new CssData();
             cssData.AddAttribute(Selector, "font-family", String.Join(", ", fontFamilyList));
-            return cssData;
         }
+
         private List<string> BuildFontFamilyList()
         {
             var results = new List<string>(4);

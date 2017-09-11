@@ -46,15 +46,13 @@ namespace Doc2web.Plugins.Style
 
         public string Selector { get; set; }
 
-        public CssData AsCss()
+        public void InsertCss(CssData cssData)
         {
-            var cssData = new CssData();
             foreach(var prop in this)
             {
                 prop.Selector = Selector;
-                cssData.AddRange(prop.AsCss());
+                prop.InsertCss(cssData);
             }
-            return cssData;
         }
 
         public bool SetEquals(CssPropertiesSet other)

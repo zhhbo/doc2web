@@ -77,7 +77,7 @@ namespace Doc2web.Plugins.Style
                     .ToArray();
 
             foreach (var cls in clsToRender)
-                cssData.AddRange(cls.AsCss());
+                cls.InsertCss(cssData);
 
             cssData.RenderInto(sb);
         }
