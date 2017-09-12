@@ -51,7 +51,7 @@ namespace Doc2web.Benchmark
 
         private double SizeRatio() => ((double)NodeCount / _nodes.Count);
 
-        [IterationSetup(Target = nameof(Flattern) + "," + nameof(FlatternSingleLayer))]
+        [IterationSetup(Target = nameof(FlatternNodes))]
         public void CopyNodes()
         {
             _tempNodes = new List<HtmlNode>(NodeCount);
@@ -67,10 +67,7 @@ namespace Doc2web.Benchmark
         }
 
         [Benchmark]
-        public List<HtmlNode> FlatternSingleLayer () => FlatternHtmlNodes.FlatternLayer(_tempNodes);
-
-        [Benchmark]
-        public List<HtmlNode> Flattern() => FlatternHtmlNodes.Flattern(_tempNodes);
+        public void FlatternNodes () => FlatternHtmlNodes.Apply(_tempNodes);
 
         [Benchmark]
         public ITag[] BuildTags() => TagsFactory.Build(_tempNodesAr);

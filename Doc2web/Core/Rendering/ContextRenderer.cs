@@ -23,7 +23,7 @@ namespace Doc2web.Core.Rendering
             var mutations = elementContext.Mutations.ToList();
 
             MutationsApplier.Apply(nodes, mutations);
-            FlatternPrototype.Flattern(nodes);
+            FlatternHtmlNodes.Apply(nodes);
 
             return (nodes.ToArray(), mutations.ToArray());
         }

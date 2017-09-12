@@ -24,8 +24,4 @@
     <Folder Include="Plugins\Numbering\" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Include="Core\Rendering\Step1\FlatternHtmlNodes.cs" />
-  </ItemGroup>
-
 </Project>

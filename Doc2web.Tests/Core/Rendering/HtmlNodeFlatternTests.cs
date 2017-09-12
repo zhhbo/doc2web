@@ -58,35 +58,7 @@ namespace Doc2web.Tests.Core.Rendering
                 new HtmlNode { Start = 10, End = 15, Z=000, Tag="section" },
             };
 
-        private List<HtmlNode> SingleLayerInput4 =>
-            new List<HtmlNode>
-            {
-                new HtmlNode { Start = 00, End = 21, Tag="a" },
-                new HtmlNode { Start = 03, End = 09, Tag="b" },
-                new HtmlNode { Start = 06, End = 15, Tag="c" },
-                new HtmlNode { Start = 12, End = 18, Tag="d" },
-            };
-
-        private List<HtmlNode> SingleLayerExpected4 =>
-            new List<HtmlNode>
-            {
-                new HtmlNode { Start = 00, End = 03, Tag="a" },
-                new HtmlNode { Start = 03, End = 06, Tag="a" },
-                new HtmlNode { Start = 03, End = 06, Tag="b" },
-                new HtmlNode { Start = 06, End = 09, Tag="a" },
-                new HtmlNode { Start = 06, End = 09, Tag="b" },
-                new HtmlNode { Start = 06, End = 09, Tag="c" },
-                new HtmlNode { Start = 09, End = 12, Tag="a" },
-                new HtmlNode { Start = 09, End = 12, Tag="c" },
-                new HtmlNode { Start = 12, End = 15, Tag="a" },
-                new HtmlNode { Start = 12, End = 15, Tag="c" },
-                new HtmlNode { Start = 12, End = 15, Tag="d" },
-                new HtmlNode { Start = 15, End = 18, Tag="a" },
-                new HtmlNode { Start = 15, End = 18, Tag="d" },
-                new HtmlNode { Start = 18, End = 21, Tag="a" }
-            };
-
-        private List<HtmlNode> MultipleLayerInput1 =>
+        private List<HtmlNode> UnaffectedNodesInput =>
             new List<HtmlNode>
             {
                 new HtmlNode { Z = 100, Start = 00, End = 20, },
@@ -95,14 +67,8 @@ namespace Doc2web.Tests.Core.Rendering
                 new HtmlNode { Z = 000, Start = 15, End = 20, }, 
             };
 
-        private List<HtmlNode> MultipleLayerExpected1 =>
-            new List<HtmlNode>
-            {
-                new HtmlNode { Z = 100, Start = 00, End = 20, },
-                new HtmlNode { Z = 000, Start = 00, End = 05, }, 
-                new HtmlNode { Z = 000, Start = 07, End = 13, }, 
-                new HtmlNode { Z = 000, Start = 15, End = 20, }, 
-            };
+        private List<HtmlNode> UnaffectedNodesExpected =>
+            UnaffectedNodesInput;
 
         private List<HtmlNode> MultipleLayerInput2 =>
             new List<HtmlNode>
@@ -127,7 +93,7 @@ namespace Doc2web.Tests.Core.Rendering
                 new HtmlNode { Z = 000, Start = 18, End = 20 }
             };
 
-        private List<HtmlNode> MultipleLayerInput3 =>
+        private List<HtmlNode> TrippleLayerInput =>
             new List<HtmlNode>
             {
                 new HtmlNode { Z = 100, Start = 00, End = 10 },
@@ -139,7 +105,7 @@ namespace Doc2web.Tests.Core.Rendering
                 new HtmlNode { Z = 000, Start = 11, End = 15 }
             };
 
-        private List<HtmlNode> MultipleLayerExpected3 =>
+        private List<HtmlNode> TrippleLayerExpected =>
             new List<HtmlNode>
             {
                 new HtmlNode { Z = 100, Start = 00, End = 10 },
@@ -158,31 +124,25 @@ namespace Doc2web.Tests.Core.Rendering
         [TestMethod]
         public void Flattern_ColisionEndTest()
         {
-            TestPrototype(ColisionEndInput, ColisionEndExpected);
+            Test(ColisionEndInput, ColisionEndExpected);
         }
 
         [TestMethod]
         public void Flattern_ColisionStartTest()
         {
-            TestPrototype(ColisionStartInput, ColisionStartExpected);
+            Test(ColisionStartInput, ColisionStartExpected);
         }
 
         [TestMethod]
         public void Flattern_SurroundingTest()
         {
-            TestPrototype(SurroundingInput, SurrouningExpected);
+            Test(SurroundingInput, SurrouningExpected);
         }
 
         [TestMethod]
-        public void Flattern_SingleLayerTest4()
+        public void Flattern_UnaffectedTest()
         {
-            Test(SingleLayerInput4, SingleLayerExpected4);
-        }
-
-        [TestMethod]
-        public void Flattern_MultipleLayerTest1()
-        {
-            Test(MultipleLayerInput1, MultipleLayerExpected1);
+            Test(UnaffectedNodesInput, UnaffectedNodesExpected);
         }
 
         [TestMethod]
@@ -192,30 +152,15 @@ namespace Doc2web.Tests.Core.Rendering
         }
 
         [TestMethod]
-        public void Flattern_MultipleLayerTest3()
+        public void Flattern_TrippleLayerTest()
         {
-            Test(MultipleLayerInput3, MultipleLayerExpected3);
-        }
-
-        private void TestPrototype(List<HtmlNode> input, List<HtmlNode> expected)
-        {
-            var result = input.Select(x => x.Clone()).ToList();
-            FlatternPrototype.Flattern(result);
-
-            Assert.AreEqual(expected.Count, result.Count);
-
-            for (int i = 0; i < expected.Count; i++)
-            {
-                var r = result[i];
-                var e = expected[i];
-
-                Assert.AreEqual(e, r);
-            }
+            Test(TrippleLayerInput, TrippleLayerExpected);
         }
 
         private void Test(List<HtmlNode> input, List<HtmlNode> expected)
         {
-            var result = FlatternHtmlNodes.Flattern(input);
+            var result = input.Select(x => x.Clone()).ToList();
+            FlatternHtmlNodes.Apply(result);
 
             Assert.AreEqual(expected.Count, result.Count);
 

@@ -8,43 +8,55 @@ namespace Doc2web.Core.Rendering.Step1
     public static class FlatternHtmlNodes
     {
 
-        /// <summary>
-        /// Ensure that no html nodes are overlasping each other.
-        /// </summary>
-        /// <param name="nodes">Initial list of nodes created by the the processor.</param>
-        /// <returns>Update list of nodes that are not overlapsing each other.</returns>
-        public static List<HtmlNode> Flattern(List<HtmlNode> nodes)
+        private class FirstComparer : IComparer<HtmlNode>
         {
-            List<HtmlNode> results = new List<HtmlNode>();
-            List<List<HtmlNode>> layers = nodes.GroupByLayer();
-
-            foreach (var layer in layers)
+            public int Compare(HtmlNode x, HtmlNode y)
             {
-                var flatLayer = FlatternLayer(layer);
-                var combinedLayer = CombineFlatternedLayers(results, flatLayer);
-
-                results.AddRange(combinedLayer);
+                if (x.Z > y.Z) return -1;
+                if (y.Z > x.Z) return 1;
+                if (x.Start > y.Start) return -1;
+                if (y.Start > x.Start) return 1;
+                return 0;
             }
-
-            results.SortByPriority();
-            return results;
         }
 
-        public static List<HtmlNode> FlatternLayer(List<HtmlNode> layer)
+        public static void Apply(List<HtmlNode> nodes)
         {
-            var singleLayerFlattern = new SingleLayerFlatterner();
-            singleLayerFlattern.Nodes = layer;
-            singleLayerFlattern.HandleIntersections();
-            return singleLayerFlattern.Nodes;
+            nodes.Sort(new FirstComparer());
+
+            int i = 1;
+
+            while (i < nodes.Count)
+            {
+                var target = nodes[i];
+                int j = 0;
+                while (j < i && nodes[j].Z > target.Z && nodes[j].Start < target.End) 
+                {
+                    var other = nodes[j];
+                    if (other.Start > target.Start && other.Start < target.End)
+                    {
+                        nodes.Insert(i, SplitNode(target, other.Start));
+                        break;
+                    }
+                    if (other.End > target.Start && other.End < target.End)
+                    {
+                        nodes.Insert(i, SplitNode(target, other.End));
+                        break;
+                    }
+
+                    j++;
+                }
+                i++;
+            }
         }
 
-        private static List<HtmlNode> CombineFlatternedLayers(List<HtmlNode> upperLayer, List<HtmlNode> flatLayer)
+        private static HtmlNode SplitNode(HtmlNode n, int colisiton)
         {
-            var combineLayerFlattern = new CombineLayerFlatterner();
-            combineLayerFlattern.UpperLayer = upperLayer;
-            combineLayerFlattern.Nodes = flatLayer;
-            combineLayerFlattern.HandleIntersections();
-            return combineLayerFlattern.Nodes;
+            var lastEnd = n.End;
+            var newNode = n.Clone();
+            n.End = colisiton;
+            newNode.Start = colisiton;
+            return newNode;
         }
     }
 }
