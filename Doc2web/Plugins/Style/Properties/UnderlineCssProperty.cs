@@ -16,10 +16,17 @@ namespace Doc2web.Plugins.Style.Properties
 
         public override void InsertCss(CssData cssData)
         {
-            cssData.AddAttribute(
-                Selector,
-                "text-decoration",
-                $"underline {Style} {Color}".TrimEnd());
+            cssData.AddAttribute(Selector, "text-decoration", TextDecoration);
+        }
+
+        private string TextDecoration
+        {
+            get
+            {
+                var style = Style;
+                if (style == "none") return "underline solid white"; // bug fix for chrome, none is not recognized.
+                else return $"underline {Style} {Color}".TrimEnd();
+            }
         }
 
         public override short GetSpecificHashcode() => 
@@ -54,6 +61,8 @@ namespace Doc2web.Plugins.Style.Properties
                     case UnderlineValues.WavyDouble:
                     case UnderlineValues.WavyHeavy:
                         return "wavy";
+                    case UnderlineValues.None:
+                        return "none";
                     default:
                         return "solid";
                 }

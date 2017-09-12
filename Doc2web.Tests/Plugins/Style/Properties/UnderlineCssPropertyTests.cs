@@ -53,6 +53,18 @@ namespace Doc2web.Tests.Plugins.Style.Properties
         }
 
         [TestMethod]
+        public void AsCss_ValNoneTest()
+        {
+            var expected = new CssData();
+            expected.AddAttribute("span.test", "text-decoration", "underline solid white");
+            _instance.Element.Val = UnderlineValues.None;
+
+            var data = _instance.AsCss();
+
+            Assert.AreEqual(expected, data);
+        }
+
+        [TestMethod]
         public void AsCss_ThemeColorTest()
         {
             var expected = new CssData();
@@ -66,7 +78,6 @@ namespace Doc2web.Tests.Plugins.Style.Properties
 
             Assert.AreEqual(expected, data);
         }
-
 
         [TestMethod]
         public void GetSpecificHashcode_EqualTest()
