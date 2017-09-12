@@ -14,8 +14,8 @@ namespace Doc2web.Core.Rendering.Step1
             {
                 if (x.Z > y.Z) return -1;
                 if (y.Z > x.Z) return 1;
-                if (x.Start > y.Start) return -1;
-                if (y.Start > x.Start) return 1;
+                if (x.Start < y.Start) return -1;
+                if (y.Start < x.Start) return 1;
                 return 0;
             }
         }
@@ -30,17 +30,17 @@ namespace Doc2web.Core.Rendering.Step1
             {
                 var target = nodes[i];
                 int j = 0;
-                while (j < i && nodes[j].Z > target.Z && nodes[j].Start < target.End) 
+                while (j < i && nodes[j].Z > target.Z)
                 {
                     var other = nodes[j];
                     if (other.Start > target.Start && other.Start < target.End)
                     {
-                        nodes.Insert(i, SplitNode(target, other.Start));
+                        nodes.Insert(i + 1, SplitNode(target, other.Start));
                         break;
                     }
                     if (other.End > target.Start && other.End < target.End)
                     {
-                        nodes.Insert(i, SplitNode(target, other.End));
+                        nodes.Insert(i + 1, SplitNode(target, other.End));
                         break;
                     }
 
