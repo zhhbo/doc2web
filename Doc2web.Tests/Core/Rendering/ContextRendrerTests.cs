@@ -24,10 +24,10 @@ namespace Doc2web.Tests.Core.Rendering
                     new Run(
                         new Text("This is the text")))
             );
-            _elementContext.AddMultipleNodes(new HtmlNode[]
+            _elementContext.AddMultipleNodes(new HtmlNode[] // Force a node colisison
             {
-                new HtmlNode { Start = 0, End = 10 },
-                new HtmlNode { Start = 3, End = 7 },
+                new HtmlNode { Start = 0, End = 5, Z = 1 },
+                new HtmlNode { Start = 3, End = 7, Z = 0 },
             });
             _elementContext.AddMutations(new Mutation[]
             {
@@ -42,7 +42,7 @@ namespace Doc2web.Tests.Core.Rendering
 
             var result = ContextRenderer.BuildNodes(_elementContext);
 
-            Assert.IsTrue(_elementContext.Nodes.Count() < result.Item1.Count);
+            Assert.IsTrue(_elementContext.Nodes.Count() < result.Item1.Length);
             foreach (var m in result.Item2)
                 m.Received(1).MutateNodes(Arg.Any<List<HtmlNode>>());
         }
@@ -50,7 +50,7 @@ namespace Doc2web.Tests.Core.Rendering
         [TestMethod]
         public void BuildTags_Test()
         {
-            var nodes = _elementContext.Nodes.ToList();
+            var nodes = _elementContext.Nodes.ToArray();
 
             var tags = ContextRenderer.BuildTags(nodes);
 

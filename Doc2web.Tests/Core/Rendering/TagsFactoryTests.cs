@@ -191,7 +191,7 @@ namespace Doc2web.Tests.Core.Rendering.Step2
         private void Test((int, ITag)[] expectedConfig, List<HtmlNode> sample)
         {
             ITag[] expected = Utils.SetRelatedTag(expectedConfig);
-            var result = TagsFactory.Build(sample);
+            var result = TagsFactory.Build(sample.ToArray());
             Assert.AreEqual(expected.Length, result.Length);
 
             for (int i = 0; i < result.Length; i++)

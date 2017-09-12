@@ -27,6 +27,7 @@ namespace Doc2web.Benchmark
         private List<HtmlNode> _tempNodes;
         private ITag[] _tags;
         private StringBuilder _tempStringBuilder;
+        private HtmlNode[] _tempNodesAr;
         private ITag[] _tempsTags;
 
         [GlobalSetup]
@@ -35,10 +36,11 @@ namespace Doc2web.Benchmark
             _wpDoc = WordprocessingDocument.Open(Utils.GetAssetPath("transaction-formatted.docx"), false);
             _body = _wpDoc.MainDocumentPart.Document.Body;
             BuildNodes();
-            _tags = TagsFactory.Build(_nodes);
+            _tags = TagsFactory.Build(_nodes.ToArray());
 
             _tempNodes = new List<HtmlNode>(NodeCount);
             _tempNodes.AddRange(_nodes.Take(NodeCount).Select(x => x.Clone()));
+            _tempNodesAr = _tempNodes.ToArray();
 
             _tempsTags = new ITag[TagCount];
             Array.Copy(_tags, _tempsTags, TagCount);
@@ -71,7 +73,7 @@ namespace Doc2web.Benchmark
         public List<HtmlNode> Flattern() => FlatternHtmlNodes.Flattern(_tempNodes);
 
         [Benchmark]
-        public ITag[] BuildTags() => TagsFactory.Build(_tempNodes);
+        public ITag[] BuildTags() => TagsFactory.Build(_tempNodesAr);
 
         [Benchmark]
         public void RenderTags() => TagsRenderer.Render(_tempsTags, _tempStringBuilder);

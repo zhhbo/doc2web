@@ -12,22 +12,23 @@ namespace Doc2web.Core.Rendering
     {
         public string Render(IElementContext elementContext)
         {
-            (List<HtmlNode> nodes, Mutation[] mutations) = BuildNodes(elementContext);
+            (HtmlNode[] nodes, Mutation[] mutations) = BuildNodes(elementContext);
             ITag[] tags = BuildTags(nodes);
             return Render(elementContext.RootElement.InnerText, mutations, tags);
         }
 
-        public static (List<HtmlNode>, Mutation[]) BuildNodes(IElementContext elementContext)
+        public static (HtmlNode[], Mutation[]) BuildNodes(IElementContext elementContext)
         {
             var nodes = elementContext.Nodes.ToList();
             var mutations = elementContext.Mutations.ToList();
 
             MutationsApplier.Apply(nodes, mutations);
+            FlatternPrototype.Flattern(nodes);
 
-            return (FlatternHtmlNodes.Flattern(nodes), mutations.ToArray());
+            return (nodes.ToArray(), mutations.ToArray());
         }
 
-        public static ITag[] BuildTags(List<HtmlNode> nodes)
+        public static ITag[] BuildTags(HtmlNode[] nodes)
         {
             return TagsFactory.Build(nodes);
         }
