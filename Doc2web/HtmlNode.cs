@@ -26,8 +26,7 @@ namespace Doc2web
         {
             get
             {
-                string val = "";
-                if (_attributes.TryGetValue("class", out val))
+                if (_attributes.TryGetValue("class", out string val))
                     return val.Split(' ');
                 else
                     return new string[] { };
@@ -40,8 +39,7 @@ namespace Doc2web
         {
             get
             {
-                string style;
-                if (_attributes.TryGetValue("style", out style))
+                if (_attributes.TryGetValue("style", out string style))
                     return ParseStyleAttribute(style);
                 else
                     return new Dictionary<string, string>();
@@ -68,8 +66,8 @@ namespace Doc2web
 
         public void AddClass(string name)
         {
-            string defaultVal = "";
-            _attributes.TryGetValue("class", out defaultVal);
+            if (name == null || name.Length == 0) return;
+            _attributes.TryGetValue("class", out string defaultVal);
             _attributes["class"] = (defaultVal + " " + name).Trim();
         }
 

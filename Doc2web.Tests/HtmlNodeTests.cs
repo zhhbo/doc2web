@@ -28,6 +28,16 @@ namespace Doc2web.Tests
             Assert.AreEqual(className, instance.Attributes["class"]);
         }
 
+        [TestMethod]
+        public void AddClass_EmptyTest()
+        {
+            var instance = new HtmlNode();
+
+            instance.AddClass("");
+            instance.AddClass(null);
+
+            Assert.AreEqual(0, instance.Classes.Count);
+        }
 
         [TestMethod]
         public void SetStyle_AddTest()

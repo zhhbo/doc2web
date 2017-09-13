@@ -28,9 +28,15 @@ namespace Doc2web.Plugins.Style
             //"Underline"
         };
 
+        public string ParagraphStylePrefix { get; set; }
+
+        public string RunStylePrefix { get; set; }
+
         public StyleProcessorPlugin(WordprocessingDocument wpDoc)
         {
             _wpDoc = wpDoc;
+            ParagraphStylePrefix = "div.container";
+            RunStylePrefix = "span";
         }
 
         private Styles Styles => _wpDoc.MainDocumentPart.StyleDefinitionsPart.Styles;
@@ -64,7 +70,10 @@ namespace Doc2web.Plugins.Style
                 .As<ICssPropertiesFactory>()
                 .As<ICssPropertiesFactory>();
             builder
-                .Register(r => new CssClassFactory(Styles, r.Resolve<ICssPropertiesFactory>()))
+                .Register(r => new CssClassFactory(Styles, r.Resolve<ICssPropertiesFactory>()) {
+                    ParagraphStylePrefix = ParagraphStylePrefix,
+                    RunStylePrefix = RunStylePrefix
+                })
                 .As<ICssClassFactory>()
                 .InstancePerLifetimeScope();
         }

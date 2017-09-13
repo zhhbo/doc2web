@@ -26,6 +26,13 @@ namespace Doc2web.Tests.Plugins.Style
         }
 
         [TestMethod]
+        public void CssClassFacotry_Test()
+        {
+            Assert.AreEqual("div.container", _instance.ParagraphStylePrefix);
+            Assert.AreEqual("span", _instance.RunStylePrefix);
+        }
+
+        [TestMethod]
         public void Build_FromRunStyleIdTest()
         {
             var mockBasedOn = MockRunCssProps("RunStyle1");
@@ -118,19 +125,19 @@ namespace Doc2web.Tests.Plugins.Style
             AssertContainsSingleRProp(rCssProp, defaults[1]);
         }
 
-        private static void AssertContainsSingleRProp(MockProp2 rCssProp, ICssClass cls)
+        private void AssertContainsSingleRProp(MockProp2 rCssProp, ICssClass cls)
         {
             var rClsDefault = cls as RunCssClass;
             Assert.IsNotNull(rClsDefault);
-            Assert.AreEqual("span", rClsDefault.Selector);
+            Assert.AreEqual(_instance.RunStylePrefix, rClsDefault.Selector);
             Assert.AreEqual(rCssProp, rClsDefault.RunProps.Single());
         }
 
-        private static void AssertContainsSinglePProps(MockProp1 pCssProp, ICssClass cls)
+        private void AssertContainsSinglePProps(MockProp1 pCssProp, ICssClass cls)
         {
             var pClsDefault = cls as ParagraphCssClass;
             Assert.IsNotNull(pClsDefault);
-            Assert.AreEqual("p", pClsDefault.Selector);
+            Assert.AreEqual(_instance.ParagraphStylePrefix, pClsDefault.Selector);
             Assert.AreEqual(pCssProp, pClsDefault.ParagraphProps.Single());
             Assert.AreEqual(0, pClsDefault.RunProps.Count);
         }
