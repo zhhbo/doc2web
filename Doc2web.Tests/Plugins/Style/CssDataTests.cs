@@ -46,7 +46,7 @@ namespace Doc2web.Tests.Plugins.Style
             var cssData = new CssData();
             cssData.AddAttribute("span", "color", "red");
 
-            Assert.AreEqual("red", cssData["span"]["color"]);
+            Assert.AreEqual("red", cssData[""]["span"]["color"]);
         }
 
         [TestMethod]
@@ -56,7 +56,18 @@ namespace Doc2web.Tests.Plugins.Style
             cssData.AddAttribute("span", "color", "red");
             cssData.AddAttribute("span", "font", "bold");
 
-            Assert.AreEqual("bold", cssData["span"]["font"]);
+            Assert.AreEqual("bold", cssData[""]["span"]["font"]);
+        }
+
+        [TestMethod]
+        public void AddAttribute_MediaQueryTest()
+        {
+            string mq = "(min-width: 30em) and (orientation: landscape)";
+            var cssData = new CssData();
+            cssData.AddAttribute(mq, "span", "color", "red");
+            cssData.AddAttribute(mq, "span", "color", "blue");
+
+            Assert.AreEqual("blue", cssData[mq]["span"]["color"]);
         }
 
         [TestMethod]
@@ -80,8 +91,9 @@ namespace Doc2web.Tests.Plugins.Style
             Assert.AreEqual(expected, cssData1);
         }
 
+
         [TestMethod]
-        public void RenderInto_Test()
+        public void RenderInto_NoMediaQueryTest()
         {
             string expectedCss = 
                 @".test {color: blue;font-weigth: light;}p {color: red;font-weigth: bold;}";
@@ -90,6 +102,25 @@ namespace Doc2web.Tests.Plugins.Style
             cssData.AddAttribute("p", "color", "red");
             cssData.AddAttribute(".test", "font-weigth", "light");
             cssData.AddAttribute(".test", "color", "blue");
+
+            var sb = new StringBuilder();
+            cssData.RenderInto(sb);
+            var result = sb.ToString().Trim();
+
+            Assert.AreEqual(expectedCss, result);
+        }
+
+        [TestMethod]
+        public void RenderInto_MediaQueryTest()
+        {
+            string mq = "(max-width: 21.59cm)";
+            string expectedCss = 
+                @"@media (max-width: 21.59cm) { .test {color: blue;font-weigth: light;}p {color: red;font-weigth: bold;} }";
+            var cssData = new CssData();
+            cssData.AddAttribute(mq, "p", "font-weigth", "bold");
+            cssData.AddAttribute(mq, "p", "color", "red");
+            cssData.AddAttribute(mq, ".test", "font-weigth", "light");
+            cssData.AddAttribute(mq, ".test", "color", "blue");
 
             var sb = new StringBuilder();
             cssData.RenderInto(sb);

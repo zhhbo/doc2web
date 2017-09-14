@@ -13,6 +13,7 @@ namespace Doc2web.Tests.Plugins.Style
     {
         private List<ICssClass> _defaultCls;
         private ICssClassFactory _clsFactory;
+        private StyleConfiguration _config;
         private CssRegistrator _instance;
 
         [TestInitialize]
@@ -21,7 +22,8 @@ namespace Doc2web.Tests.Plugins.Style
             _defaultCls = new List<ICssClass>();
             _clsFactory = Substitute.For<ICssClassFactory>();
             _clsFactory.BuildDefaults().Returns(_defaultCls);
-            _instance = new CssRegistrator(_clsFactory);
+            _config = new StyleConfiguration();
+            _instance = new CssRegistrator(_config, _clsFactory);
         }
 
         [TestMethod]
@@ -83,7 +85,7 @@ namespace Doc2web.Tests.Plugins.Style
 
             Assert.AreEqual(rClsName2, rClsName);
             Assert.AreEqual(expectedStyle1Css, output);
-            cls.Received(1).Selector = "span." + rClsName;
+            cls.Received(1).Selector = _config.RunCssClassPrefix + "." + rClsName;
         }
 
         [TestMethod]
@@ -102,7 +104,7 @@ namespace Doc2web.Tests.Plugins.Style
 
             Assert.AreEqual(rClsName2, rClsName);
             Assert.AreEqual(expectedStyle1Css, output);
-            cls.Received(1).Selector = "p." + rClsName;
+            cls.Received(1).Selector = _config.ParagraphCssClassPrefix + "." + rClsName;
         }
 
         [TestMethod]

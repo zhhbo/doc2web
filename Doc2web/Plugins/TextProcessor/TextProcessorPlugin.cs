@@ -15,6 +15,12 @@ namespace Doc2web.Plugins.TextProcessor
 
         public int ContainerZ { get; set; }
 
+        public string IdentationTag { get; set; }
+
+        public string LeftIdentationCls { get; set; }
+
+        public string RightIdentationCls { get; set; }
+
         public string ParagraphTag { get; set; }
 
         public string ParagraphCls { get; set; }
@@ -32,6 +38,9 @@ namespace Doc2web.Plugins.TextProcessor
             ContainerTag = "div";
             ContainerCls = "container";
             ContainerZ = 1_000_000;
+            IdentationTag = "div";
+            LeftIdentationCls = "leftspacer";
+            RightIdentationCls = "rightspacer";
             ParagraphTag = "p";
             ParagraphCls = "";
             ParagraphZ = 1_000;
@@ -51,6 +60,16 @@ namespace Doc2web.Plugins.TextProcessor
                 Z = ContainerZ,
             };
             containerNode.AddClass(ContainerCls);
+            context.AddNode(containerNode);
+            context.AddNode(BuildLeftIdentation());
+            context.AddNode(BuildPNode(context, p, containerNode));
+            context.AddNode(BuildRightIdentation(containerNode.End));
+
+            context.ProcessChilden();
+        }
+
+        private HtmlNode BuildPNode(IElementContext context, Paragraph p, HtmlNode containerNode)
+        {
             var pPr = p.ParagraphProperties;
             if (pPr != null)
             {
@@ -60,7 +79,8 @@ namespace Doc2web.Plugins.TextProcessor
                     containerNode.AddClass(dynamicStyle);
 
                 var styleId = p.ParagraphProperties?.ParagraphStyleId?.Val?.Value;
-                if (styleId != null) {
+                if (styleId != null)
+                {
                     containerNode.AddClass(cssRegistrator.Register(styleId));
                 }
             }
@@ -73,10 +93,33 @@ namespace Doc2web.Plugins.TextProcessor
                 Z = ParagraphZ,
             };
             pNode.AddClass(ParagraphCls);
-            context.AddNode(containerNode);
-            context.AddNode(pNode);
+            return pNode;
+        }
 
-            context.ProcessChilden();
+        private HtmlNode BuildLeftIdentation()
+        {
+            var node = new HtmlNode
+            {
+                Start = 0,
+                End = 0,
+                Tag = IdentationTag,
+                Z = ParagraphZ
+            };
+            node.AddClass(LeftIdentationCls);
+            return node;
+        }
+
+        private HtmlNode BuildRightIdentation(int i)
+        {
+            var node = new HtmlNode
+            {
+                Start = i,
+                End = i,
+                Tag = IdentationTag,
+                Z = ParagraphZ
+            };
+            node.AddClass(RightIdentationCls);
+            return node;
         }
 
         [ElementProcessing]
@@ -108,5 +151,14 @@ namespace Doc2web.Plugins.TextProcessor
             context.AddNode(node);
             context.ProcessChilden();
         }
+
+        public void PostProcess(IGlobalContext context)
+        {
+            context.AddCss(RequiredCss);
+
+        }
+
+        private string RequiredCss =>
+            $"{ContainerTag}.{ContainerCls} {{display: flex; flex-direction: column}}";
     }
 }

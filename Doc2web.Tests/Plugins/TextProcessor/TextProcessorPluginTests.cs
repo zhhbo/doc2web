@@ -69,6 +69,10 @@ namespace Doc2web.Tests.Plugins.TextProcessor
             Assert.AreEqual("container", _instance.ContainerCls);
             Assert.AreEqual(1_000_000, _instance.ContainerZ);
 
+            Assert.AreEqual("div", _instance.IdentationTag);
+            Assert.AreEqual("leftspacer", _instance.LeftIdentationCls);
+            Assert.AreEqual("rightspacer", _instance.RightIdentationCls);
+
             Assert.AreEqual("p", _instance.ParagraphTag);
             Assert.AreEqual("", _instance.ParagraphCls);
             Assert.AreEqual(1_000, _instance.ParagraphZ);
@@ -96,11 +100,45 @@ namespace Doc2web.Tests.Plugins.TextProcessor
         }
 
         [TestMethod]
-        public void ProcessParagraph_AddParagraphTest()
+        public void ProcessParagraph_AddLeftIdentationsTest()
         {
             _instance.ProcessParagraph(_pContext, _p);
 
             var firstNode = _pContext.Nodes.ElementAt(1);
+            var expected = new HtmlNode
+            {
+                Tag = _instance.IdentationTag,
+                Start = 0,
+                End = 0,
+                Z = _instance.ParagraphZ,
+            };
+            expected.AddClass(_instance.LeftIdentationCls);
+            Assert.AreEqual(expected, firstNode);
+        }
+
+        [TestMethod]
+        public void ProcessParagraph_AddRightIdentationsTest()
+        {
+            _instance.ProcessParagraph(_pContext, _p);
+
+            var firstNode = _pContext.Nodes.ElementAt(3);
+            var expected = new HtmlNode
+            {
+                Tag = _instance.IdentationTag,
+                Start = _p.InnerText.Length,
+                End = _p.InnerText.Length,
+                Z = _instance.ParagraphZ,
+            };
+            expected.AddClass(_instance.RightIdentationCls);
+            Assert.AreEqual(expected, firstNode);
+        }
+
+        [TestMethod]
+        public void ProcessParagraph_AddParagraphTest()
+        {
+            _instance.ProcessParagraph(_pContext, _p);
+
+            var firstNode = _pContext.Nodes.ElementAt(2);
             var expected = new HtmlNode
             {
                 Tag = _instance.ParagraphTag,

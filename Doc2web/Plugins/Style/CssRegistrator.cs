@@ -10,13 +10,17 @@ namespace Doc2web.Plugins.Style
 {
     public class CssRegistrator : ICssRegistrator
     {
+        private StyleConfiguration _config;
         private ICssClassFactory _classFactory;
         private ConcurrentDictionary<string, byte> _classesToRender;
         private Dictionary<ICssClass, string> _dynamicParagraphClassesUIDs;
         private Dictionary<ICssClass, string> _dynamicRunClassesUIDs;
 
-        public CssRegistrator(ICssClassFactory classFactory)
+        public CssRegistrator(
+            StyleConfiguration config,
+            ICssClassFactory classFactory)
         {
+            _config = config;
             _classFactory = classFactory;
             _classesToRender = new ConcurrentDictionary<string, byte>();
             _dynamicParagraphClassesUIDs = new Dictionary<ICssClass, string>();
@@ -32,12 +36,12 @@ namespace Doc2web.Plugins.Style
         public string Register(ParagraphProperties pPr)
         {
             var cls = _classFactory.Build(pPr);
-            return TryGetDynamicClass(cls, "p.{0}", _dynamicParagraphClassesUIDs);
+            return TryGetDynamicClass(cls, _config.ParagraphCssClassPrefix + ".{0}", _dynamicParagraphClassesUIDs);
         }
         public string Register(RunProperties rPr)
         {
             var cls = _classFactory.Build(rPr);
-            return TryGetDynamicClass(cls, "span.{0}",_dynamicRunClassesUIDs);
+            return TryGetDynamicClass(cls, _config.RunCssClassPrefix + ".{0}",_dynamicRunClassesUIDs);
         }
 
         private string TryGetDynamicClass(ICssClass cls, string selectorPrefix, Dictionary<ICssClass, string> dict)

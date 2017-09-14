@@ -34,7 +34,7 @@ namespace Doc2web.Tests.Plugins.Style.Properties
 
             var result = _instance.AsCss();
 
-            Assert.AreEqual(ExpectedValues, result["span.test"]["font-family"]);
+            Assert.AreEqual(ExpectedValues, result[""]["span.test"]["font-family"]);
         }
 
         [TestMethod]
@@ -44,7 +44,7 @@ namespace Doc2web.Tests.Plugins.Style.Properties
 
             var result = _instance.AsCss();
 
-            Assert.AreEqual(ExpectedThemeValues, result["span.test"]["font-family"]);
+            Assert.AreEqual(ExpectedThemeValues, result[""]["span.test"]["font-family"]);
         }
 
         [TestMethod]

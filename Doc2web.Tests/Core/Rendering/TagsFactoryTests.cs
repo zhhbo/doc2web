@@ -52,20 +52,20 @@ namespace Doc2web.Tests.Core.Rendering.Step2
 
         private static List<HtmlNode> InputSorting2 => new List<HtmlNode>
         {
-            new HtmlNode { Start = 00, End = 05, Z = 100, Tag="div" },
-            new HtmlNode { Start = 00, End = 05, Z = 050, Tag="span" },
-            new HtmlNode { Start = 05, End = 10, Z = 050, Tag="span" },
-            new HtmlNode { Start = 05, End = 10, Z = 100, Tag="div" },
+            new HtmlNode { Start = 00, End = 05, Z = 100, Tag="a" },
+            new HtmlNode { Start = 00, End = 05, Z = 050, Tag="b" },
+            new HtmlNode { Start = 05, End = 10, Z = 050, Tag="c" },
+            new HtmlNode { Start = 05, End = 10, Z = 100, Tag="d" },
         };
 
         private static (int, ITag)[] ExpectedSorting2 => new(int, ITag)[]
         {
-           (3, new OpeningTag { Index = 00, Z = 100, Name="div" }),
-           (2, new OpeningTag { Index = 00, Z = 050, Name="span" }),
+           (3, new OpeningTag { Index = 00, Z = 100, Name="a" }),
+           (2, new OpeningTag { Index = 00, Z = 050, Name="b" }),
            (1, new ClosingTag { Index = 05 }),
            (0, new ClosingTag { Index = 05 }),
-           (7, new OpeningTag { Index = 05, Z = 100, Name="div" }),
-           (6, new OpeningTag { Index = 05, Z = 050, Name="span" }),
+           (7, new OpeningTag { Index = 05, Z = 100, Name="d" }),
+           (6, new OpeningTag { Index = 05, Z = 050, Name="c" }),
            (5, new ClosingTag { Index = 10 }),
            (4, new ClosingTag { Index = 10 })
         };
@@ -133,6 +133,26 @@ namespace Doc2web.Tests.Core.Rendering.Step2
            (0, new ClosingTag { Index = 0 }),
         };
 
+        private static List<HtmlNode> InputSorting6 => new List<HtmlNode>
+        {
+            new HtmlNode { Start = 0, End = 5, Z = 1, Tag="section" },
+            new HtmlNode { Start = 0, End = 0, Z = 0, Tag="div" },
+            new HtmlNode { Start = 0, End = 5, Z = 0, Tag="p" },
+            new HtmlNode { Start = 5, End = 5, Z = 0, Tag="div" },
+        };
+
+        private static (int, ITag)[] ExpectedSorting6 => new(int, ITag)[]
+        {
+            (7, new OpeningTag { Index = 0, Z = 1, Name = "section" } ),
+            (2, new OpeningTag { Index = 0, Z = 0, Name = "div" } ),
+            (1, new ClosingTag { Index = 0 }),
+            (4, new OpeningTag { Index = 0, Z = 0, Name = "p" } ),
+            (3, new ClosingTag { Index = 5 }),
+            (6, new OpeningTag { Index = 5, Z = 0, Name = "div" } ),
+            (5, new ClosingTag { Index = 5 }),
+            (0, new ClosingTag { Index = 5 }),
+        };
+
         [TestMethod]
         public void Build_OpenCloseTest()
         {
@@ -187,6 +207,11 @@ namespace Doc2web.Tests.Core.Rendering.Step2
             }
         }
 
+        [TestMethod]
+        public void Build_SortingTest6()
+        {
+            Test(ExpectedSorting6, InputSorting6);
+        }
 
         private void Test((int, ITag)[] expectedConfig, List<HtmlNode> sample)
         {

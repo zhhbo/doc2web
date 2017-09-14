@@ -14,29 +14,41 @@ namespace Doc2web.Plugins.Style
     public class StyleProcessorPlugin
     {
         private WordprocessingDocument _wpDoc;
-        private static string[] restricted = new string[]
+        //private static string[] restricted = new string[]
+        //{
+        //    //"Bold",
+        //    //"Caps",
+        //    //"Color",
+        //    //"FontSize",
+        //    //"Highlight",
+        //    //"Italic",
+        //    //"Justification",
+        //    //"RunFonts",
+        //    //"SmallCaps",
+        //    //"Underline"
+        //};
+
+        private StyleConfiguration _config = new StyleConfiguration();
+
+        public string ParagraphClassCssPrefix
         {
-            //"Bold",
-            //"Caps",
-            //"Color",
-            //"FontSize",
-            //"Highlight",
-            //"Italic",
-            //"Justification",
-            //"RunFonts",
-            //"SmallCaps",
-            //"Underline"
-        };
+            get => _config.ParagraphCssClassPrefix;
+            set => _config.ParagraphCssClassPrefix = value;
+        }
 
-        public string ParagraphStylePrefix { get; set; }
-
-        public string RunStylePrefix { get; set; }
+        public string RunClassCssPrefix
+        {
+            get => _config.RunCssClassPrefix;
+            set => _config.RunCssClassPrefix = value;
+        }
 
         public StyleProcessorPlugin(WordprocessingDocument wpDoc)
         {
             _wpDoc = wpDoc;
-            ParagraphStylePrefix = "div.container";
-            RunStylePrefix = "span";
+            ParagraphClassCssPrefix = "div.container";
+            RunClassCssPrefix = "span";
+            _config.LeftIdentationCssClassPrefix = "> .leftspacer";
+            _config.RightIdentationCssClassPrefix = "> .rightspacer";
         }
 
         private Styles Styles => _wpDoc.MainDocumentPart.StyleDefinitionsPart.Styles;
@@ -47,12 +59,12 @@ namespace Doc2web.Plugins.Style
         {
             builder.RegisterAssemblyTypes(Assembly.GetExecutingAssembly())
                 .Where(t => t.Name.EndsWith("CssProperty") && !t.IsAbstract)
-                .Where(t =>
-                {
-                    foreach (var r in restricted)
-                        if (t.Name.StartsWith(r)) return false;
-                    return true;
-                })
+                //.Where(t =>
+                //{
+                //    foreach (var r in restricted)
+                //        if (t.Name.StartsWith(r)) return false;
+                //    return true;
+                //})
                 .As(x => {
                     var t = typeof(CssProperty<>);
                     return t.MakeGenericType(x.BaseType.GetGenericArguments());
@@ -70,10 +82,10 @@ namespace Doc2web.Plugins.Style
                 .As<ICssPropertiesFactory>()
                 .As<ICssPropertiesFactory>();
             builder
-                .Register(r => new CssClassFactory(Styles, r.Resolve<ICssPropertiesFactory>()) {
-                    ParagraphStylePrefix = ParagraphStylePrefix,
-                    RunStylePrefix = RunStylePrefix
-                })
+                .Register(r => new CssClassFactory(
+                    Styles, 
+                    r.Resolve<StyleConfiguration>(),
+                    r.Resolve<ICssPropertiesFactory>()))
                 .As<ICssClassFactory>()
                 .InstancePerLifetimeScope();
         }
@@ -81,6 +93,7 @@ namespace Doc2web.Plugins.Style
         [InitializeProcessing]
         public void InitProcessing(ContainerBuilder builder)
         {
+            builder.RegisterInstance(_config.Clone());
             builder
                 .RegisterType<CssRegistrator>()
                 .As<ICssRegistrator>()
@@ -91,7 +104,7 @@ namespace Doc2web.Plugins.Style
         public void InjectCss(IGlobalContext context)
         {
             var cssRegistrator = context.Container.Resolve<ICssRegistrator>() as CssRegistrator;
-            var sb = new StringBuilder();
+            var sb = new StringBuilder(".container { display: flex; } .container > p { flex: 1;  margin-top: 0; }");
             cssRegistrator.RenderInto(sb);
             context.AddCss(sb.ToString());
         }

@@ -9,7 +9,7 @@ namespace Doc2web.Core.Rendering.Step2
     {
         public static ITag[] Build(HtmlNode[] nodes)
         {
-            var tags = BuildTags(nodes).ToArray();
+            var tags = BuildTags(nodes).OrderBy(x => x.Index).ToArray();
             Array.Sort(tags, new TagComparer());
             return tags;
         }

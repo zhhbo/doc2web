@@ -15,6 +15,7 @@ namespace Doc2web.Tests.Plugins.Style
     {
         private Styles _styles;
         private ICssPropertiesFactory _propsFac;
+        private StyleConfiguration _config;
         private CssClassFactory _instance;
 
         [TestInitialize]
@@ -22,14 +23,8 @@ namespace Doc2web.Tests.Plugins.Style
         {
             _styles = Samples.StyleBasedOn1.CreateStyles();
             _propsFac = Substitute.For<ICssPropertiesFactory>();
-            _instance = new CssClassFactory(_styles, _propsFac);
-        }
-
-        [TestMethod]
-        public void CssClassFacotry_Test()
-        {
-            Assert.AreEqual("div.container", _instance.ParagraphStylePrefix);
-            Assert.AreEqual("span", _instance.RunStylePrefix);
+            _config = new StyleConfiguration();
+            _instance = new CssClassFactory(_styles, _config, _propsFac);
         }
 
         [TestMethod]
@@ -129,7 +124,7 @@ namespace Doc2web.Tests.Plugins.Style
         {
             var rClsDefault = cls as RunCssClass;
             Assert.IsNotNull(rClsDefault);
-            Assert.AreEqual(_instance.RunStylePrefix, rClsDefault.Selector);
+            Assert.AreEqual(_config.RunCssClassPrefix, rClsDefault.Selector);
             Assert.AreEqual(rCssProp, rClsDefault.RunProps.Single());
         }
 
@@ -137,7 +132,7 @@ namespace Doc2web.Tests.Plugins.Style
         {
             var pClsDefault = cls as ParagraphCssClass;
             Assert.IsNotNull(pClsDefault);
-            Assert.AreEqual(_instance.ParagraphStylePrefix, pClsDefault.Selector);
+            Assert.AreEqual(_config.ParagraphCssClassPrefix, pClsDefault.Selector);
             Assert.AreEqual(pCssProp, pClsDefault.ParagraphProps.Single());
             Assert.AreEqual(0, pClsDefault.RunProps.Count);
         }

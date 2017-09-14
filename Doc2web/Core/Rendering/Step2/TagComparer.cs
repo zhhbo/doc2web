@@ -81,6 +81,8 @@ namespace Doc2web.Core.Rendering.Step2
         private int CompareOpeningClosing(OpeningTag x, ClosingTag y)
         {
             if (x.RelatedIndex <= y.RelatedIndex) return -1;
+            if (x.RelatedIndex < y.Index) return -1;
+            if (x.RelatedIndex == y.Index && x.Z < y.Z) return -1;
             return 1;
         }
 

@@ -10,19 +10,20 @@ namespace Doc2web.Plugins.Style
     public class CssClassFactory : ICssClassFactory
     {
         private Dictionary<string, DocumentFormat.OpenXml.Wordprocessing.Style> _styleDictionary;
+        private StyleConfiguration _config;
         private DocDefaults _docDefaults;
         private Dictionary<string, ParagraphCssClass> _pClassesChache;
         private Dictionary<string, RunCssClass> _rClassesCache;
         private ICssPropertiesFactory _propsFac;
 
-        public string ParagraphStylePrefix { get; set; }
-        public string RunStylePrefix { get; set; }
 
-        public CssClassFactory(Styles styles, ICssPropertiesFactory cssPropertyFactory)
+        public CssClassFactory(
+            Styles styles, 
+            StyleConfiguration config,
+            ICssPropertiesFactory cssPropertyFactory)
         {
             InitStyleDictionnary(styles);
-            ParagraphStylePrefix = "div.container";
-            RunStylePrefix = "span";
+            _config = config;
             _docDefaults = styles.DocDefaults;
             _pClassesChache = new Dictionary<string, ParagraphCssClass>();
             _rClassesCache = new Dictionary<string, RunCssClass>();
@@ -54,7 +55,7 @@ namespace Doc2web.Plugins.Style
                 .ParagraphPropertiesBaseStyle;
             if (pDefaults != null)
             {
-                var pCls = new ParagraphCssClass { Selector = ParagraphStylePrefix };
+                var pCls = new ParagraphCssClass { Selector = _config.ParagraphCssClassPrefix };
                 pCls.ParagraphProps.AddMany(_propsFac.Build(pDefaults));
                 cls.Add(pCls);
             }
@@ -65,7 +66,7 @@ namespace Doc2web.Plugins.Style
             var rDefaults = _docDefaults.RunPropertiesDefault?.RunPropertiesBaseStyle;
             if (rDefaults != null)
             {
-                var rCls = new RunCssClass { Selector = RunStylePrefix };
+                var rCls = new RunCssClass { Selector = _config.RunCssClassPrefix };
                 rCls.RunProps.AddMany(_propsFac.Build(rDefaults));
                 cls.Add(rCls);
             }
@@ -103,7 +104,7 @@ namespace Doc2web.Plugins.Style
             if (style.BasedOn?.Val?.Value != null)
                 cls.BasedOn = Build(style.BasedOn.Val.Value) as RunCssClass;
 
-            cls.Selector = $"{RunStylePrefix}.{style.StyleId.Value}";
+            cls.Selector = $"{_config.RunCssClassPrefix}.{style.StyleId.Value}";
             _rClassesCache.Add(style.StyleId.Value, cls);
 
             return cls;
@@ -122,7 +123,7 @@ namespace Doc2web.Plugins.Style
             if (style.BasedOn?.Val?.Value != null)
                 cls.BasedOn = Build(style.BasedOn.Val.Value) as ParagraphCssClass;
 
-            cls.Selector = $"{ParagraphStylePrefix}.{style.StyleId.Value}";
+            cls.Selector = $"{_config.ParagraphCssClassPrefix}.{style.StyleId.Value}";
             _pClassesChache.Add(style.StyleId.Value, cls);
 
             return cls;
