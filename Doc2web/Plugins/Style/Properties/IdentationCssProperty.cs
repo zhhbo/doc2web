@@ -19,6 +19,25 @@ namespace Doc2web.Plugins.Style.Properties
         {
             AddTryIdentation(cssData, LeftIndent, _config.LeftIdentationCssClassPrefix);
             AddTryIdentation(cssData, RightIndent, _config.RightIdentationCssClassPrefix);
+            AddTryAlinea(cssData, Hanging);
+            AddTryAlinea(cssData, FirstLine);
+        }
+
+        private void AddTryAlinea(CssData cssData, int? indentation)
+        {
+            if (!indentation.HasValue) return;
+            cssData.AddAttribute(
+                @"(max-width: 21.59cm)",
+                Selector,
+                "text-indent",
+                Math.Round(Utils.TwipsToPageRatio(indentation.Value) * 100, 3) + "%"
+            );
+            cssData.AddAttribute(
+                @"(min-width: 21.59cm)",
+                Selector,
+                "text-indent",
+                Math.Round(Utils.TwipsToCm(indentation.Value), 3) + "cm"
+            );
         }
 
         private void AddTryIdentation(CssData cssData, int? indent, string cssSuffix)
@@ -45,6 +64,18 @@ namespace Doc2web.Plugins.Style.Properties
         private int? LeftIndent => TryGetValue(Element.Left);
 
         private int? RightIndent => TryGetValue(Element.Right);
+
+        private int? Hanging
+        {
+            get
+            {
+                var x = TryGetValue(Element.Hanging);
+                if (x.HasValue) return x * -1;
+                return x;
+
+            }
+        }
+        private int? FirstLine => TryGetValue(Element.FirstLine);
 
         private int? TryGetValue(StringValue v)
         {

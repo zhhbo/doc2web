@@ -77,6 +77,48 @@ namespace Doc2web.Tests.Plugins.Style.Properties
         }
 
         [TestMethod]
+        public void InsertCss_HangingTest()
+        {
+            var expected = new CssData();
+            expected.AddAttribute(
+                "(max-width: 21.59cm)",
+                "div.container.test-class",
+                "text-indent",
+                "-2.941%");
+            expected.AddAttribute(
+                "(min-width: 21.59cm)",
+                "div.container.test-class",
+                "text-indent",
+                "-0.635cm");
+            _instance.Element.Hanging = new StringValue("360");
+
+            var result = _instance.AsCss();
+
+            Assert.AreEqual(expected, result);
+        }
+
+        [TestMethod]
+        public void InsertCss_FirstLineTest()
+        {
+            var expected = new CssData();
+            expected.AddAttribute(
+                "(max-width: 21.59cm)",
+                "div.container.test-class",
+                "text-indent",
+                "2.941%");
+            expected.AddAttribute(
+                "(min-width: 21.59cm)",
+                "div.container.test-class",
+                "text-indent",
+                "0.635cm");
+            _instance.Element.FirstLine = new StringValue("360");
+
+            var result = _instance.AsCss();
+
+            Assert.AreEqual(expected, result);
+        }
+
+        [TestMethod]
         public void GetSpeficicHashcode_Test()
         {
             _instance.Element.Left = new StringValue("720");
