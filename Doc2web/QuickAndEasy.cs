@@ -5,6 +5,7 @@ using DocumentFormat.OpenXml.Packaging;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Doc2web.Plugins.Numbering;
 
 namespace Doc2web
 {
@@ -15,6 +16,7 @@ namespace Doc2web
             using (var conversionEngine = new ConversionEngine(
                 new StyleProcessorPlugin(wpDoc),
                 new TextProcessorPlugin(),
+                new NumberingProcessorPlugin(wpDoc),
                 new CrossReferencesCleanupPlugin(),
                 new HyphenInsertionPlugin(),
                 new BreakInsertionPlugin(),

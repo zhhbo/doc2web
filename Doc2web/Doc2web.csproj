@@ -21,7 +21,6 @@
 
   <ItemGroup>
     <Folder Include="Plugins\TrackChanges\" />
-    <Folder Include="Plugins\Numbering\" />
   </ItemGroup>
 
 </Project>
