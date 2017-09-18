@@ -12,7 +12,7 @@ namespace Doc2web.Plugins.TextFixes
         {
             context.AddMutation(new TextInsertion
             {
-                Index = context.TextIndex,
+                Position = context.TextIndex,
                 Text = "&#173;"
             });
         }
@@ -22,7 +22,7 @@ namespace Doc2web.Plugins.TextFixes
         {
             context.AddMutation(new TextInsertion
             {
-                Index = context.TextIndex,
+                Position = context.TextIndex,
                 Text = "&#8209;"
             });
         }

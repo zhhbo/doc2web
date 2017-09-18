@@ -24,7 +24,6 @@ namespace Doc2web.Tests.Core.Rendering
                 new HtmlNode { Start = 00, End = 10, Z = 100, Tag="div" },
                 new HtmlNode { Start = 05, End = 10, Z = 000, Tag="section" },
                 new HtmlNode { Start = 10, End = 15, Z = 000, Tag="section" }
-
             };
 
         private List<HtmlNode> ColisionStartInput =>

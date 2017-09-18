@@ -18,8 +18,8 @@ namespace Doc2web.Tests.Core.Rendering.Step2
 
         private static (int, ITag)[] ExpectedOpenClose => new(int, ITag)[]
         {
-           (1, new OpeningTag { Index = 0, Z = 0, Name = "div" }),
-           (0, new ClosingTag { Index = 10 })
+           (1, new OpeningTag { Position = 0, Name = "div" }),
+           (0, new ClosingTag { Position = 10 })
         };
 
 
@@ -30,162 +30,7 @@ namespace Doc2web.Tests.Core.Rendering.Step2
 
         private static (int, ITag)[] ExpectedSelfClosing => new(int, ITag)[]
         {
-           (0, new SelfClosingTag { Index = 0, Z = 0, Name = "br" }),
-        };
-
-        private static List<HtmlNode> InputSorting1 => new List<HtmlNode>
-        {
-            new HtmlNode { Start = 00, End = 10, Z = 100 },
-            new HtmlNode { Start = 00, End = 05, Z = 050 },
-            new HtmlNode { Start = 05, End = 10, Z = 050 }
-        };
-
-        private static (int, ITag)[] ExpectedSorting1 => new(int, ITag)[]
-        {
-           (5, new OpeningTag { Index = 00, Z = 100 }),
-           (2, new OpeningTag { Index = 00, Z = 050 }),
-           (1, new ClosingTag { Index = 05 }),
-           (4, new OpeningTag { Index = 05, Z = 050 }),
-           (3, new ClosingTag { Index = 10 }),
-           (0, new ClosingTag { Index = 10 })
-        };
-
-        private static List<HtmlNode> InputSorting2 => new List<HtmlNode>
-        {
-            new HtmlNode { Start = 00, End = 05, Z = 100, Tag="a" },
-            new HtmlNode { Start = 00, End = 05, Z = 050, Tag="b" },
-            new HtmlNode { Start = 05, End = 10, Z = 050, Tag="c" },
-            new HtmlNode { Start = 05, End = 10, Z = 100, Tag="d" },
-        };
-
-        private static (int, ITag)[] ExpectedSorting2 => new(int, ITag)[]
-        {
-           (3, new OpeningTag { Index = 00, Z = 100, Name="a" }),
-           (2, new OpeningTag { Index = 00, Z = 050, Name="b" }),
-           (1, new ClosingTag { Index = 05 }),
-           (0, new ClosingTag { Index = 05 }),
-           (7, new OpeningTag { Index = 05, Z = 100, Name="d" }),
-           (6, new OpeningTag { Index = 05, Z = 050, Name="c" }),
-           (5, new ClosingTag { Index = 10 }),
-           (4, new ClosingTag { Index = 10 })
-        };
-
-        private static List<HtmlNode> InputSorting3 => new List<HtmlNode>
-        {
-            new HtmlNode { Start = 00, End = 10, Z = 075, Tag="div" },
-            new HtmlNode { Start = 00, End = 00, Z = 100, Tag="hr" },
-            new HtmlNode { Start = 00, End = 00, Z = 050, Tag="hr" },
-            new HtmlNode { Start = 05, End = 05, Z = 050, Tag="br" },
-            new HtmlNode { Start = 05, End = 05, Z = 100, Tag="br" },
-            new HtmlNode { Start = 10, End = 10, Z = 050, Tag="hr" },
-            new HtmlNode { Start = 10, End = 10, Z = 100, Tag="hr" },
-        };
-
-        private static (int, ITag)[] ExpectedSorting3 => new(int, ITag)[]
-        {
-           (0, new SelfClosingTag { Index = 00, Z = 100, Name = "hr" }),
-           (6, new OpeningTag     { Index = 00, Z = 075, Name = "div" }),
-           (2, new SelfClosingTag { Index = 00, Z = 050, Name = "hr" }),
-           (3, new SelfClosingTag { Index = 05, Z = 050, Name = "br" }),
-           (4, new SelfClosingTag { Index = 05, Z = 100, Name = "br" }),
-           (3, new SelfClosingTag { Index = 10, Z = 050, Name = "hr" }),
-           (1, new ClosingTag     { Index = 10 }),
-           (5, new SelfClosingTag { Index = 10, Z = 100, Name = "hr" }),
-        };
-
-        private static List<HtmlNode> InputSorting4 => new List<HtmlNode>
-        {
-            new HtmlNode { Start = 0, End = 0, Z = 0, Tag="br" },
-            new HtmlNode { Start = 0, End = 0, Z = 0, Tag="hr" },
-            new HtmlNode { Start = 0, End = 1, Z = 0, Tag="q" },
-            new HtmlNode { Start = 0, End = 1, Z = 0, Tag="r" },
-            new HtmlNode { Start = 0, End = 1, Z = 0, Tag="s" },
-            new HtmlNode { Start = 1, End = 1, Z = 0, Tag="track" },
-        };
-
-        private static (int, ITag)[] ExpectedSorting4 => new(int, ITag)[]
-        {
-           (0, new SelfClosingTag { Index = 0, Z = 0, Name = "br" }),
-           (1, new SelfClosingTag { Index = 0, Z = 0, Name = "hr" }),
-           (7, new OpeningTag     { Index = 0, Z = 0, Name = "q" }),
-           (6, new OpeningTag     { Index = 0, Z = 0, Name = "r" }),
-           (5, new OpeningTag     { Index = 0, Z = 0, Name = "s" }),
-           (4, new ClosingTag     { Index = 1 }),
-           (3, new ClosingTag     { Index = 1 }),
-           (2, new ClosingTag     { Index = 1 }),
-           (8, new SelfClosingTag { Index = 1, Z = 100, Name = "track" }),
-        };
-
-        private static List<HtmlNode> InputSorting5 => new List<HtmlNode>
-        {
-            new HtmlNode { Start = 0, End = 0, Z = 3, Tag="z" },
-            new HtmlNode { Start = 0, End = 0, Z = 2, Tag="y" },
-            new HtmlNode { Start = 0, End = 0, Z = 1, Tag="x" },
-        };
-
-        private static (int, ITag)[] ExpectedSorting5 => new(int, ITag)[]
-        {
-           (5, new OpeningTag { Index = 0, Z = 3, Name = "z" }),
-           (4, new OpeningTag { Index = 0, Z = 2, Name = "y" }),
-           (3, new OpeningTag { Index = 0, Z = 1, Name = "x" }),
-           (2, new ClosingTag { Index = 0 }),
-           (1, new ClosingTag { Index = 0 }),
-           (0, new ClosingTag { Index = 0 }),
-        };
-
-        private static List<HtmlNode> InputSorting6 => new List<HtmlNode>
-        {
-            new HtmlNode { Start = 0, End = 5, Z = 1, Tag="section" },
-            new HtmlNode { Start = 0, End = 0, Z = 0, Tag="div" },
-            new HtmlNode { Start = 0, End = 5, Z = 0, Tag="p" },
-            new HtmlNode { Start = 5, End = 5, Z = 0, Tag="div" },
-        };
-
-        private static (int, ITag)[] ExpectedSorting6 => new(int, ITag)[]
-        {
-            (7, new OpeningTag { Index = 0, Z = 1, Name = "section" } ),
-            (2, new OpeningTag { Index = 0, Z = 0, Name = "div" } ),
-            (1, new ClosingTag { Index = 0 }),
-            (4, new OpeningTag { Index = 0, Z = 0, Name = "p" } ),
-            (3, new ClosingTag { Index = 5 }),
-            (6, new OpeningTag { Index = 5, Z = 0, Name = "div" } ),
-            (5, new ClosingTag { Index = 5 }),
-            (0, new ClosingTag { Index = 5 }),
-        };
-        private static List<HtmlNode> LimitSortingInput => new List<HtmlNode>
-        {
-            new HtmlNode { Start = double.MinValue, End = double.MaxValue, Z = 100, Tag="container" },
-            new HtmlNode { Start = double.MinValue + double.Epsilon, End = double.MinValue + double.Epsilon, Z = 090, Tag="left-indentation" },
-            new HtmlNode { Start = double.MinValue + double.Epsilon, End = double.MinValue + double.Epsilon, Z = 080, Tag="numbering-container" },
-            new HtmlNode { Start = double.MinValue + double.Epsilon, End = double.MinValue + double.Epsilon, Z = 070, Tag="numbering-number" },
-            new HtmlNode { Start = 0 - double.Epsilon, End = 6 + double.Epsilon, Z = 090, Tag="p" },
-            new HtmlNode { Start = 0, End = 3, Z = 001, Tag="span" },
-            new HtmlNode { Start = 3, End = 6, Z = 001, Tag="span" },
-            new HtmlNode { Start = double.MaxValue - double.Epsilon, End = double.MaxValue - double.Epsilon, Z = 090, Tag="right-indentation" },
-        };
-
-        private static (int, ITag)[] LimitSortingExpected => new(int, ITag)[]
-        {
-            (15, new OpeningTag { Index = 0, Z = 100, Name = "container" } ),
-
-            (06, new OpeningTag { Index = 0, Z = 090, Name = "left-indentation" } ),
-            (05, new OpeningTag { Index = 0, Z = 080, Name = "numbering-container" } ),
-            (04, new OpeningTag { Index = 0, Z = 070, Name = "numbering-number" } ),
-            (03, new ClosingTag { Index = 0 }),
-            (02, new ClosingTag { Index = 0 }),
-            (01, new ClosingTag { Index = 0 }),
-
-            (12, new OpeningTag { Index = 0, Z = 090, Name = "p" } ),
-            (09, new OpeningTag { Index = 0, Z = 001, Name = "span" } ),
-            (08, new ClosingTag { Index = 3 }),
-            (11, new OpeningTag { Index = 3, Z = 001, Name = "span" } ),
-            (10, new ClosingTag { Index = 6 }),
-            (07, new ClosingTag { Index = 6 }),
-
-            (14, new OpeningTag { Index = 6, Z = 090, Name = "right-indentation" } ),
-            (13, new ClosingTag { Index = 6 }),
-
-            (00, new ClosingTag { Index = 6 }),
+           (0, new SelfClosingTag { Position = 0, Name = "br" }),
         };
 
         [TestMethod]
@@ -200,59 +45,6 @@ namespace Doc2web.Tests.Core.Rendering.Step2
             Test(ExpectedSelfClosing, InputSelfClosing);
         }
 
-        [TestMethod]
-        public void Build_SortingTest1()
-        {
-            Test(ExpectedSorting1, InputSorting1);
-        }
-
-        [TestMethod]
-        public void Build_SortingTest2()
-        {
-            Test(ExpectedSorting2, InputSorting2);
-        }
-
-        [TestMethod]
-        public void Build_SortingTest3()
-        {
-            Test(ExpectedSorting3, InputSorting3);
-        }
-
-        [TestMethod]
-        public void Build_SortingTest4()
-        {
-            var random = new Random();
-            var expected = ExpectedSorting4;
-            for(int i=0; i<100; i++)
-            {
-                var shuffledInput = InputSorting4.OrderBy(x => random.Next()).ToList();
-                Test(expected, shuffledInput);
-            }
-        }
-
-        [TestMethod]
-        public void Build_SortingTest5()
-        {
-            var random = new Random();
-            var expected = ExpectedSorting5;
-            for(int i=0; i<100; i++)
-            {
-                var shuffledInput = InputSorting5.OrderBy(x => random.Next()).ToList();
-                Test(expected, shuffledInput);
-            }
-        }
-
-        [TestMethod]
-        public void Build_SortingTest6()
-        {
-            Test(ExpectedSorting6, InputSorting6);
-        }
-
-        [TestMethod]
-        public void Build_SortingTest7()
-        {
-            Test(LimitSortingExpected, LimitSortingInput, 0, 6);
-        }
 
         private void Test((int, ITag)[] expectedConfig, List<HtmlNode> sample, double minLimit = 0, double maxLimit = double.MaxValue)
         {
@@ -295,26 +87,24 @@ namespace Doc2web.Tests.Core.Rendering.Step2
         private void AssertSelfClosingTagAreEqual(SelfClosingTag expected, SelfClosingTag result)
         {
             Assert.AreEqual(expected.Name, result.Name);
-            Assert.AreEqual(expected.Index, result.Index);
+            Assert.AreEqual(expected.Position, result.Position);
             AssertAttributesAreEquals(expected.Attributes, result.Attributes);
         }
 
         private void AssertOpeningTagsAreEqual(OpeningTag expected, OpeningTag result)
         {
             Assert.AreEqual(expected.Name, result.Name);
-            Assert.AreEqual(expected.Index, result.Index);
+            Assert.AreEqual(expected.Position, result.Position);
             Assert.AreEqual(expected.Attributes, result.Attributes);
-            Assert.AreEqual(expected.Z, result.Z);
             AssertAttributesAreEquals(expected.Attributes, result.Attributes);
             AssertClosingTagsAreEqual(expected.Related, result.Related);
         }
 
         private void AssertClosingTagsAreEqual(ClosingTag expected, ClosingTag result)
         {
-            Assert.AreEqual(expected.Index, result.Index);
+            Assert.AreEqual(expected.Position, result.Position);
             Assert.AreEqual(expected.Name, result.Name);
-            Assert.AreEqual(expected.RelatedIndex, result.RelatedIndex);
-            Assert.AreEqual(expected.Z, result.Z);
+            Assert.AreEqual(expected.RelatedPosition, result.RelatedPosition);
         }
 
         private void AssertAttributesAreEquals

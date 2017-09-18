@@ -4,17 +4,11 @@ using System.Text;
 
 namespace Doc2web.Core.Rendering
 {
-    public interface ITag
+    public interface ITag : IRenderable
     {
-        double Index { get; set; }
-
-        double RelatedIndex { get; }
-
-        double Z { get; }
+        double RelatedPosition { get; }
 
         string Name { get; }
-
-        string Render();
     }
 
 }

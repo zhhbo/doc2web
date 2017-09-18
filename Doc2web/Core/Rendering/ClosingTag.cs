@@ -10,13 +10,13 @@ namespace Doc2web.Core.Rendering
 
         public string Name => Related.Name;
 
+        public double Offset => 0;
+
         public string TextBefore { get; set; }
 
-        public double Index { get; set; }
+        public double Position { get; set; }
 
-        public double RelatedIndex => Related.Index;
-
-        public double Z => Related.Z;
+        public double RelatedPosition => Related.Position;
 
         public string Render() => $"{TextBefore}</{Related.Name}>";
 

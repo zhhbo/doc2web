@@ -1,17 +1,17 @@
-﻿using System;
+﻿using Doc2web.Core.Rendering;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace Doc2web
 {
-    public abstract class Mutation
+    public abstract class Mutation : IRenderable
     {
-        public double Index { get; set; }
+        public double Position { get; set; }
 
-        public virtual void UpdateOtherMutations(List<Mutation> mutations) { }
+        public virtual double Offset => 0;
 
-        public virtual void MutateNodes(List<HtmlNode> nodes) { }
+        public virtual string Render() => "";
 
-        public virtual void MutateText(StringBuilder text) { }
     }
 }

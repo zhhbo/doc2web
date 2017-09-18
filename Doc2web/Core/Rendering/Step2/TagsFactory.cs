@@ -9,9 +9,7 @@ namespace Doc2web.Core.Rendering.Step2
     {
         public static ITag[] Build(HtmlNode[] nodes)
         {
-            var tags = BuildTags(nodes).OrderBy(x => x.Index).ToArray();
-            Array.Sort(tags, new TagComparer());
-            return tags;
+            return BuildTags(nodes).OrderBy(x => x.Position).ToArray();
         }
 
         private static ITag[] BuildTags(HtmlNode[] nodes)
@@ -68,14 +66,13 @@ namespace Doc2web.Core.Rendering.Step2
             var opening = new OpeningTag
             {
                 Name = node.Tag,
-                Index = node.Start,
-                Z = node.Z,
+                Position = node.Start,
                 Attributes = node.Attributes
             };
             var closing = new ClosingTag
             {
                 Related = opening,
-                Index = node.End
+                Position = node.End
             };
             opening.Related = closing;
             return new ITag[2] { opening, closing };
@@ -86,8 +83,7 @@ namespace Doc2web.Core.Rendering.Step2
             return new SelfClosingTag
             {
                 Name = node.Tag,
-                Index = node.Start,
-                Z = node.Z,
+                Position = node.Start,
                 Attributes = node.Attributes
             };
         }

@@ -8,21 +8,20 @@ namespace Doc2web.Core.Rendering
     {
         public SelfClosingTag()
         {
-            Index = 0;
-            Z = int.MinValue;
+            Position = 0;
             Name = "div";
             Attributes = new Dictionary<string, string>();
         }
 
-        public double Index { get; set; }
+        public double Offset => 0;
 
-        public double Z { get; set; }
+        public double Position { get; set; }
 
         public string Name { get; set; }
 
         public IReadOnlyDictionary<string, string> Attributes { get; set; }
 
-        public virtual double RelatedIndex => Index;
+        public virtual double RelatedPosition => Position;
 
         public virtual string Render() => String.Format("<{0} {1}/>", Name, RenderAttributes());
 

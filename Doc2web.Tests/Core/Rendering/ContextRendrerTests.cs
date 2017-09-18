@@ -42,9 +42,7 @@ namespace Doc2web.Tests.Core.Rendering
 
             var result = ContextRenderer.BuildNodes(_elementContext);
 
-            Assert.IsTrue(_elementContext.Nodes.Count() < result.Item1.Length);
-            foreach (var m in result.Item2)
-                m.Received(1).MutateNodes(Arg.Any<List<HtmlNode>>());
+            Assert.IsTrue(_elementContext.Nodes.Count() < result.Length);
         }
 
         //[TestMethod]

@@ -7,6 +7,7 @@ namespace Doc2web.Plugins.TextProcessor
     public class TextProcessorConfig
     {
         public double ContainerStart { get; set; }
+
         public double ContainerEnd { get; set; }
         
         public string ContainerTag { get; set; }
@@ -17,15 +18,7 @@ namespace Doc2web.Plugins.TextProcessor
 
         public string IdentationTag { get; set; }
 
-        public double LeftIndentationStart { get; set; }
-
-        public double LeftIndentationEnd { get; set; }
-
         public string LeftIdentationCls { get; set; }
-
-        public double RightIndentationStart { get; set; }
-
-        public double RightIndentationEnd { get; }
 
         public string RightIndentationCls { get; set; }
 
@@ -33,7 +26,7 @@ namespace Doc2web.Plugins.TextProcessor
 
         public string ParagraphCls { get; set; }
 
-        public double ParagraphDelta { get; }
+        public double Delta { get; }
 
         public int ParagraphZ { get; set; }
 
@@ -45,25 +38,21 @@ namespace Doc2web.Plugins.TextProcessor
 
         public TextProcessorConfig()
         {
-            ContainerStart = double.MinValue;
-            ContainerEnd = double.MaxValue;
+            ContainerStart = -1_000_000;
+            ContainerEnd = 1_000_000;
             ContainerTag = "div";
             ContainerCls = "container";
             ContainerZ = 1_000_000;
 
             IdentationTag = "div";
 
-            LeftIndentationStart = double.MinValue + 0.01;
-            LeftIndentationEnd = double.MinValue + 0.02;
             LeftIdentationCls = "leftspacer";
 
-            RightIndentationStart = double.MaxValue - 0.02;
-            RightIndentationEnd = double.MaxValue - 0.01;
             RightIndentationCls = "rightspacer";
 
             ParagraphTag = "p";
             ParagraphCls = "";
-            ParagraphDelta = 0.01;
+            Delta = 0.01;
             ParagraphZ = 1_000;
             RunTag = "span";
             RunCls = "";

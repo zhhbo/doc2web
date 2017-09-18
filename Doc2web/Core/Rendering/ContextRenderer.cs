@@ -12,26 +12,19 @@ namespace Doc2web.Core.Rendering
     {
         public string Render(IElementContext elementContext)
         {
-            (HtmlNode[] nodes, Mutation[] mutations) = BuildNodes(elementContext);
+            HtmlNode[] nodes = BuildNodes(elementContext);
+
             ITag[] tags = BuildTags(nodes);
-            foreach(var t in tags)
-            {
-                if (t.Index < 0) t.Index = 0;
-                else if (t.Index > elementContext.RootElement.InnerText.Length)
-                    t.Index = elementContext.RootElement.InnerText.Length;
-            }
-            return Render(elementContext.RootElement.InnerText, mutations, tags);
+            return Render(elementContext.RootElement.InnerText, elementContext.Mutations.ToArray(), tags);
         }
 
-        public static (HtmlNode[], Mutation[]) BuildNodes(IElementContext elementContext)
+        public static HtmlNode[] BuildNodes(IElementContext elementContext)
         {
             var nodes = elementContext.Nodes.ToList();
-            var mutations = elementContext.Mutations.ToList();
 
-            MutationsApplier.Apply(nodes, mutations);
             FlatternHtmlNodes.Apply(nodes);
 
-            return (nodes.ToArray(), mutations.ToArray());
+            return nodes.ToArray();
         }
 
         public static ITag[] BuildTags(HtmlNode[] nodes)
@@ -41,12 +34,17 @@ namespace Doc2web.Core.Rendering
 
         public static string Render(string text, Mutation[] mutations, ITag[] tags)
         {
-            var html = new StringBuilder(text);
+            var renderer = new Renderer2()
+            {
+                Text = text,
+                Elements =
+                    tags
+                    .Cast<IRenderable>()
+                    .Concat(mutations.Cast<IRenderable>())
+                    .ToArray()
+            };
 
-            for (int i = 0; i < mutations.Length; i++)
-                mutations[i].MutateText(html);
-
-            return TagsRenderer.Render(tags, html);
+            return renderer.Render();
         }
 
     }

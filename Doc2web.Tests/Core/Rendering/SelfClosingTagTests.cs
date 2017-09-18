@@ -15,11 +15,11 @@ namespace Doc2web.Tests.Core.Rendering
         {
             var instance = new SelfClosingTag();
 
-            Assert.AreEqual(0, instance.Index);
-            Assert.AreEqual(int.MinValue, instance.Z);
+            Assert.AreEqual(0, instance.Position);
+            //Assert.AreEqual(int.MinValue, instance.Z);
             Assert.AreEqual("div", instance.Name);
             Assert.AreEqual(0, instance.Attributes.Count);
-            Assert.AreEqual(instance.Index, instance.RelatedIndex);
+            Assert.AreEqual(instance.Position, instance.RelatedPosition);
         }
 
         [TestMethod]

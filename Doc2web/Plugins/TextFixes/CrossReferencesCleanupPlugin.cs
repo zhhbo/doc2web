@@ -21,8 +21,8 @@ namespace Doc2web.Plugins.TextFixes
             {
                 context.AddMutation(new TextDeletion
                 {
-                    Index = context.TextIndex + match.Index,
-                    Length = match.Length
+                    Position = context.TextIndex + match.Index,
+                    Count = match.Length
                 });
             }
         }

@@ -32,7 +32,7 @@ namespace Doc2web.Plugins.TextFixes
         private Mutation BuildReplacement(int i, string replacement) =>
             new TextReplacement
             {
-                Index = i,
+                Position = i,
                 Length = 1,
                 Replacement = replacement
             };

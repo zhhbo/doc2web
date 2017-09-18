@@ -61,7 +61,7 @@ namespace Doc2web.Benchmark
         [IterationSetup(Target = nameof(RenderTags))]
         public void ResetStringBuilder()
         {
-            var maxI = _tempsTags[_tempsTags.Length - 1].Index + 1;
+            var maxI = _tempsTags[_tempsTags.Length - 1].Position + 1;
             _tempStringBuilder = new StringBuilder((int)maxI);
             for (int i = 1; i < maxI; i++) _tempStringBuilder.Append(i);
         }

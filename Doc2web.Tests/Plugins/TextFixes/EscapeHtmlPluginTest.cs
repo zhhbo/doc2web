@@ -66,7 +66,7 @@ namespace Doc2web.Tests.Plugins.TextFixes
         {
             var mutation = _mutations.Single() as TextReplacement;
             Assert.IsNotNull(mutation);
-            Assert.AreEqual(_text.IndexOf(charToEscape), mutation.Index);
+            Assert.AreEqual(_text.IndexOf(charToEscape), mutation.Position);
             Assert.AreEqual(1, mutation.Length);
             Assert.AreEqual(replacement, mutation.Replacement);
         }

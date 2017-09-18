@@ -38,7 +38,7 @@ namespace Doc2web.Tests.Plugins.TextFixes
             _instance.InsertSoftHyphen(_context, dash);
 
             var insertion = _textInsertions.Single();
-            Assert.AreEqual(666, insertion.Index);
+            Assert.AreEqual(666, insertion.Position);
             Assert.AreEqual("&#173;", insertion.Text);
         }
 
@@ -50,7 +50,7 @@ namespace Doc2web.Tests.Plugins.TextFixes
             _instance.InsertNoBreakHyphen(_context, dash);
 
             var insertion = _textInsertions.Single();
-            Assert.AreEqual(666, insertion.Index);
+            Assert.AreEqual(666, insertion.Position);
             Assert.AreEqual("&#8209;", insertion.Text);
         }
     }

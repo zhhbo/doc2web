@@ -13,7 +13,7 @@ namespace Doc2web.Core.Rendering
 
         public string TextAfter { get; set; }
 
-        public override double RelatedIndex => Related.Index;
+        public override double RelatedPosition => Related.Position;
 
         public override string Render() =>
             (Attributes.Keys.Any()) ?

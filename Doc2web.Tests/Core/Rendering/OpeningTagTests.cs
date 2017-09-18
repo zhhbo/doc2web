@@ -16,11 +16,11 @@ namespace Doc2web.Tests.Core.Rendering
             var instance = new OpeningTag();
             var related = new ClosingTag
             {
-                Index = 10
+                Position = 10
             };
             instance.Related = related;
 
-            Assert.AreEqual(10, instance.RelatedIndex);
+            Assert.AreEqual(10, instance.RelatedPosition);
         }
 
         [TestMethod]
@@ -32,7 +32,7 @@ namespace Doc2web.Tests.Core.Rendering
             };
             var related = new ClosingTag
             {
-                Index = 10
+                Position = 10
             };
             instance.Related = related;
 

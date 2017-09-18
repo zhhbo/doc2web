@@ -25,7 +25,7 @@ namespace Doc2web.Tests.Plugins.TextFixes
 
             var mutations = context.Mutations
                 .Select(x => x as TextDeletion)
-                .Select(x => (x.Index, x.Length))
+                .Select(x => (x.Position, x.Offset))
                 .ToArray();
 
             Assert.AreEqual(3, mutations.Length);

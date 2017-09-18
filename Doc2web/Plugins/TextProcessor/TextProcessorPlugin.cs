@@ -59,8 +59,8 @@ namespace Doc2web.Plugins.TextProcessor
 
             var pNode = new HtmlNode
             {
-                Start = context.TextIndex - _config.ParagraphDelta,
-                End = context.TextIndex + p.InnerText.Length + _config.ParagraphDelta,
+                Start = context.TextIndex - _config.Delta,
+                End = context.TextIndex + p.InnerText.Length + _config.Delta,
                 Tag = _config.ParagraphTag,
                 Z = _config.ParagraphZ,
             };
@@ -72,8 +72,8 @@ namespace Doc2web.Plugins.TextProcessor
         {
             var node = new HtmlNode
             {
-                Start = _config.LeftIndentationStart,
-                End = _config.LeftIndentationEnd,
+                Start = _config.ContainerStart + _config.Delta,
+                End = _config.ContainerStart + _config.Delta * 2,
                 Tag = _config.IdentationTag,
                 Z = _config.ParagraphZ
             };
@@ -85,8 +85,8 @@ namespace Doc2web.Plugins.TextProcessor
         {
             var node = new HtmlNode
             {
-                Start = _config.RightIndentationStart,
-                End = _config.RightIndentationEnd,
+                Start = _config.ContainerEnd - _config.Delta * 2,
+                End = _config.ContainerEnd - _config.Delta,
                 Tag = _config.IdentationTag,
                 Z = _config.ParagraphZ
             };
@@ -127,7 +127,6 @@ namespace Doc2web.Plugins.TextProcessor
         public void PostProcess(IGlobalContext context)
         {
             context.AddCss(RequiredCss);
-
         }
 
         private string RequiredCss =>

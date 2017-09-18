@@ -14,21 +14,21 @@ namespace Doc2web.Tests.Core.Rendering
         {
             var related = new OpeningTag
             {
-                Index = 10,
+                Position = 10,
                 Name = "span",
-                Z = 100
+                //Z = 100
             };
             var instance = new ClosingTag
             {
-                Index = 20,
+                Position = 20,
                 Related = related,
             };
 
             Assert.AreSame(related, instance.Related);
             Assert.AreEqual(related.Name, instance.Name);
-            Assert.AreEqual(20, instance.Index);
-            Assert.AreEqual(related.Index, instance.RelatedIndex);
-            Assert.AreEqual(related.Z, instance.Z);
+            Assert.AreEqual(20, instance.Position);
+            Assert.AreEqual(related.Position, instance.RelatedPosition);
+            //Assert.AreEqual(related.Z, instance.Z);
         }
 
         [TestMethod]
