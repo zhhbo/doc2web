@@ -10,27 +10,17 @@ namespace Doc2web.Plugins.Numbering
     public class NumberingProcessorPlugin
     {
         private WordprocessingDocument _wpDoc;
+        private NumberingProcessorPluginConfig _config;
 
-        public double NumberingIndex { get; set; }
-        public double NumberingDelta { get; }
-        public string NumberingContainerTag { get; set; }
-        public string NumberingContainerCls { get; set; }
-        public int NumberingContainerZ { get; set; }
-        public string NumberingNumberTag { get; set; }
-        public string NumberingNumberCls { get; set; }
-        public int NumberingNumberZ { get; set; }
+        public NumberingProcessorPlugin(WordprocessingDocument wpDoc) : this(wpDoc, new NumberingProcessorPluginConfig())
+        {
 
-        public NumberingProcessorPlugin(WordprocessingDocument wpDoc)
+        }
+
+        public NumberingProcessorPlugin(WordprocessingDocument wpDoc, NumberingProcessorPluginConfig config)
         {
             _wpDoc = wpDoc;
-            NumberingIndex = -1_000_000 + 0.011;
-            NumberingDelta = 0.001;
-            NumberingContainerTag = "div";
-            NumberingContainerCls = "numbering-container";
-            NumberingContainerZ = 900;
-            NumberingNumberTag = "span";
-            NumberingNumberCls = "numbering-number";
-            NumberingNumberZ = 899;
+            _config = config;
         }
 
 
@@ -61,12 +51,12 @@ namespace Doc2web.Plugins.Numbering
         {
             var node = new HtmlNode
             {
-                Start = NumberingIndex,
-                End = NumberingIndex + NumberingDelta * 4,
-                Tag = NumberingContainerTag,
-                Z = NumberingContainerZ,
+                Start = _config.NumberingIndex,
+                End = _config.NumberingIndex + _config.NumberingDelta * 4,
+                Tag = _config.NumberingContainerTag,
+                Z = _config.NumberingContainerZ,
             };
-            node.AddClass(NumberingContainerCls);
+            node.AddClass(_config.NumberingContainerCls);
             return node;
         }
 
@@ -74,18 +64,18 @@ namespace Doc2web.Plugins.Numbering
         {
             var node = new HtmlNode
             {
-                Start = NumberingIndex + NumberingDelta,
-                End = NumberingIndex + NumberingDelta * 3,
-                Tag = NumberingNumberTag,
-                Z = NumberingNumberZ,
+                Start = _config.NumberingIndex + _config.NumberingDelta,
+                End = _config.NumberingIndex + _config.NumberingDelta * 3,
+                Tag = _config.NumberingNumberTag,
+                Z = _config.NumberingNumberZ,
             };
-            node.AddClass(NumberingNumberCls);
+            node.AddClass(_config.NumberingNumberCls);
             return node;
         }
 
         private Mutation BuildNumberingInsertion(string verbose) => new TextInsertion
         {
-            Position = NumberingIndex + NumberingDelta * 2,
+            Position = _config.NumberingIndex + _config.NumberingDelta * 2,
             Text = verbose
         };
     }

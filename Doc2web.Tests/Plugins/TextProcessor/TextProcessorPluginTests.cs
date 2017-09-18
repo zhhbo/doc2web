@@ -110,8 +110,8 @@ namespace Doc2web.Tests.Plugins.TextProcessor
             var expected = new HtmlNode
             {
                 Tag = _config.IdentationTag,
-                Start = _config.LeftIndentationStart,
-                End = _config.LeftIndentationEnd,
+                Start = _config.ContainerStart + _config.Delta,
+                End = _config.ContainerStart + _config.Delta * 2,
                 Z = _config.ParagraphZ,
             };
             expected.AddClass(_config.LeftIdentationCls);
@@ -127,8 +127,8 @@ namespace Doc2web.Tests.Plugins.TextProcessor
             var expected = new HtmlNode
             {
                 Tag = _config.IdentationTag,
-                Start = _config.RightIndentationStart,
-                End = _config.RightIndentationEnd,
+                Start = _config.ContainerEnd - _config.Delta * 2,
+                End = _config.ContainerEnd - _config.Delta,
                 Z = _config.ParagraphZ,
             };
             expected.AddClass(_config.RightIndentationCls);
