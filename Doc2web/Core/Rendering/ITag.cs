@@ -6,11 +6,11 @@ namespace Doc2web.Core.Rendering
 {
     public interface ITag
     {
-        int Index { get; }
+        double Index { get; set; }
 
-        int RelatedIndex { get; }
+        double RelatedIndex { get; }
 
-        int Z { get; }
+        double Z { get; }
 
         string Name { get; }
 

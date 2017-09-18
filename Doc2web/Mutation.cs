@@ -6,7 +6,7 @@ namespace Doc2web
 {
     public abstract class Mutation
     {
-        public int Index { get; set; }
+        public double Index { get; set; }
 
         public virtual void UpdateOtherMutations(List<Mutation> mutations) { }
 

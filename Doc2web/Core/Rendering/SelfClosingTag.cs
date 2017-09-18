@@ -14,15 +14,15 @@ namespace Doc2web.Core.Rendering
             Attributes = new Dictionary<string, string>();
         }
 
-        public int Index { get; set; }
+        public double Index { get; set; }
 
-        public int Z { get; set; }
+        public double Z { get; set; }
 
         public string Name { get; set; }
 
         public IReadOnlyDictionary<string, string> Attributes { get; set; }
 
-        public virtual int RelatedIndex => Index;
+        public virtual double RelatedIndex => Index;
 
         public virtual string Render() => String.Format("<{0} {1}/>", Name, RenderAttributes());
 

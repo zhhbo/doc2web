@@ -9,61 +9,33 @@ namespace Doc2web.Plugins.TextProcessor
 {
     public class TextProcessorPlugin
     {
-        public string ContainerTag { get; set; }
+        private TextProcessorConfig _config;
 
-        public string ContainerCls { get; set; }
-
-        public int ContainerZ { get; set; }
-
-        public string IdentationTag { get; set; }
-
-        public string LeftIdentationCls { get; set; }
-
-        public string RightIdentationCls { get; set; }
-
-        public string ParagraphTag { get; set; }
-
-        public string ParagraphCls { get; set; }
-
-        public int ParagraphZ { get; set; }
-
-        public string RunTag { get; set; }
-
-        public string RunCls { get; set; }
-
-        public int RunZ { get; set; }
-
-        public TextProcessorPlugin()
+        public TextProcessorPlugin() : this(new TextProcessorConfig())
         {
-            ContainerTag = "div";
-            ContainerCls = "container";
-            ContainerZ = 1_000_000;
-            IdentationTag = "div";
-            LeftIdentationCls = "leftspacer";
-            RightIdentationCls = "rightspacer";
-            ParagraphTag = "p";
-            ParagraphCls = "";
-            ParagraphZ = 1_000;
-            RunTag = "span";
-            RunCls = "";
-            RunZ = 1;
+        }
+        
+        public TextProcessorPlugin(TextProcessorConfig config)
+        {
+            _config = config;
         }
 
         [ElementProcessing]
         public void ProcessParagraph(IElementContext context, Paragraph p)
         {
+            if (p != context.RootElement) return;
             var containerNode = new HtmlNode
             {
-                Start = context.TextIndex,
-                End = context.Element.InnerText.Length,
-                Tag = ContainerTag,
-                Z = ContainerZ,
+                Start = _config.ContainerStart,
+                End = _config.ContainerEnd,
+                Tag = _config.ContainerTag,
+                Z = _config.ContainerZ,
             };
-            containerNode.AddClass(ContainerCls);
+            containerNode.AddClass(_config.ContainerCls);
             context.AddNode(containerNode);
             context.AddNode(BuildLeftIdentation());
             context.AddNode(BuildPNode(context, p, containerNode));
-            context.AddNode(BuildRightIdentation(containerNode.End));
+            context.AddNode(BuildRightIdentation());
 
             context.ProcessChilden();
         }
@@ -87,12 +59,12 @@ namespace Doc2web.Plugins.TextProcessor
 
             var pNode = new HtmlNode
             {
-                Start = containerNode.Start,
-                End = containerNode.End,
-                Tag = ParagraphTag,
-                Z = ParagraphZ,
+                Start = context.TextIndex - _config.ParagraphDelta,
+                End = context.TextIndex + p.InnerText.Length + _config.ParagraphDelta,
+                Tag = _config.ParagraphTag,
+                Z = _config.ParagraphZ,
             };
-            pNode.AddClass(ParagraphCls);
+            pNode.AddClass(_config.ParagraphCls);
             return pNode;
         }
 
@@ -100,25 +72,25 @@ namespace Doc2web.Plugins.TextProcessor
         {
             var node = new HtmlNode
             {
-                Start = 0,
-                End = 0,
-                Tag = IdentationTag,
-                Z = ParagraphZ
+                Start = _config.LeftIndentationStart,
+                End = _config.LeftIndentationEnd,
+                Tag = _config.IdentationTag,
+                Z = _config.ParagraphZ
             };
-            node.AddClass(LeftIdentationCls);
+            node.AddClass(_config.LeftIdentationCls);
             return node;
         }
 
-        private HtmlNode BuildRightIdentation(int i)
+        private HtmlNode BuildRightIdentation()
         {
             var node = new HtmlNode
             {
-                Start = i,
-                End = i,
-                Tag = IdentationTag,
-                Z = ParagraphZ
+                Start = _config.RightIndentationStart,
+                End = _config.RightIndentationEnd,
+                Tag = _config.IdentationTag,
+                Z = _config.ParagraphZ
             };
-            node.AddClass(RightIdentationCls);
+            node.AddClass(_config.RightIndentationCls);
             return node;
         }
 
@@ -130,10 +102,10 @@ namespace Doc2web.Plugins.TextProcessor
             {
                 Start = context.TextIndex,
                 End = context.TextIndex + r.InnerText.Length,
-                Tag = RunTag,
-                Z = RunZ,
+                Tag = _config.RunTag,
+                Z = _config.RunZ,
             };
-            node.AddClass(RunCls);
+            node.AddClass(_config.RunCls);
 
             var rPr = r.RunProperties;
             if (rPr != null)
@@ -159,6 +131,6 @@ namespace Doc2web.Plugins.TextProcessor
         }
 
         private string RequiredCss =>
-            $"{ContainerTag}.{ContainerCls} {{display: flex; flex-direction: column}}";
+            $"{_config.ContainerTag}.{_config.ContainerCls} {{display: flex; flex-direction: column}}";
     }
 }

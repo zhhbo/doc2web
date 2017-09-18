@@ -26,7 +26,10 @@ namespace Doc2web.Tests.Core.Rendering
         [TestMethod]
         public void Render_Test()
         {
-            var instance = new OpeningTag();
+            var instance = new OpeningTag()
+            {
+                TextAfter = "some stuff"
+            };
             var related = new ClosingTag
             {
                 Index = 10
@@ -35,7 +38,7 @@ namespace Doc2web.Tests.Core.Rendering
 
             var renderOuput = instance.Render();
 
-            Assert.AreEqual("<div>", renderOuput);
+            Assert.AreEqual("<div>some stuff", renderOuput);
         }
 
         [TestMethod]

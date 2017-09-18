@@ -16,6 +16,7 @@ namespace Doc2web.Tests.Plugins.TextProcessor
     [TestClass]
     public class TextProcessorPluginTests
     {
+        private TextProcessorConfig _config;
         private TextProcessorPlugin _instance;
         private Run _r;
         private ContainerBuilder _containerBuilder;
@@ -31,7 +32,8 @@ namespace Doc2web.Tests.Plugins.TextProcessor
         [TestInitialize]
         public void Initialize()
         {
-            _instance = new TextProcessorPlugin();
+            _config = new TextProcessorConfig();
+            _instance = new TextProcessorPlugin(_config);
             _r = new Run(new Text("Some text."));
             _p = new Paragraph(_r);
             _nestingHandler = Substitute.For<IContextNestingHandler>();
@@ -65,21 +67,21 @@ namespace Doc2web.Tests.Plugins.TextProcessor
         [TestMethod]
         public void TextProcessorPlugin_Test()
         {
-            Assert.AreEqual("div", _instance.ContainerTag);
-            Assert.AreEqual("container", _instance.ContainerCls);
-            Assert.AreEqual(1_000_000, _instance.ContainerZ);
+            Assert.AreEqual("div", _config.ContainerTag);
+            Assert.AreEqual("container", _config.ContainerCls);
+            Assert.AreEqual(1_000_000, _config.ContainerZ);
 
-            Assert.AreEqual("div", _instance.IdentationTag);
-            Assert.AreEqual("leftspacer", _instance.LeftIdentationCls);
-            Assert.AreEqual("rightspacer", _instance.RightIdentationCls);
+            Assert.AreEqual("div", _config.IdentationTag);
+            Assert.AreEqual("leftspacer", _config.LeftIdentationCls);
+            Assert.AreEqual("rightspacer", _config.RightIndentationCls);
 
-            Assert.AreEqual("p", _instance.ParagraphTag);
-            Assert.AreEqual("", _instance.ParagraphCls);
-            Assert.AreEqual(1_000, _instance.ParagraphZ);
+            Assert.AreEqual("p", _config.ParagraphTag);
+            Assert.AreEqual("", _config.ParagraphCls);
+            Assert.AreEqual(1_000, _config.ParagraphZ);
 
-            Assert.AreEqual("span", _instance.RunTag);
-            Assert.AreEqual("", _instance.RunCls);
-            Assert.AreEqual(1, _instance.RunZ);
+            Assert.AreEqual("span", _config.RunTag);
+            Assert.AreEqual("", _config.RunCls);
+            Assert.AreEqual(1, _config.RunZ);
         }
 
         [TestMethod]
@@ -90,12 +92,12 @@ namespace Doc2web.Tests.Plugins.TextProcessor
             var firstNode = _pContext.Nodes.First();
             var expected = new HtmlNode
             {
-                Tag = _instance.ContainerTag,
-                Start = 0,
-                End = _p.InnerText.Length,
-                Z = _instance.ContainerZ,
+                Tag = _config.ContainerTag,
+                Start = _config.ContainerStart,
+                End = _config.ContainerEnd,
+                Z = _config.ContainerZ,
             };
-            expected.AddClass(_instance.ContainerCls);
+            expected.AddClass(_config.ContainerCls);
             Assert.AreEqual(expected, firstNode);
         }
 
@@ -107,12 +109,12 @@ namespace Doc2web.Tests.Plugins.TextProcessor
             var firstNode = _pContext.Nodes.ElementAt(1);
             var expected = new HtmlNode
             {
-                Tag = _instance.IdentationTag,
-                Start = 0,
-                End = 0,
-                Z = _instance.ParagraphZ,
+                Tag = _config.IdentationTag,
+                Start = _config.LeftIndentationStart,
+                End = _config.LeftIndentationEnd,
+                Z = _config.ParagraphZ,
             };
-            expected.AddClass(_instance.LeftIdentationCls);
+            expected.AddClass(_config.LeftIdentationCls);
             Assert.AreEqual(expected, firstNode);
         }
 
@@ -124,12 +126,12 @@ namespace Doc2web.Tests.Plugins.TextProcessor
             var firstNode = _pContext.Nodes.ElementAt(3);
             var expected = new HtmlNode
             {
-                Tag = _instance.IdentationTag,
-                Start = _p.InnerText.Length,
-                End = _p.InnerText.Length,
-                Z = _instance.ParagraphZ,
+                Tag = _config.IdentationTag,
+                Start = _config.RightIndentationStart,
+                End = _config.RightIndentationEnd,
+                Z = _config.ParagraphZ,
             };
-            expected.AddClass(_instance.RightIdentationCls);
+            expected.AddClass(_config.RightIndentationCls);
             Assert.AreEqual(expected, firstNode);
         }
 
@@ -141,12 +143,12 @@ namespace Doc2web.Tests.Plugins.TextProcessor
             var firstNode = _pContext.Nodes.ElementAt(2);
             var expected = new HtmlNode
             {
-                Tag = _instance.ParagraphTag,
-                Start = 0,
-                End = _p.InnerText.Length,
-                Z = _instance.ParagraphZ,
+                Tag = _config.ParagraphTag,
+                Start = 0 - _config.ParagraphDelta,
+                End = _p.InnerText.Length + _config.ParagraphDelta,
+                Z = _config.ParagraphZ,
             };
-            expected.AddClass(_instance.ParagraphCls);
+            expected.AddClass(_config.ParagraphCls);
             Assert.AreEqual(expected, firstNode);
         }
 
@@ -187,12 +189,12 @@ namespace Doc2web.Tests.Plugins.TextProcessor
             var firstNode = _rContext.Nodes.Single();
             var expected = new HtmlNode
             {
-                Tag = _instance.RunTag,
+                Tag = _config.RunTag,
                 Start = 0,
                 End = _r.InnerText.Length,
-                Z = _instance.RunZ,
+                Z = _config.RunZ,
             };
-            expected.AddClass(_instance.RunCls);
+            expected.AddClass(_config.RunCls);
             Assert.AreEqual(expected, firstNode);
         }
 

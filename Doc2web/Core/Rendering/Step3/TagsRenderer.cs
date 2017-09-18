@@ -44,7 +44,8 @@ namespace Doc2web.Core.Rendering.Step3
             {
                 var tag = tags[i];
                 string html = tag.Render();
-                insertions[i] = (tag.Index, html);
+                int ti = (int)tag.Index;
+                insertions[i] = (ti, html);
                 totalOffset += html.Length;
             }
             return insertions;

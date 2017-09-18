@@ -21,7 +21,7 @@ namespace Doc2web.Tests.Core.Rendering
             var instance = new ClosingTag
             {
                 Index = 20,
-                Related = related
+                Related = related,
             };
 
             Assert.AreSame(related, instance.Related);
@@ -37,12 +37,13 @@ namespace Doc2web.Tests.Core.Rendering
             var related = new OpeningTag();
             var instance = new ClosingTag
             {
-                Related = related
+                Related = related,
+                TextBefore = "some stuff"
             };
 
             var renderOutput = instance.Render();
 
-            Assert.AreEqual("</div>", renderOutput);
+            Assert.AreEqual("some stuff</div>", renderOutput);
         }
     }
 }

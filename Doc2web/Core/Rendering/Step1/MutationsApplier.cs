@@ -8,7 +8,7 @@ namespace Doc2web.Core.Rendering.Step1
     {
         private class MutationComparer : IComparer<Mutation>
         {
-            public int Compare(Mutation x, Mutation y) => y.Index - x.Index;
+            public int Compare(Mutation x, Mutation y) => (int)(y.Index - x.Index);
         }
 
         public static void Apply(List<HtmlNode> nodes, List<Mutation> mutations)

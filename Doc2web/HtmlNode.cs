@@ -14,13 +14,17 @@ namespace Doc2web
             Z = int.MinValue;
         }
 
-        public int Start { get; set; }
+        public double Start { get; set; }
 
-        public int End { get; set; }
+        public double End { get; set; }
 
         public string Tag { get; set; }
 
         public int Z { get; set; }
+
+        public string TextPrefix { get; set; }
+
+        public string TextSuffix { get; set; }
 
         public IReadOnlyCollection<string> Classes
         {

@@ -126,7 +126,7 @@ namespace Doc2web.Tests.Mutations
             TestTextMutation("etelpmoC");
         }
 
-        private void TestMutationUpdate(string replacement, int? m1, int? m2)
+        private void TestMutationUpdate(string replacement, double? m1, double? m2)
         {
             _instance.Replacement = replacement;
             var result = new List<Mutation>(_otherMutations);

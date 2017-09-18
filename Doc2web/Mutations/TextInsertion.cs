@@ -30,7 +30,7 @@ namespace Doc2web
 
         public override void MutateText(StringBuilder stringBuilder)
         {
-            stringBuilder.Insert(Index, Text);
+            stringBuilder.Insert((int)Index, Text);
         }
     }
 }

@@ -9,14 +9,16 @@ namespace Doc2web.Core.Rendering
         public OpeningTag Related { get; set; }
 
         public string Name => Related.Name;
-        
-        public int Index { get; set; }
 
-        public int RelatedIndex => Related.Index;
+        public string TextBefore { get; set; }
 
-        public int Z => Related.Z;
+        public double Index { get; set; }
 
-        public string Render() => $"</{Related.Name}>";
+        public double RelatedIndex => Related.Index;
+
+        public double Z => Related.Z;
+
+        public string Render() => $"{TextBefore}</{Related.Name}>";
 
     }
 

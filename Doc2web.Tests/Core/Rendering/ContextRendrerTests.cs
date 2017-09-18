@@ -47,35 +47,35 @@ namespace Doc2web.Tests.Core.Rendering
                 m.Received(1).MutateNodes(Arg.Any<List<HtmlNode>>());
         }
 
-        [TestMethod]
-        public void BuildTags_Test()
-        {
-            var nodes = _elementContext.Nodes.ToArray();
+        //[TestMethod]
+        //public void BuildTags_Test()
+        //{
+        //    var nodes = _elementContext.Nodes.ToArray();
 
-            var tags = ContextRenderer.BuildTags(nodes);
+        //    var tags = ContextRenderer.BuildTags(nodes);
 
-            Assert.IsTrue(tags.Length > 0);
-        }
+        //    Assert.IsTrue(tags.Length > 0);
+        //}
 
-        [TestMethod]
-        public void Render_Test()
-        {
-            string expectedHtml = $"<p>{_elementContext.RootElement.InnerText}</p>";
-            var m1 = Substitute.For<Mutation>();
-            var m2 = Substitute.For<Mutation>();
-            var openingTag = new OpeningTag { Index = 0, Name = "p" };
-            var closingTag = new ClosingTag { Index = _elementContext.RootElement.InnerText.Length };
-            closingTag.Related = openingTag;
-            openingTag.Related = closingTag;
+        //[TestMethod]
+        //public void Render_Test() { }
+        //{
+        //    string expectedHtml = $"<p>{_elementContext.RootElement.InnerText}</p>";
+        //    var m1 = Substitute.For<Mutation>();
+        //    var m2 = Substitute.For<Mutation>();
+        //    var openingTag = new OpeningTag { Index = 0, Name = "p" };
+        //    var closingTag = new ClosingTag { Index = _elementContext.RootElement.InnerText.Length };
+        //    closingTag.Related = openingTag;
+        //    openingTag.Related = closingTag;
 
-            var r = ContextRenderer.Render(
-                _elementContext.RootElement.InnerText, 
-                new Mutation[] { m1, m2 },
-                new ITag[] { openingTag, closingTag });
+        //    var r = ContextRenderer.Render(
+        //        _elementContext.RootElement.InnerText, 
+        //        new Mutation[] { m1, m2 },
+        //        new ITag[] { openingTag, closingTag });
 
-            Assert.AreEqual(expectedHtml, r.ToString());
-            m1.Received(1).MutateText(Arg.Any<StringBuilder>());
-            m2.Received(1).MutateText(Arg.Any<StringBuilder>());
-        }
+        //    Assert.AreEqual(expectedHtml, r.ToString());
+        //    m1.Received(1).MutateText(Arg.Any<StringBuilder>());
+        //    m2.Received(1).MutateText(Arg.Any<StringBuilder>());
+        //}
     }
 }

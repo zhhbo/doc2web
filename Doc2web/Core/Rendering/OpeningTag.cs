@@ -11,11 +11,13 @@ namespace Doc2web.Core.Rendering
 
         public ClosingTag Related { get; set; }
 
-        public override int RelatedIndex => Related.Index;
+        public string TextAfter { get; set; }
+
+        public override double RelatedIndex => Related.Index;
 
         public override string Render() =>
             (Attributes.Keys.Any()) ?
-            $"<{Name} {RenderAttributes()}>" :
-            $"<{Name}>";
+            $"<{Name} {RenderAttributes()}>{TextAfter}" :
+            $"<{Name}>{TextAfter}";
     }
 }

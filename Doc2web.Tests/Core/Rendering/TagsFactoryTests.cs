@@ -152,6 +152,41 @@ namespace Doc2web.Tests.Core.Rendering.Step2
             (5, new ClosingTag { Index = 5 }),
             (0, new ClosingTag { Index = 5 }),
         };
+        private static List<HtmlNode> LimitSortingInput => new List<HtmlNode>
+        {
+            new HtmlNode { Start = double.MinValue, End = double.MaxValue, Z = 100, Tag="container" },
+            new HtmlNode { Start = double.MinValue + double.Epsilon, End = double.MinValue + double.Epsilon, Z = 090, Tag="left-indentation" },
+            new HtmlNode { Start = double.MinValue + double.Epsilon, End = double.MinValue + double.Epsilon, Z = 080, Tag="numbering-container" },
+            new HtmlNode { Start = double.MinValue + double.Epsilon, End = double.MinValue + double.Epsilon, Z = 070, Tag="numbering-number" },
+            new HtmlNode { Start = 0 - double.Epsilon, End = 6 + double.Epsilon, Z = 090, Tag="p" },
+            new HtmlNode { Start = 0, End = 3, Z = 001, Tag="span" },
+            new HtmlNode { Start = 3, End = 6, Z = 001, Tag="span" },
+            new HtmlNode { Start = double.MaxValue - double.Epsilon, End = double.MaxValue - double.Epsilon, Z = 090, Tag="right-indentation" },
+        };
+
+        private static (int, ITag)[] LimitSortingExpected => new(int, ITag)[]
+        {
+            (15, new OpeningTag { Index = 0, Z = 100, Name = "container" } ),
+
+            (06, new OpeningTag { Index = 0, Z = 090, Name = "left-indentation" } ),
+            (05, new OpeningTag { Index = 0, Z = 080, Name = "numbering-container" } ),
+            (04, new OpeningTag { Index = 0, Z = 070, Name = "numbering-number" } ),
+            (03, new ClosingTag { Index = 0 }),
+            (02, new ClosingTag { Index = 0 }),
+            (01, new ClosingTag { Index = 0 }),
+
+            (12, new OpeningTag { Index = 0, Z = 090, Name = "p" } ),
+            (09, new OpeningTag { Index = 0, Z = 001, Name = "span" } ),
+            (08, new ClosingTag { Index = 3 }),
+            (11, new OpeningTag { Index = 3, Z = 001, Name = "span" } ),
+            (10, new ClosingTag { Index = 6 }),
+            (07, new ClosingTag { Index = 6 }),
+
+            (14, new OpeningTag { Index = 6, Z = 090, Name = "right-indentation" } ),
+            (13, new ClosingTag { Index = 6 }),
+
+            (00, new ClosingTag { Index = 6 }),
+        };
 
         [TestMethod]
         public void Build_OpenCloseTest()
@@ -213,7 +248,13 @@ namespace Doc2web.Tests.Core.Rendering.Step2
             Test(ExpectedSorting6, InputSorting6);
         }
 
-        private void Test((int, ITag)[] expectedConfig, List<HtmlNode> sample)
+        [TestMethod]
+        public void Build_SortingTest7()
+        {
+            Test(LimitSortingExpected, LimitSortingInput, 0, 6);
+        }
+
+        private void Test((int, ITag)[] expectedConfig, List<HtmlNode> sample, double minLimit = 0, double maxLimit = double.MaxValue)
         {
             ITag[] expected = Utils.SetRelatedTag(expectedConfig);
             var result = TagsFactory.Build(sample.ToArray());

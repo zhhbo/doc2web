@@ -14,6 +14,12 @@ namespace Doc2web.Core.Rendering
         {
             (HtmlNode[] nodes, Mutation[] mutations) = BuildNodes(elementContext);
             ITag[] tags = BuildTags(nodes);
+            foreach(var t in tags)
+            {
+                if (t.Index < 0) t.Index = 0;
+                else if (t.Index > elementContext.RootElement.InnerText.Length)
+                    t.Index = elementContext.RootElement.InnerText.Length;
+            }
             return Render(elementContext.RootElement.InnerText, mutations, tags);
         }
 

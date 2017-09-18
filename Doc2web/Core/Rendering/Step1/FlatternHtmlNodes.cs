@@ -50,7 +50,7 @@ namespace Doc2web.Core.Rendering.Step1
             }
         }
 
-        private static HtmlNode SplitNode(HtmlNode n, int colisiton)
+        private static HtmlNode SplitNode(HtmlNode n, double colisiton)
         {
             var lastEnd = n.End;
             var newNode = n.Clone();

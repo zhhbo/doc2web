@@ -58,20 +58,20 @@ namespace Doc2web
         private void ReplaceBigger(StringBuilder text)
         {
             ReplaceSameSize(text);
-            text.Insert(Index + Length, Replacement.Substring(Length));
+            text.Insert((int)Index + Length, Replacement.Substring(Length));
         }
 
         private void ReplaceSmaller(StringBuilder text)
         {
             for (int i = 0; i < Replacement.Length; i++)
-                text[Index + i] = Replacement[i];
-            text.Remove(Index + Replacement.Length, Length - Replacement.Length);
+                text[(int)Index + i] = Replacement[i];
+            text.Remove((int)Index + Replacement.Length, Length - Replacement.Length);
         }
 
         private void ReplaceSameSize(StringBuilder text)
         {
             for (int i = 0; i < Length; i++)
-                text[Index + i] = Replacement[i];
+                text[(int)Index + i] = Replacement[i];
         }
     }
 }

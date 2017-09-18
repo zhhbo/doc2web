@@ -62,7 +62,7 @@ namespace Doc2web.Benchmark
         public void ResetStringBuilder()
         {
             var maxI = _tempsTags[_tempsTags.Length - 1].Index + 1;
-            _tempStringBuilder = new StringBuilder(maxI);
+            _tempStringBuilder = new StringBuilder((int)maxI);
             for (int i = 1; i < maxI; i++) _tempStringBuilder.Append(i);
         }
 
@@ -86,7 +86,7 @@ namespace Doc2web.Benchmark
                 bodyNode.End = AddParagraphNodes(bodyNode.End, p);
         }
 
-        private int AddParagraphNodes(int i, Paragraph p)
+        private double AddParagraphNodes(double i, Paragraph p)
         {
             _nodes.Add(new HtmlNode
             {
@@ -96,7 +96,7 @@ namespace Doc2web.Benchmark
                 End = i + p.InnerText.Length
             });
 
-            int j = 0;
+            double j = 0;
             foreach (var r in p.Elements<Run>())
                 j = AddRunNodes(i, j, r);
 
@@ -105,7 +105,7 @@ namespace Doc2web.Benchmark
             return i;
         }
 
-        private int AddRunNodes(int i, int j, Run r)
+        private double AddRunNodes(double i, double j, Run r)
         {
             _nodes.Add(new HtmlNode
             {

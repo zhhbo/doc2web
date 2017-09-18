@@ -7,9 +7,9 @@ namespace Doc2web
     public class TextDeletion : Mutation
     {
 
-        public int Length { get; set; }
+        public double Length { get; set; }
 
-        private int End => Index + Length;
+        private double End => Index + Length;
 
         public override void UpdateOtherMutations(List<Mutation> mutations)
         {
@@ -32,7 +32,7 @@ namespace Doc2web
 
         public override void MutateText(StringBuilder text)
         {
-            text.Remove(Index, Length);
+            text.Remove((int)Index, (int)Length);
         }
 
         public override void MutateNodes(List<HtmlNode> nodes)
