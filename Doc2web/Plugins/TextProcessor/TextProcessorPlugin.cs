@@ -14,7 +14,7 @@ namespace Doc2web.Plugins.TextProcessor
         public TextProcessorPlugin() : this(new TextProcessorConfig())
         {
         }
-        
+
         public TextProcessorPlugin(TextProcessorConfig config)
         {
             _config = config;
@@ -97,30 +97,33 @@ namespace Doc2web.Plugins.TextProcessor
         [ElementProcessing]
         public void ProcessRun(IElementContext context, Run r)
         {
-            if (r.InnerText.Length == 0) return;
-            var node = new HtmlNode
+            if (r.InnerText.Length > 0)
             {
-                Start = context.TextIndex,
-                End = context.TextIndex + r.InnerText.Length,
-                Tag = _config.RunTag,
-                Z = _config.RunZ,
-            };
-            node.AddClass(_config.RunCls);
+                var node = new HtmlNode
+                {
+                    Start = context.TextIndex + _config.Delta,
+                    End = context.TextIndex + r.InnerText.Length,
+                    Tag = _config.RunTag,
+                    Z = _config.RunZ,
+                };
+                node.AddClass(_config.RunCls);
 
-            var rPr = r.RunProperties;
-            if (rPr != null)
-            {
-                var cssRegistrator = context.GlobalContext.Container.Resolve<ICssRegistrator>();
-                var dynamicStyle = cssRegistrator.Register(rPr);
-                if (dynamicStyle != "")
-                    node.AddClass(dynamicStyle);
+                var rPr = r.RunProperties;
+                if (rPr != null)
+                {
+                    var cssRegistrator = context.GlobalContext.Container.Resolve<ICssRegistrator>();
+                    var dynamicStyle = cssRegistrator.Register(rPr);
+                    if (dynamicStyle != "")
+                        node.AddClass(dynamicStyle);
 
-                var styleId = rPr.RunStyle?.Val?.Value;
-                if (styleId != null)
-                    node.AddClass(cssRegistrator.Register(styleId));
+                    var styleId = rPr.RunStyle?.Val?.Value;
+                    if (styleId != null)
+                        node.AddClass(cssRegistrator.Register(styleId));
+                }
+
+                context.AddNode(node);
+
             }
-
-            context.AddNode(node);
             context.ProcessChilden();
         }
 

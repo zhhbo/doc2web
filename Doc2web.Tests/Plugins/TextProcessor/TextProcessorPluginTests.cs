@@ -190,7 +190,7 @@ namespace Doc2web.Tests.Plugins.TextProcessor
             var expected = new HtmlNode
             {
                 Tag = _config.RunTag,
-                Start = 0,
+                Start = _config.Delta,
                 End = _r.InnerText.Length,
                 Z = _config.RunZ,
             };
