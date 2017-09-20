@@ -29,8 +29,8 @@ namespace Doc2web.Tests.Plugins.Style
         [TestMethod]
         public void RenderInto_StylesTest()
         {
-            string expectedStyle1Css = @"span.test {color: red;font-weight: bold;}";
-            string expectedStyle2Css = @"p.test {font-weight: light;text-decoration: underline;}";
+            string expectedStyle1Css = "span.test {color: red;font-weight: bold;}";
+            string expectedStyle2Css = "p.test {font-weight: light;text-decoration: underline;}";
             RegisterMockCssClass("style1",
                 ("span.test", "font-weight", "bold"),
                 ("span.test", "color", "red"));
@@ -45,6 +45,26 @@ namespace Doc2web.Tests.Plugins.Style
             Assert.IsTrue(output.Contains(expectedStyle1Css));
             Assert.IsTrue(output.Contains(expectedStyle2Css));
             Assert.AreEqual(expectedStyle1Css.Length + expectedStyle2Css.Length, output.Length);
+        }
+
+        [TestMethod]
+        public void RenderInto_NumberingTest()
+        {
+            string expectedStyleContainer =
+                ".numbering-container.numbering-0-1 {width: 13vw;}";
+            string expectedStyleNumber =
+                ".numbering-0-1 .numbering-number {color: red;}";
+
+            RegisterMockCssClass(0, 1,
+                (".numbering-container.numbering-0-1", "width", "13vw"),
+                (".numbering-0-1 .numbering-number", "color", "red"));
+
+            _instance.Register(0, 1);
+            var output = TestRender();
+
+            Assert.IsTrue(output.Contains(expectedStyleContainer));
+            Assert.IsTrue(output.Contains(expectedStyleNumber));
+            Assert.AreEqual(expectedStyleContainer.Length + expectedStyleNumber.Length, output.Length);
         }
 
 
@@ -146,6 +166,17 @@ namespace Doc2web.Tests.Plugins.Style
             var data = MockCssClass(stubCssData);
             _clsFactory
                 .Build(Arg.Is(styleId))
+                .Returns(data);
+        }
+
+        private void RegisterMockCssClass(
+            int numberingInstance, 
+            int level, 
+            params (string, string, string)[] stubCssData)
+        {
+            var data = MockCssClass(stubCssData);
+            _clsFactory
+                .Build(Arg.Is(numberingInstance), Arg.Is(level))
                 .Returns(data);
         }
 

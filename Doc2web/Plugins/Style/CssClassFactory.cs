@@ -15,12 +15,13 @@ namespace Doc2web.Plugins.Style
         private Dictionary<string, ParagraphCssClass> _pClassesChache;
         private Dictionary<string, RunCssClass> _rClassesCache;
         private ICssPropertiesFactory _propsFac;
-
+        private INumberingCrawler _numberingCrawler;
 
         public CssClassFactory(
             Styles styles, 
             StyleConfiguration config,
-            ICssPropertiesFactory cssPropertyFactory)
+            ICssPropertiesFactory cssPropertyFactory,
+            INumberingCrawler numberingCrawler)
         {
             InitStyleDictionnary(styles);
             _config = config;
@@ -28,6 +29,7 @@ namespace Doc2web.Plugins.Style
             _pClassesChache = new Dictionary<string, ParagraphCssClass>();
             _rClassesCache = new Dictionary<string, RunCssClass>();
             _propsFac = cssPropertyFactory;
+            _numberingCrawler = numberingCrawler;
         }
 
         private void InitStyleDictionnary(Styles styles)
@@ -127,6 +129,27 @@ namespace Doc2web.Plugins.Style
             _pClassesChache.Add(style.StyleId.Value, cls);
 
             return cls;
+        }
+
+        public ICssClass Build(int numberingId, int levelId)
+        {
+            var result = new NumberingCssClass
+            {
+                NumberingId = numberingId,
+                Level = levelId
+            };
+            var levels = _numberingCrawler.Collect(numberingId, levelId);
+            foreach(var level in levels)
+            {
+                var container = level.PreviousParagraphProperties;
+                var number = level.NumberingSymbolRunProperties;
+                if (container != null)
+                    result.ContainerProps.AddMany(_propsFac.Build(container));
+                if (number != null)
+                    result.NumberProps.AddMany(_propsFac.Build(number));
+
+            }
+            return result;
         }
 
         public ICssClass Build(ParagraphProperties pPr)

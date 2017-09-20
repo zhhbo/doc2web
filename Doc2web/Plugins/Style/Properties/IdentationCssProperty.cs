@@ -30,7 +30,7 @@ namespace Doc2web.Plugins.Style.Properties
                 @"(max-width: 21.59cm)",
                 Selector,
                 "text-indent",
-                Math.Round(Utils.TwipsToPageRatio(indentation.Value) * 100, 3) + "%"
+                Math.Round(Utils.TwipsToPageRatio(indentation.Value) * 100, 3) + "vw"
             );
             cssData.AddAttribute(
                 @"(min-width: 21.59cm)",
@@ -52,7 +52,7 @@ namespace Doc2web.Plugins.Style.Properties
             cssData.AddAttribute(
                 selector,
                 "width",
-                $"{Math.Round(Utils.TwipsToPageRatio(indent.Value) * 100, 3)}%"
+                $"{Math.Round(Utils.TwipsToPageRatio(indent.Value) * 100, 3)}vw"
             );
             cssData.AddAttribute(
                 selector,

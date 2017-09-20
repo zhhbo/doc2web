@@ -41,7 +41,7 @@ namespace Doc2web.Tests.Plugins.Style.Properties
             expected.AddAttribute(
                 "div.container.test-class > .leftspacer",
                 "width",
-                "5.882%");
+                "5.882vw");
             expected.AddAttribute(
                 "div.container.test-class > .leftspacer",
                 "min-width",
@@ -64,7 +64,7 @@ namespace Doc2web.Tests.Plugins.Style.Properties
             expected.AddAttribute(
                 "div.container.test-class > .rightspacer",
                 "width",
-                "5.882%");
+                "5.882vw");
             expected.AddAttribute(
                 "div.container.test-class > .rightspacer",
                 "min-width",
@@ -84,7 +84,7 @@ namespace Doc2web.Tests.Plugins.Style.Properties
                 "(max-width: 21.59cm)",
                 "div.container.test-class",
                 "text-indent",
-                "-2.941%");
+                "-2.941vw");
             expected.AddAttribute(
                 "(min-width: 21.59cm)",
                 "div.container.test-class",
@@ -105,7 +105,7 @@ namespace Doc2web.Tests.Plugins.Style.Properties
                 "(max-width: 21.59cm)",
                 "div.container.test-class",
                 "text-indent",
-                "2.941%");
+                "2.941vw");
             expected.AddAttribute(
                 "(min-width: 21.59cm)",
                 "div.container.test-class",

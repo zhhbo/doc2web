@@ -11,6 +11,8 @@ namespace Doc2web.Plugins.Style
 
         ICssClass Build(string styleId);
 
+        ICssClass Build(int numberingId, int level);
+
         ICssClass Build(ParagraphProperties pPr);
 
         ICssClass Build(RunProperties rPr);

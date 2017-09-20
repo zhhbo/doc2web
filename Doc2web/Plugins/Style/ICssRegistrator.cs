@@ -15,6 +15,14 @@ namespace Doc2web.Plugins.Style
         string Register(string styleId);
 
         /// <summary>
+        /// Create a css class based on a specific level of a numbering instance.
+        /// </summary>
+        /// <param name="numberingInstance"></param>
+        /// <param name="level"></param>
+        /// <returns></returns>
+        string Register(int numberingInstance, int level);
+
+        /// <summary>
         /// Create a css class from paragraph properties.
         /// </summary>
         /// <param name="pPr">Paragraph properties used to create the css class.</param>

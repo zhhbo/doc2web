@@ -52,7 +52,7 @@ namespace Doc2web.Plugins.Style
         }
 
         private Styles Styles => _wpDoc.MainDocumentPart.StyleDefinitionsPart.Styles;
-        private Theme Theme => _wpDoc.MainDocumentPart.ThemePart.Theme; 
+        private Theme Theme => _wpDoc.MainDocumentPart.ThemePart.Theme;
 
         [InitializeEngine]
         public void InitEngine(ContainerBuilder builder)
@@ -81,11 +81,17 @@ namespace Doc2web.Plugins.Style
                 .RegisterType<CssPropertiesFactory>()
                 .As<ICssPropertiesFactory>()
                 .As<ICssPropertiesFactory>();
+            builder.RegisterInstance(new NumberingCrawler(
+                _wpDoc.MainDocumentPart.NumberingDefinitionsPart.Numbering,
+                _wpDoc.MainDocumentPart.StyleDefinitionsPart.Styles))
+                .As<INumberingCrawler>();
+
             builder
                 .Register(r => new CssClassFactory(
                     Styles, 
                     r.Resolve<StyleConfiguration>(),
-                    r.Resolve<ICssPropertiesFactory>()))
+                    r.Resolve<ICssPropertiesFactory>(),
+                    r.Resolve<INumberingCrawler>()))
                 .As<ICssClassFactory>()
                 .InstancePerLifetimeScope();
         }

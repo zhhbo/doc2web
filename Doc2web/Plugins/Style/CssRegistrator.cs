@@ -12,7 +12,8 @@ namespace Doc2web.Plugins.Style
     {
         private StyleConfiguration _config;
         private ICssClassFactory _classFactory;
-        private ConcurrentDictionary<string, byte> _classesToRender;
+        private ConcurrentDictionary<string, byte> _stylesToRender;
+        private ConcurrentDictionary<(int, int), byte> _numberingToRender;
         private Dictionary<ICssClass, string> _dynamicParagraphClassesUIDs;
         private Dictionary<ICssClass, string> _dynamicRunClassesUIDs;
 
@@ -22,15 +23,22 @@ namespace Doc2web.Plugins.Style
         {
             _config = config;
             _classFactory = classFactory;
-            _classesToRender = new ConcurrentDictionary<string, byte>();
+            _stylesToRender = new ConcurrentDictionary<string, byte>();
+            _numberingToRender = new ConcurrentDictionary<(int, int), byte>();
             _dynamicParagraphClassesUIDs = new Dictionary<ICssClass, string>();
             _dynamicRunClassesUIDs = new Dictionary<ICssClass, string>();
         }
 
         public string Register(string styleId)
         {
-            _classesToRender.TryAdd(styleId, 0);
+            _stylesToRender.TryAdd(styleId, 0);
             return styleId;
+        }
+
+        public string Register(int numberingInstance, int level)
+        {
+            _numberingToRender.TryAdd((numberingInstance, level), 0);
+            return $"numbering-{numberingInstance}-{level}";
         }
 
         public string Register(ParagraphProperties pPr)
@@ -71,10 +79,15 @@ namespace Doc2web.Plugins.Style
         {
             var cssData = new CssData();
             var defaults = _classFactory.BuildDefaults();
+            var numbering =
+                _numberingToRender.Keys
+                .Select(x => _classFactory.Build(x.Item1, x.Item2))
+                .ToArray();
             var clsToRender =
-                _classesToRender
+                _stylesToRender
                     .Keys
                     .Select(_classFactory.Build)
+                    .Concat(numbering)
                     .Concat(_dynamicParagraphClassesUIDs.Keys)
                     .Concat(_dynamicRunClassesUIDs.Keys)
                     .Concat(defaults)

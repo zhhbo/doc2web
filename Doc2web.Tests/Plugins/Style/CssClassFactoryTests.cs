@@ -16,6 +16,7 @@ namespace Doc2web.Tests.Plugins.Style
         private Styles _styles;
         private ICssPropertiesFactory _propsFac;
         private StyleConfiguration _config;
+        private INumberingCrawler _numCrawler;
         private CssClassFactory _instance;
 
         [TestInitialize]
@@ -24,7 +25,8 @@ namespace Doc2web.Tests.Plugins.Style
             _styles = Samples.StyleBasedOn1.CreateStyles();
             _propsFac = Substitute.For<ICssPropertiesFactory>();
             _config = new StyleConfiguration();
-            _instance = new CssClassFactory(_styles, _config, _propsFac);
+            _numCrawler = Substitute.For<INumberingCrawler>();
+            _instance = new CssClassFactory(_styles, _config, _propsFac, _numCrawler);
         }
 
         [TestMethod]
@@ -66,6 +68,50 @@ namespace Doc2web.Tests.Plugins.Style
             Assert.IsNotNull(basedOnCls);
             Assert.AreEqual(mockBasedOnRun, basedOnCls.RunProps.Single());
             Assert.AreEqual(mockBasedOnPara, basedOnCls.ParagraphProps.Single());
+        }
+
+        [TestMethod]
+        public void Build_FromNumberingTest()
+        {
+            var level1 = new Level(
+                new PreviousParagraphProperties(),
+                new NumberingSymbolRunProperties()
+           );
+            var level2 = new Level(
+                new PreviousParagraphProperties(),
+                new NumberingSymbolRunProperties()
+            );
+            var mockProp1 = new MockProp1();
+            var mockProp2 = new MockProp2();
+            var mockProp3 = new MockProp3();
+            var mockProp4 = new MockProp4();
+            _numCrawler
+                .Collect(Arg.Is(0), Arg.Is(1))
+                .Returns(new List<Level>() { level1, level2 });
+            _propsFac
+                .Build(Arg.Is(level1.PreviousParagraphProperties))
+                .Returns(new ICssProperty[] { mockProp1 });
+            _propsFac
+                .Build(Arg.Is(level2.PreviousParagraphProperties))
+                .Returns(new ICssProperty[] { mockProp2 });
+            _propsFac
+                .Build(Arg.Is(level1.NumberingSymbolRunProperties))
+                .Returns(new ICssProperty[] { mockProp3 });
+            _propsFac
+                .Build(Arg.Is(level2.NumberingSymbolRunProperties))
+                .Returns(new ICssProperty[] { mockProp4 });
+
+            var result = _instance.Build(0, 1) as NumberingCssClass;
+
+            Assert.IsNotNull(result);
+            Assert.AreEqual(0, result.NumberingId);
+            Assert.AreEqual(1, result.Level);
+            Assert.AreEqual(2, result.ContainerProps.Count);
+            Assert.IsTrue(result.ContainerProps.Contains(mockProp1));
+            Assert.IsTrue(result.ContainerProps.Contains(mockProp2));
+            Assert.AreEqual(2, result.NumberProps.Count);
+            Assert.IsTrue(result.NumberProps.Contains(mockProp3));
+            Assert.IsTrue(result.NumberProps.Contains(mockProp4));
         }
 
         [TestMethod]

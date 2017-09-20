@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using Doc2web.Plugins.Style;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
 using System;
@@ -40,14 +41,17 @@ namespace Doc2web.Plugins.Numbering
             var numbering = numberingMapper.GetNumbering(p);
             if (numbering != null)
             {
-                context.AddNode(BuildNumberingContainer());
+                var cssRegistrator = context.GlobalContext.Container.Resolve<ICssRegistrator>();
+                var cssClass = cssRegistrator.Register(numbering.NumberingId, numbering.LevelIndex);
+
+                context.AddNode(BuildNumberingContainer(cssClass));
                 context.AddNode(BuildNumberingNumber());
                 context.AddMutation(BuildNumberingInsertion(numbering.Verbose));
             }
         }
 
 
-        private HtmlNode BuildNumberingContainer()
+        private HtmlNode BuildNumberingContainer(string cssClass)
         {
             var node = new HtmlNode
             {
@@ -57,6 +61,7 @@ namespace Doc2web.Plugins.Numbering
                 Z = _config.NumberingContainerZ,
             };
             node.AddClass(_config.NumberingContainerCls);
+            node.AddClass(cssClass);
             return node;
         }
 
