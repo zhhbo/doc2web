@@ -47,13 +47,13 @@ namespace Doc2web.Tests.Plugins.Style
         public void InsertCss_Test()
         {
             var expected = new CssData();
-            expected.AddAttribute(".numbering-container.numbering-1-3", "width", "3vw");
+            expected.AddAttribute(".numbering-1-3", "width", "3vw");
             expected.AddAttribute(".numbering-1-3 .numbering-number", "font-family", "Arial");
             _instance.NumberingId = 1;
             _instance.Level = 3;
             _instance.ContainerProps.Add(
                 new MockProp1 {
-                    Out = ( ".numbering-container.numbering-1-3", "width", "3vw") });
+                    Out = ( ".numbering-1-3", "width", "3vw") });
             _instance.NumberProps.Add(
                 new MockProp2 {
                     Out = ( ".numbering-1-3 .numbering-number", "font-family", "Arial") });

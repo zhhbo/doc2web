@@ -11,6 +11,7 @@ namespace Doc2web.Plugins.Style.Properties
      * Not supported attributes:
      * themeTint, themeShade */
 
+    [RunCssProperty]
     public class ColorCssProperty : CssProperty<Color>
     {
         private static Regex hexadecimalRegex = new Regex(@"^[0-9a-f]{6}|[0-9A-F]{6}$", RegexOptions.Compiled);

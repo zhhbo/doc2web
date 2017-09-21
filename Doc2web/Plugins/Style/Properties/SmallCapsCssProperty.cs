@@ -5,6 +5,7 @@ using System.Text;
 
 namespace Doc2web.Plugins.Style.Properties
 {
+    [RunCssProperty]
     public class SmallCapsCssProperty : BooleanCssProperty<SmallCaps>
     {
         public override void SetOff(CssData data)

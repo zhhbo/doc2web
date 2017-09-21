@@ -6,6 +6,7 @@ using System.Text;
 
 namespace Doc2web.Plugins.Style.Properties
 {
+    [RunCssProperty]
     public class RunFontsCssProperty : CssProperty<RunFonts>
     {
         private IThemeFontsProvider _themeFontProvider;

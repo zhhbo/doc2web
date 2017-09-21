@@ -36,5 +36,12 @@ namespace Doc2web.Plugins.Style.Properties
 
         public abstract short GetSpecificHashcode();
         public abstract bool HaveSameOuput(T element);
+
+        public override string ToString()
+        {
+            var data = new CssData();
+            InsertCss(data);
+            return data.ToString();
+        }
     }
 }

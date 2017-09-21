@@ -6,9 +6,10 @@ using DocumentFormat.OpenXml;
 
 namespace Doc2web.Plugins.Style.Properties
 {
+    [ParagraphCssProperty]
     public class IdentationCssProperty : CssProperty<Indentation>
     {
-        private StyleConfiguration _config;
+        protected StyleConfiguration _config;
 
         public IdentationCssProperty(StyleConfiguration config) : base()
         {
@@ -61,11 +62,11 @@ namespace Doc2web.Plugins.Style.Properties
             );
         }
 
-        private int? LeftIndent => TryGetValue(Element.Left);
+        protected int? LeftIndent => TryGetValue(Element.Left);
 
-        private int? RightIndent => TryGetValue(Element.Right);
+        protected int? RightIndent => TryGetValue(Element.Right);
 
-        private int? Hanging
+        protected int? Hanging
         {
             get
             {
@@ -75,7 +76,7 @@ namespace Doc2web.Plugins.Style.Properties
 
             }
         }
-        private int? FirstLine => TryGetValue(Element.FirstLine);
+        protected int? FirstLine => TryGetValue(Element.FirstLine);
 
         private int? TryGetValue(StringValue v)
         {

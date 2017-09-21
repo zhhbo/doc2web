@@ -7,6 +7,10 @@ namespace Doc2web.Plugins.Style
 {
     public interface ICssPropertiesFactory
     {
-        ICssProperty[] Build(OpenXmlElement element);
+        ICssProperty[] BuildRun(OpenXmlElement element);
+
+        ICssProperty[] BuildParagraph(OpenXmlElement element);
+
+        ICssProperty[] BuildNumbering(OpenXmlElement element);
     }
 }

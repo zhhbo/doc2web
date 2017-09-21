@@ -1,4 +1,6 @@
-﻿using System;
+﻿using DocumentFormat.OpenXml;
+using DocumentFormat.OpenXml.Wordprocessing;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -28,6 +30,42 @@ namespace Doc2web.Plugins.Style.Properties
         public static double TwipsToPageRatio(int twips)
         {
             return twips / (567.0 * 21.59);
+        }
+    }
+
+    public class IndentationDecorator
+    {
+        public Indentation Element {get; set;}
+
+        public int? LeftIndent => TryGetValue(Element.Left);
+
+        public int? RightIndent => TryGetValue(Element.Right);
+
+        public int? Hanging
+        {
+            get
+            {
+                var x = TryGetValue(Element.Hanging);
+                if (x.HasValue) return x * -1;
+                return x;
+
+            }
+        }
+        public int? FirstLine => TryGetValue(Element.FirstLine);
+
+        private int? TryGetValue(StringValue v)
+        {
+            if (v?.Value != null)
+            {
+                try
+                {
+                    return int.Parse(v.Value);
+                } catch
+                {
+                    return null;
+                }
+            }
+            return null;
         }
     }
 }

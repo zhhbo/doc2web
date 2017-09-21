@@ -29,6 +29,8 @@ namespace Doc2web.Plugins.Numbering
         public void InitEngine(ContainerBuilder builder)
         {
             builder
+                .RegisterInstance(_config);
+            builder
                 .Register(x => new NumberingMapper(_wpDoc))
                 .SingleInstance();
         }
@@ -73,6 +75,7 @@ namespace Doc2web.Plugins.Numbering
                 End = _config.NumberingIndex + _config.NumberingDelta * 3,
                 Tag = _config.NumberingNumberTag,
                 Z = _config.NumberingNumberZ,
+                TextSuffix = "&#9;" // Add a tab
             };
             node.AddClass(_config.NumberingNumberCls);
             return node;
@@ -83,5 +86,22 @@ namespace Doc2web.Plugins.Numbering
             Position = _config.NumberingIndex + _config.NumberingDelta * 2,
             Text = verbose
         };
+
+        [PostProcessing]
+        public void PostProcessingCss(IGlobalContext context)
+        {
+            context.AddCss(CSS);
+        }
+
+        private static string CSS = @"
+.numbering-container {
+    display: flex;
+    min-width: fit-content;
+}
+.numbering-number {
+    min-width: fit-content;
+    whitepsace: pre;
+}
+";
     }
 }

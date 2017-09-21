@@ -5,6 +5,7 @@ using System.Text;
 
 namespace Doc2web.Plugins.Style.Properties
 {
+    [ParagraphCssProperty]
     public class JustificationCssProperty : CssProperty<Justification>
     {
         private static string[] MapJusitfyValues = new string[]

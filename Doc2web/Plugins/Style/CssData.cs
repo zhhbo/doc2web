@@ -156,5 +156,14 @@ namespace Doc2web.Plugins.Style
                 sb.Append(";");
             }
         }
+
+        public override string ToString()
+        {
+            var sb = new StringBuilder();
+            RenderInto(sb);
+            sb.Replace("{", "{\n");
+            sb.Replace(";", ";\n");
+            return sb.ToString();
+        }
     }
 }

@@ -32,7 +32,7 @@ namespace Doc2web.Plugins.Style
 
         public void InsertCss(CssData cssData)
         {
-            ContainerProps.Selector = $".numbering-container{Selector}";
+            ContainerProps.Selector = Selector;
             NumberProps.Selector = $"{Selector} .nubmering-number";
             ContainerProps.InsertCss(cssData);
             NumberProps.InsertCss(cssData);

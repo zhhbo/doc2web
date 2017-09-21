@@ -58,7 +58,7 @@ namespace Doc2web.Plugins.Style
             if (pDefaults != null)
             {
                 var pCls = new ParagraphCssClass { Selector = _config.ParagraphCssClassPrefix };
-                pCls.ParagraphProps.AddMany(_propsFac.Build(pDefaults));
+                pCls.ParagraphProps.AddMany(_propsFac.BuildParagraph(pDefaults));
                 cls.Add(pCls);
             }
         }
@@ -69,7 +69,7 @@ namespace Doc2web.Plugins.Style
             if (rDefaults != null)
             {
                 var rCls = new RunCssClass { Selector = _config.RunCssClassPrefix };
-                rCls.RunProps.AddMany(_propsFac.Build(rDefaults));
+                rCls.RunProps.AddMany(_propsFac.BuildRun(rDefaults));
                 cls.Add(rCls);
             }
         }
@@ -101,7 +101,7 @@ namespace Doc2web.Plugins.Style
             var cls = new RunCssClass();
 
             if (style.StyleRunProperties != null)
-                cls.RunProps.AddMany(_propsFac.Build(style.StyleRunProperties));
+                cls.RunProps.AddMany(_propsFac.BuildRun(style.StyleRunProperties));
 
             if (style.BasedOn?.Val?.Value != null)
                 cls.BasedOn = Build(style.BasedOn.Val.Value) as RunCssClass;
@@ -116,11 +116,11 @@ namespace Doc2web.Plugins.Style
         {
             var cls = new ParagraphCssClass();
 
-            if (style.StyleRunProperties != null)
-                cls.RunProps.AddMany(_propsFac.Build(style.StyleRunProperties));
-
             if (style.StyleParagraphProperties != null)
-                cls.ParagraphProps.AddMany(_propsFac.Build(style.StyleParagraphProperties));
+                cls.ParagraphProps.AddMany(_propsFac.BuildParagraph(style.StyleParagraphProperties));
+
+            if (style.StyleRunProperties != null)
+                cls.RunProps.AddMany(_propsFac.BuildRun(style.StyleRunProperties));
 
             if (style.BasedOn?.Val?.Value != null)
                 cls.BasedOn = Build(style.BasedOn.Val.Value) as ParagraphCssClass;
@@ -144,9 +144,9 @@ namespace Doc2web.Plugins.Style
                 var container = level.PreviousParagraphProperties;
                 var number = level.NumberingSymbolRunProperties;
                 if (container != null)
-                    result.ContainerProps.AddMany(_propsFac.Build(container));
+                    result.ContainerProps.AddMany(_propsFac.BuildNumbering(container));
                 if (number != null)
-                    result.NumberProps.AddMany(_propsFac.Build(number));
+                    result.NumberProps.AddMany(_propsFac.BuildRun(number));
 
             }
             return result;
@@ -155,14 +155,14 @@ namespace Doc2web.Plugins.Style
         public ICssClass Build(ParagraphProperties pPr)
         {
             var cls = new ParagraphCssClass();
-            cls.ParagraphProps.AddMany(_propsFac.Build(pPr));
+            cls.ParagraphProps.AddMany(_propsFac.BuildParagraph(pPr));
             return cls;
         }
 
         public ICssClass Build(RunProperties rPr)
         {
             var cls = new RunCssClass();
-            cls.RunProps.AddMany(_propsFac.Build(rPr));
+            cls.RunProps.AddMany(_propsFac.BuildRun(rPr));
             return cls;
         }
     }

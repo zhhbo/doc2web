@@ -65,10 +65,7 @@ namespace Doc2web.Plugins.Style
                 //        if (t.Name.StartsWith(r)) return false;
                 //    return true;
                 //})
-                .As(x => {
-                    var t = typeof(CssProperty<>);
-                    return t.MakeGenericType(x.BaseType.GetGenericArguments());
-                });
+                .As(x => RegisterCssProp(x));
             builder
                 .Register(r => new ThemeColorsProvider(Theme))
                 .As<IThemeColorsProvider>()
@@ -94,6 +91,18 @@ namespace Doc2web.Plugins.Style
                     r.Resolve<INumberingCrawler>()))
                 .As<ICssClassFactory>()
                 .InstancePerLifetimeScope();
+        }
+
+        private static Type RegisterCssProp(Type x)
+        {
+            var t = typeof(CssProperty<>);
+            while(x.GetGenericArguments().Length != 1)
+            {
+                if (x.BaseType == typeof(object))
+                    throw new InvalidProgramException("A classs ending in CssProperty is invalid");
+                x = x.BaseType;
+            }
+            return t.MakeGenericType(x.GetGenericArguments());
         }
 
         [InitializeProcessing]
