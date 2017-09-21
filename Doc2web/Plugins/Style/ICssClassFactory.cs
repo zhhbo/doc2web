@@ -1,4 +1,5 @@
-﻿using DocumentFormat.OpenXml.Wordprocessing;
+﻿using DocumentFormat.OpenXml;
+using DocumentFormat.OpenXml.Wordprocessing;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -9,12 +10,12 @@ namespace Doc2web.Plugins.Style
     {
         List<ICssClass> BuildDefaults();
 
-        ICssClass Build(string styleId);
+        ICssClass BuildFromStyle(string styleId);
 
-        ICssClass Build(int numberingId, int level);
+        ICssClass BuildFromNumbering(int numberingId, int level);
 
-        ICssClass Build(ParagraphProperties pPr);
+        ICssClass BuildFromParagraphProperties(OpenXmlElement pPr);
 
-        ICssClass Build(RunProperties rPr);
+        ICssClass BuildFromRunProperties(OpenXmlElement rPr);
     }
 }

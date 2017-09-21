@@ -38,8 +38,8 @@ namespace Doc2web.Tests.Plugins.Style
                 ("p.test", "font-weight", "light"),
                 ("p.test", "text-decoration", "underline"));
 
-            _instance.Register("style1");
-            _instance.Register("style2");
+            _instance.RegisterStyle("style1");
+            _instance.RegisterStyle("style2");
             var output = TestRender();
 
             Assert.IsTrue(output.Contains(expectedStyle1Css));
@@ -59,7 +59,7 @@ namespace Doc2web.Tests.Plugins.Style
                 (".numbering-container.numbering-0-1", "width", "13vw"),
                 (".numbering-0-1 .numbering-number", "color", "red"));
 
-            _instance.Register(0, 1);
+            _instance.RegisterNumbering(0, 1);
             var output = TestRender();
 
             Assert.IsTrue(output.Contains(expectedStyleContainer));
@@ -78,8 +78,8 @@ namespace Doc2web.Tests.Plugins.Style
             RegisterMockCssClass(rProp, ("span.asdf", "color", "red"));
             RegisterMockCssClass(pProp, ("p.asdf1", "font-weight", "light"));
 
-            var rClsName = _instance.Register(rProp);
-            var pClsName = _instance.Register(pProp);
+            var rClsName = _instance.RegisterRunProperties(rProp);
+            var pClsName = _instance.RegisterParagraphProperties(pProp);
             var output = TestRender();
 
             Assert.AreNotEqual("", rClsName);
@@ -97,10 +97,10 @@ namespace Doc2web.Tests.Plugins.Style
             RegisterMockCssClass(rProp,
                 ("span", "font-weight", "bold"),
                 ("span.test", "color", "red"));
-            var cls = _clsFactory.Build(rProp);
+            var cls = _clsFactory.BuildFromRunProperties(rProp);
 
-            var rClsName = _instance.Register(rProp);
-            var rClsName2 = _instance.Register(rProp);
+            var rClsName = _instance.RegisterRunProperties(rProp);
+            var rClsName2 = _instance.RegisterRunProperties(rProp);
             var output = TestRender();
 
             Assert.AreEqual(rClsName2, rClsName);
@@ -116,10 +116,10 @@ namespace Doc2web.Tests.Plugins.Style
             RegisterMockCssClass(pProp,
                 ("p", "font-weight", "light"),
                 ("span.test", "text-decoration", "underline"));
-            var cls = _clsFactory.Build(pProp);
+            var cls = _clsFactory.BuildFromParagraphProperties(pProp);
 
-            var rClsName = _instance.Register(pProp);
-            var rClsName2 = _instance.Register(pProp);
+            var rClsName = _instance.RegisterParagraphProperties(pProp);
+            var rClsName2 = _instance.RegisterParagraphProperties(pProp);
             var output = TestRender();
 
             Assert.AreEqual(rClsName2, rClsName);
@@ -134,11 +134,11 @@ namespace Doc2web.Tests.Plugins.Style
             var rPr = new RunProperties();
             var cls = Substitute.For<ICssClass>();
             cls.IsEmpty.Returns(true);
-            _clsFactory.Build(Arg.Is(pPr)).Returns(cls);
-            _clsFactory.Build(Arg.Is(rPr)).Returns(cls);
+            _clsFactory.BuildFromParagraphProperties(Arg.Is(pPr)).Returns(cls);
+            _clsFactory.BuildFromRunProperties(Arg.Is(rPr)).Returns(cls);
 
-            Assert.AreEqual("", _instance.Register(pPr));
-            Assert.AreEqual("", _instance.Register(rPr));
+            Assert.AreEqual("", _instance.RegisterParagraphProperties(pPr));
+            Assert.AreEqual("", _instance.RegisterRunProperties(rPr));
         }
 
         [TestMethod]
@@ -165,7 +165,7 @@ namespace Doc2web.Tests.Plugins.Style
         {
             var data = MockCssClass(stubCssData);
             _clsFactory
-                .Build(Arg.Is(styleId))
+                .BuildFromStyle(Arg.Is(styleId))
                 .Returns(data);
         }
 
@@ -176,7 +176,7 @@ namespace Doc2web.Tests.Plugins.Style
         {
             var data = MockCssClass(stubCssData);
             _clsFactory
-                .Build(Arg.Is(numberingInstance), Arg.Is(level))
+                .BuildFromNumbering(Arg.Is(numberingInstance), Arg.Is(level))
                 .Returns(data);
         }
 
@@ -184,7 +184,7 @@ namespace Doc2web.Tests.Plugins.Style
         {
             var data = MockCssClass(stubCssData);
             _clsFactory
-                .Build(Arg.Is(rProp))
+                .BuildFromRunProperties(Arg.Is(rProp))
                 .Returns(data);
         }
 
@@ -192,7 +192,7 @@ namespace Doc2web.Tests.Plugins.Style
         {
             var data = MockCssClass(stubCssData);
             _clsFactory
-                .Build(Arg.Is(pProp))
+                .BuildFromParagraphProperties(Arg.Is(pProp))
                 .Returns(data);
         }
 

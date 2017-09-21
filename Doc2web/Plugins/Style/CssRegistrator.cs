@@ -5,6 +5,7 @@ using DocumentFormat.OpenXml.Wordprocessing;
 using System.Threading.Tasks;
 using System.Linq;
 using System.Collections.Concurrent;
+using DocumentFormat.OpenXml;
 
 namespace Doc2web.Plugins.Style
 {
@@ -29,26 +30,27 @@ namespace Doc2web.Plugins.Style
             _dynamicRunClassesUIDs = new Dictionary<ICssClass, string>();
         }
 
-        public string Register(string styleId)
+        public string RegisterStyle(string styleId)
         {
             _stylesToRender.TryAdd(styleId, 0);
             return styleId;
         }
 
-        public string Register(int numberingInstance, int level)
+        public string RegisterNumbering(int numberingInstance, int level)
         {
             _numberingToRender.TryAdd((numberingInstance, level), 0);
             return $"numbering-{numberingInstance}-{level}";
         }
 
-        public string Register(ParagraphProperties pPr)
+        public string RegisterParagraphProperties(OpenXmlElement pPr)
         {
-            var cls = _classFactory.Build(pPr);
+            var cls = _classFactory.BuildFromParagraphProperties(pPr);
             return TryGetDynamicClass(cls, _config.ParagraphCssClassPrefix + ".{0}", _dynamicParagraphClassesUIDs);
         }
-        public string Register(RunProperties rPr)
+
+        public string RegisterRunProperties(OpenXmlElement rPr)
         {
-            var cls = _classFactory.Build(rPr);
+            var cls = _classFactory.BuildFromRunProperties(rPr);
             return TryGetDynamicClass(cls, _config.RunCssClassPrefix + ".{0}",_dynamicRunClassesUIDs);
         }
 
@@ -81,12 +83,12 @@ namespace Doc2web.Plugins.Style
             var defaults = _classFactory.BuildDefaults();
             var numbering =
                 _numberingToRender.Keys
-                .Select(x => _classFactory.Build(x.Item1, x.Item2))
+                .Select(x => _classFactory.BuildFromNumbering(x.Item1, x.Item2))
                 .ToArray();
             var clsToRender =
                 _stylesToRender
                     .Keys
-                    .Select(_classFactory.Build)
+                    .Select(_classFactory.BuildFromStyle)
                     .Concat(numbering)
                     .Concat(_dynamicParagraphClassesUIDs.Keys)
                     .Concat(_dynamicRunClassesUIDs.Keys)

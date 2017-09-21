@@ -44,10 +44,10 @@ namespace Doc2web.Plugins.Numbering
             if (numbering != null)
             {
                 var cssRegistrator = context.GlobalContext.Container.Resolve<ICssRegistrator>();
-                var cssClass = cssRegistrator.Register(numbering.NumberingId, numbering.LevelIndex);
+                var cssClass = cssRegistrator.RegisterNumbering(numbering.NumberingId, numbering.LevelIndex);
 
                 context.AddNode(BuildNumberingContainer(cssClass));
-                context.AddNode(BuildNumberingNumber());
+                context.AddNode(BuildNumberingNumber(p, cssRegistrator));
                 context.AddMutation(BuildNumberingInsertion(numbering.Verbose));
             }
         }
@@ -67,7 +67,7 @@ namespace Doc2web.Plugins.Numbering
             return node;
         }
 
-        private HtmlNode BuildNumberingNumber()
+        private HtmlNode BuildNumberingNumber(Paragraph p, ICssRegistrator icssRegistrator)
         {
             var node = new HtmlNode
             {
@@ -78,6 +78,13 @@ namespace Doc2web.Plugins.Numbering
                 TextSuffix = "&#9;" // Add a tab
             };
             node.AddClass(_config.NumberingNumberCls);
+
+            var dynProp = p.ParagraphProperties?.ParagraphMarkRunProperties;
+            if (dynProp != null)
+            {
+                var cls = icssRegistrator.RegisterRunProperties(dynProp);
+                node.AddClass(cls);
+            }
             return node;
         }
 

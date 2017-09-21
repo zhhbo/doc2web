@@ -51,12 +51,12 @@ namespace Doc2web.Benchmark
         {
             var t1 =
                 _paragraphProperties
-                .Select(x => Task.Factory.StartNew(() => Registrator.Register(x)))
+                .Select(x => Task.Factory.StartNew(() => Registrator.RegisterParagraphProperties(x)))
                 .ToArray();
 
             var t2 =
                 _runProperties
-                .Select(x => Task.Factory.StartNew(() => Registrator.Register(x)))
+                .Select(x => Task.Factory.StartNew(() => Registrator.RegisterRunProperties(x)))
                 .ToArray();
 
             Task.WaitAll(t1);
@@ -78,7 +78,7 @@ namespace Doc2web.Benchmark
                 .ToArray();
 
             for (int i = 0; i < styles.Length; i++)
-                Registrator.Register(styles[i]);
+                Registrator.RegisterStyle(styles[i]);
 
             (Registrator as CssRegistrator).RenderInto(new StringBuilder()); // make sure everything is cached...
         }

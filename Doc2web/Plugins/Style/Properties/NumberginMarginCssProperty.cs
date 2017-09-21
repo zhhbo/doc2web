@@ -20,7 +20,7 @@ namespace Doc2web.Plugins.Style.Properties
 
         public override void InsertCss(CssData cssData)
         {
-            if (LeftIndent.HasValue)
+            if (LeftIndent.HasValue && LeftIndent > 0)
             {
                 SetupLeftKindIdentation(cssData);
             } else if (RightIndent.HasValue)
@@ -35,6 +35,7 @@ namespace Doc2web.Plugins.Style.Properties
 
         private void SetupLeftKindIdentation(CssData cssData)
         {
+            cssData.AddAttribute(ContainerSelector, "display", "flex");
             cssData.AddAttribute(ContainerSelector, "flex-direction", "row-reverse");
             cssData.AddAttribute(
                 ContainerSelector,

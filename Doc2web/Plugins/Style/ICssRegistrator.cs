@@ -1,4 +1,5 @@
-﻿using DocumentFormat.OpenXml.Wordprocessing;
+﻿using DocumentFormat.OpenXml;
+using DocumentFormat.OpenXml.Wordprocessing;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -12,7 +13,7 @@ namespace Doc2web.Plugins.Style
         /// </summary>
         /// <param name="styleId">Targeted style id.</param>
         /// <returns>Css class representing this style id.</returns>
-        string Register(string styleId);
+        string RegisterStyle(string styleId);
 
         /// <summary>
         /// Create a css class based on a specific level of a numbering instance.
@@ -20,20 +21,20 @@ namespace Doc2web.Plugins.Style
         /// <param name="numberingInstance"></param>
         /// <param name="level"></param>
         /// <returns></returns>
-        string Register(int numberingInstance, int level);
+        string RegisterNumbering(int numberingInstance, int level);
 
         /// <summary>
         /// Create a css class from paragraph properties.
         /// </summary>
         /// <param name="pPr">Paragraph properties used to create the css class.</param>
         /// <returns>Css class created from the paragraph properties.</returns>
-        string Register(ParagraphProperties pPr);
+        string RegisterParagraphProperties(OpenXmlElement pPr);
 
         /// <summary>
         /// Create a css class from run properties.
         /// </summary>
         /// <param name="rPr">Run properties used to create the css class.</param>
         /// <returns>Css class created from the run properties.</returns>
-        string Register(RunProperties rPr);
+        string RegisterRunProperties(OpenXmlElement rPr);
     }
 }

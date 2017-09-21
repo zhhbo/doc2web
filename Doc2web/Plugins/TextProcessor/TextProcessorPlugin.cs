@@ -46,14 +46,14 @@ namespace Doc2web.Plugins.TextProcessor
             if (pPr != null)
             {
                 var cssRegistrator = context.GlobalContext.Container.Resolve<ICssRegistrator>();
-                var dynamicStyle = cssRegistrator.Register(pPr);
+                var dynamicStyle = cssRegistrator.RegisterParagraphProperties(pPr);
                 if (dynamicStyle != "")
                     containerNode.AddClass(dynamicStyle);
 
                 var styleId = p.ParagraphProperties?.ParagraphStyleId?.Val?.Value;
                 if (styleId != null)
                 {
-                    containerNode.AddClass(cssRegistrator.Register(styleId));
+                    containerNode.AddClass(cssRegistrator.RegisterStyle(styleId));
                 }
             }
 
@@ -112,13 +112,13 @@ namespace Doc2web.Plugins.TextProcessor
                 if (rPr != null)
                 {
                     var cssRegistrator = context.GlobalContext.Container.Resolve<ICssRegistrator>();
-                    var dynamicStyle = cssRegistrator.Register(rPr);
+                    var dynamicStyle = cssRegistrator.RegisterRunProperties(rPr);
                     if (dynamicStyle != "")
                         node.AddClass(dynamicStyle);
 
                     var styleId = rPr.RunStyle?.Val?.Value;
                     if (styleId != null)
-                        node.AddClass(cssRegistrator.Register(styleId));
+                        node.AddClass(cssRegistrator.RegisterStyle(styleId));
                 }
 
                 context.AddNode(node);

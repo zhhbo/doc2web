@@ -35,7 +35,7 @@ namespace Doc2web.Tests.Plugins.Style
             var mockBasedOn = MockRunCssProps("RunStyle1");
             var mockProp = MockRunCssProps("RunStyle2");
 
-            var cls = _instance.Build("RunStyle2");
+            var cls = _instance.BuildFromStyle("RunStyle2");
             Assert.IsNotNull(cls);
 
             var runCssClass = cls as RunCssClass;
@@ -56,7 +56,7 @@ namespace Doc2web.Tests.Plugins.Style
             var mockPropPara = MockParagraphCssProps("ParagraphStyle2");
             var mockPropRun = MockRunCssProps("ParagraphStyle2");
 
-            var cls = _instance.Build("ParagraphStyle2");
+            var cls = _instance.BuildFromStyle("ParagraphStyle2");
             Assert.IsNotNull(cls);
 
             var paraCssCls = cls as ParagraphCssClass;
@@ -101,7 +101,7 @@ namespace Doc2web.Tests.Plugins.Style
                 .BuildRun(Arg.Is(level2.NumberingSymbolRunProperties))
                 .Returns(new ICssProperty[] { mockProp4 });
 
-            var result = _instance.Build(0, 1) as NumberingCssClass;
+            var result = _instance.BuildFromNumbering(0, 1) as NumberingCssClass;
 
             Assert.IsNotNull(result);
             Assert.AreEqual(0, result.NumberingId);
@@ -121,7 +121,7 @@ namespace Doc2web.Tests.Plugins.Style
             var runProps = new RunProperties();
             _propsFac.BuildRun(Arg.Is(runProps)).Returns(mockProps);
 
-            var cls = _instance.Build(runProps);
+            var cls = _instance.BuildFromRunProperties(runProps);
             Assert.IsNotNull(cls);
 
             var runCssClass = cls as RunCssClass;
@@ -136,7 +136,7 @@ namespace Doc2web.Tests.Plugins.Style
             var pPr = new ParagraphProperties();
             _propsFac.BuildParagraph(Arg.Is(pPr)).Returns(mockProps);
 
-            var cls = _instance.Build(pPr);
+            var cls = _instance.BuildFromParagraphProperties(pPr);
             Assert.IsNotNull(cls);
 
             var pCssClass = cls as ParagraphCssClass;

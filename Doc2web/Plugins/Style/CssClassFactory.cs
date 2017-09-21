@@ -4,6 +4,7 @@ using System.Text;
 using DocumentFormat.OpenXml.Wordprocessing;
 using DocumentFormat.OpenXml.Packaging;
 using System.Linq;
+using DocumentFormat.OpenXml;
 
 namespace Doc2web.Plugins.Style
 {
@@ -74,7 +75,7 @@ namespace Doc2web.Plugins.Style
             }
         }
 
-        public ICssClass Build(string styleId)
+        public ICssClass BuildFromStyle(string styleId)
         {
             if (_pClassesChache.TryGetValue(styleId, out ParagraphCssClass pCls)) return pCls;
             else if (_rClassesCache.TryGetValue(styleId, out RunCssClass rCls)) return rCls;
@@ -104,7 +105,7 @@ namespace Doc2web.Plugins.Style
                 cls.RunProps.AddMany(_propsFac.BuildRun(style.StyleRunProperties));
 
             if (style.BasedOn?.Val?.Value != null)
-                cls.BasedOn = Build(style.BasedOn.Val.Value) as RunCssClass;
+                cls.BasedOn = BuildFromStyle(style.BasedOn.Val.Value) as RunCssClass;
 
             cls.Selector = $"{_config.RunCssClassPrefix}.{style.StyleId.Value}";
             _rClassesCache.Add(style.StyleId.Value, cls);
@@ -123,7 +124,7 @@ namespace Doc2web.Plugins.Style
                 cls.RunProps.AddMany(_propsFac.BuildRun(style.StyleRunProperties));
 
             if (style.BasedOn?.Val?.Value != null)
-                cls.BasedOn = Build(style.BasedOn.Val.Value) as ParagraphCssClass;
+                cls.BasedOn = BuildFromStyle(style.BasedOn.Val.Value) as ParagraphCssClass;
 
             cls.Selector = $"{_config.ParagraphCssClassPrefix}.{style.StyleId.Value}";
             _pClassesChache.Add(style.StyleId.Value, cls);
@@ -131,7 +132,7 @@ namespace Doc2web.Plugins.Style
             return cls;
         }
 
-        public ICssClass Build(int numberingId, int levelId)
+        public ICssClass BuildFromNumbering(int numberingId, int levelId)
         {
             var result = new NumberingCssClass
             {
@@ -152,14 +153,14 @@ namespace Doc2web.Plugins.Style
             return result;
         }
 
-        public ICssClass Build(ParagraphProperties pPr)
+        public ICssClass BuildFromParagraphProperties(OpenXmlElement pPr)
         {
             var cls = new ParagraphCssClass();
             cls.ParagraphProps.AddMany(_propsFac.BuildParagraph(pPr));
             return cls;
         }
 
-        public ICssClass Build(RunProperties rPr)
+        public ICssClass BuildFromRunProperties(OpenXmlElement rPr)
         {
             var cls = new RunCssClass();
             cls.RunProps.AddMany(_propsFac.BuildRun(rPr));
