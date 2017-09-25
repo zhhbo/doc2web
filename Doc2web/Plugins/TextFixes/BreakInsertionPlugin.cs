@@ -75,7 +75,7 @@ namespace Doc2web.Plugins.TextFixes
         private string CSS =>
             $"{BreakAtStartSelector} {{flex-direction: column;}}" +
             $"{BreakAtStartNumberingSelector} {{width: 100%;}}" +
-            $"{BreakAtStartNumberingSelector} * {{padding: 0}}";
+            $"{BreakAtStartNumberingSelector} * {{padding: 0!important;}}";
 
     }
 }
