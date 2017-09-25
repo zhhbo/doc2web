@@ -7,6 +7,7 @@ using System.Text;
 using DocumentFormat.OpenXml.Wordprocessing;
 using System.Linq;
 using System.Collections;
+using Doc2web.Plugins.Numbering;
 
 namespace Doc2web.Tests.Plugins.TextFixes
 {
@@ -16,6 +17,7 @@ namespace Doc2web.Tests.Plugins.TextFixes
         private BreakInsertionPluginConfig _config;
         private BreakInsertionPlugin _instance;
         private List<HtmlNode> _nodes;
+        private HtmlNode _numberingContainerMax;
         private IElementContext _context;
         private HtmlNode _container;
 
@@ -25,6 +27,7 @@ namespace Doc2web.Tests.Plugins.TextFixes
             _config = new BreakInsertionPluginConfig();
             _instance = new BreakInsertionPlugin(_config);
             _nodes = new List<HtmlNode>();
+
             _container = new HtmlNode
             {
                 Start = -1_000_000,
@@ -33,11 +36,12 @@ namespace Doc2web.Tests.Plugins.TextFixes
                 Tag = _config.ContainerTag
             };
             _container.AddClass(_config.ContainerCls);
+
             _context = Substitute.For<IElementContext>();
             _context.When(x => x.AddNode(Arg.Any<HtmlNode>()))
                 .Do(x => _nodes.Add(x.ArgAt<HtmlNode>(0)));
             _context.TextIndex.Returns(100);
-            _context.Nodes.Returns(new HtmlNode[] { _container });
+            _context.Nodes.Returns(new HtmlNode[] { _container, _numberingContainerMax });
         }
 
         [TestMethod]
@@ -82,8 +86,7 @@ namespace Doc2web.Tests.Plugins.TextFixes
         private void AssertContainerFlexIsCol()
         {
             Assert.AreEqual(0, _nodes.Count);
-            Assert.IsTrue(_container.Style.ContainsKey("flex-direction"));
-            Assert.AreEqual("column", _container.Style["flex-direction"]);
+            Assert.IsTrue(_container.Classes.Contains(_config.BreakAtStartCls));
         }
     }
 }

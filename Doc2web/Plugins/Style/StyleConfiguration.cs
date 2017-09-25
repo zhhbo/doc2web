@@ -15,8 +15,8 @@ namespace Doc2web.Plugins.Style
         {
             ParagraphCssClassPrefix = "div.container";
             RunCssClassPrefix = "span";
-            LeftIdentationCssClassPrefix = "> .leftspacer";
-            RightIdentationCssClassPrefix = "> .rightspacer";
+            LeftIdentationCssClassPrefix = ".leftspacer";
+            RightIdentationCssClassPrefix = ".rightspacer";
         }
 
         public StyleConfiguration Clone() =>

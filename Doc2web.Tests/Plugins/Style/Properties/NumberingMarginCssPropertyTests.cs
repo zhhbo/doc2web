@@ -31,14 +31,15 @@ namespace Doc2web.Tests.Plugins.Style.Properties
         public void InsertCss_LeftTest()
         {
             var expected = new CssData();
-            expected.AddAttribute(".numbering-x-x.numbering-container", "display", "flex");
-            expected.AddAttribute(".numbering-x-x.numbering-container", "flex-direction", "row-reverse");
-            expected.AddAttribute(".numbering-x-x.numbering-container", "width", "17.645vw");
-            expected.AddAttribute(".numbering-x-x .numbering-number", "width", "4.632vw");
-            expected.AddAttribute("(min-width: 21.59cm)",
-                ".numbering-x-x.numbering-container", "width", "3.81cm");
-            expected.AddAttribute("(min-width: 21.59cm)",
-                ".numbering-x-x .numbering-number", "width", "1cm");
+            expected.AddAttribute(".numbering-x-x.numbering-container-max", "min-width", "17.645vw");
+            expected.AddAttribute(".numbering-x-x .numbering-container-min", "width", "auto");
+            expected.AddAttribute(".numbering-x-x .numbering-container-min", "display", "flex");
+            expected.AddAttribute(".numbering-x-x .numbering-container-min", "flex-direction", "row-reverse");
+            expected.AddAttribute(".numbering-x-x .numbering-number-max", "min-width", "4.632vw");
+            expected.AddAttribute(".numbering-x-x .numbering-number-min", "width", "auto");
+
+            expected.AddAttribute("(min-width: 21.59cm)", ".numbering-x-x.numbering-container-max", "width", "3.81cm");
+            expected.AddAttribute("(min-width: 21.59cm)", ".numbering-x-x .numbering-number-max", "width", "1cm");
             _instance.Element.Left = "2160";
             _instance.Element.Hanging = "567";
 

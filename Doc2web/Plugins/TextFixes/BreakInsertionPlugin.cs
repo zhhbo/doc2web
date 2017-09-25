@@ -51,13 +51,31 @@ namespace Doc2web.Plugins.TextFixes
                 context.Nodes
                 .FirstOrDefault(IsContainer);
             if (container != null)
-                container.SetStyle("flex-direction", "column");
+                container.AddClass(_config.BreakAtStartCls);
         }
 
         private bool IsContainer(HtmlNode n) =>
             n.Z == _config.ContainerZ &&
             n.Tag == _config.ContainerTag &&
             (_config.ContainerCls != "" ? n.Classes.Contains(_config.ContainerCls) : true);
+
+
+        [PostProcessing]
+        public void PostProcessing(IGlobalContext context)
+        {
+            context.AddCss(CSS);
+        }
+
+        private string BreakAtStartSelector =>
+            $".{_config.ContainerCls}.{_config.BreakAtStartCls}";
+
+        private string BreakAtStartNumberingSelector =>
+            $"{BreakAtStartSelector} .{_config.NumberingContainerCls}";
+
+        private string CSS =>
+            $"{BreakAtStartSelector} {{flex-direction: column;}}" +
+            $"{BreakAtStartNumberingSelector} {{width: 100%;}}" +
+            $"{BreakAtStartNumberingSelector} * {{padding: 0}}";
 
     }
 }

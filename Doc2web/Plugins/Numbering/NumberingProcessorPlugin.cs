@@ -46,38 +46,66 @@ namespace Doc2web.Plugins.Numbering
                 var cssRegistrator = context.GlobalContext.Container.Resolve<ICssRegistrator>();
                 var cssClass = cssRegistrator.RegisterNumbering(numbering.NumberingId, numbering.LevelIndex);
 
-                context.AddNode(BuildNumberingContainer(cssClass));
-                context.AddNode(BuildNumberingNumber(p, cssRegistrator));
-                context.AddMutation(BuildNumberingInsertion(numbering.Verbose));
+                context.AddNode(BuildContainerMax(cssClass));
+                context.AddNode(BuildContainerMin());
+                context.AddNode(BuildNumberMax());
+                context.AddNode(BuildNumberMin(p, cssRegistrator, numbering.LevelXmlElement));
+                context.AddMutation(BuildiInsertion(numbering.Verbose));
             }
         }
 
+        private double PositionWithDelta(int delta = 0) => _config.NumberingIndex + _config.NumberingDelta * delta;
 
-        private HtmlNode BuildNumberingContainer(string cssClass)
+        private HtmlNode BuildContainerMax(string cssClass)
         {
             var node = new HtmlNode
             {
-                Start = _config.NumberingIndex,
-                End = _config.NumberingIndex + _config.NumberingDelta * 4,
+                Start = PositionWithDelta(0),
+                End = PositionWithDelta(8),
                 Tag = _config.NumberingContainerTag,
                 Z = _config.NumberingContainerZ,
             };
-            node.AddClass(_config.NumberingContainerCls);
+            node.AddClass(_config.NumberingContainerMaxCls);
             node.AddClass(cssClass);
             return node;
         }
 
-        private HtmlNode BuildNumberingNumber(Paragraph p, ICssRegistrator icssRegistrator)
+        private HtmlNode BuildContainerMin()
         {
             var node = new HtmlNode
             {
-                Start = _config.NumberingIndex + _config.NumberingDelta,
-                End = _config.NumberingIndex + _config.NumberingDelta * 3,
+                Start = PositionWithDelta(1),
+                End = PositionWithDelta(7),
+                Tag = _config.NumberingContainerTag,
+                Z = _config.NumberingContainerZ,
+            };
+            node.AddClass(_config.NumberingContainerMinCls);
+            return node;
+        }
+
+        private HtmlNode BuildNumberMax()
+        {
+            var node = new HtmlNode
+            {
+                Start = PositionWithDelta(2),
+                End = PositionWithDelta(6),
+                Tag = _config.NumberingContainerTag,
+                Z = _config.NumberingContainerZ,
+            };
+            node.AddClass(_config.NumberingNumberMaxCls);
+            return node;
+        }
+
+        private HtmlNode BuildNumberMin(Paragraph p, ICssRegistrator icssRegistrator, Level level)
+        {
+            var node = new HtmlNode
+            {
+                Start = PositionWithDelta(3),
+                End = PositionWithDelta(5),
                 Tag = _config.NumberingNumberTag,
                 Z = _config.NumberingNumberZ,
-                TextSuffix = "&#9;" // Add a tab
             };
-            node.AddClass(_config.NumberingNumberCls);
+            node.AddClass(_config.NumberingNumberMinCls);
 
             var dynProp = p.ParagraphProperties?.ParagraphMarkRunProperties;
             if (dynProp != null)
@@ -85,12 +113,21 @@ namespace Doc2web.Plugins.Numbering
                 var cls = icssRegistrator.RegisterRunProperties(dynProp);
                 node.AddClass(cls);
             }
+
+            if (level.LevelSuffix?.Val?.Value == LevelSuffixValues.Space)
+            {
+                node.SetStyle("padding-right", "1em");
+            } else
+            {
+                node.SetStyle("padding-right", "2em");
+            }
+
             return node;
         }
 
-        private Mutation BuildNumberingInsertion(string verbose) => new TextInsertion
+        private Mutation BuildiInsertion(string verbose) => new TextInsertion
         {
-            Position = _config.NumberingIndex + _config.NumberingDelta * 2,
+            Position = PositionWithDelta(4),
             Text = verbose
         };
 
@@ -100,15 +137,7 @@ namespace Doc2web.Plugins.Numbering
             context.AddCss(CSS);
         }
 
-        private static string CSS = @"
-.numbering-container {
-    display: flex;
-    min-width: fit-content;
-}
-.numbering-number {
-    min-width: fit-content;
-    whitepsace: pre;
-}
-";
+        private static string CSS =>
+            $".leftspacer {{ display: flex; }} .numbering-container {{ display: flex; }} .numbering-number-min {{ white-space: pre;}}";
     }
 }

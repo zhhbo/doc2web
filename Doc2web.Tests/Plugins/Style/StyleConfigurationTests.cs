@@ -16,8 +16,8 @@ namespace Doc2web.Tests.Plugins.Style
 
             Assert.AreEqual("div.container", a.ParagraphCssClassPrefix);
             Assert.AreEqual("span", a.RunCssClassPrefix);
-            Assert.AreEqual("> .leftspacer", a.LeftIdentationCssClassPrefix);
-            Assert.AreEqual("> .rightspacer", a.RightIdentationCssClassPrefix);
+            Assert.AreEqual(".leftspacer", a.LeftIdentationCssClassPrefix);
+            Assert.AreEqual(".rightspacer", a.RightIdentationCssClassPrefix);
         }
 
         [TestMethod]
