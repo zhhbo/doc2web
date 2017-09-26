@@ -4,13 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Doc2web.Plugins.Numbering.NumberFormatRenderers
+namespace Doc2web.Plugins.Numbering.Stringifiers
 {
     /// <summary>
     /// Render numbers like a = 1, b = 2, aa = 27, bb = 28, etc...
     /// Uses lower cases.
     /// </summary>
-    public class LowerLetterNumberFormatRenderer : INumberFormatRenderer
+    public class LowerLetterStringifier : IStringifier
     {
         private static char[] alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".ToLowerInvariant().ToCharArray();
 

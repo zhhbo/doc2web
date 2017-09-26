@@ -4,12 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Doc2web.Plugins.Numbering.NumberFormatRenderers
+namespace Doc2web.Plugins.Numbering.Stringifiers
 {
     /// <summary>
     /// Render a number into the roman format. Uses lower case.
     /// </summary>
-    public class LowerRomanNumberFormatRenderer : INumberFormatRenderer
+    public class LowerRomanStringifier : IStringifier
     {
         public virtual string Render(int value)
         {

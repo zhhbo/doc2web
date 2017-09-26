@@ -4,12 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Doc2web.Plugins.Numbering.NumberFormatRenderers
+namespace Doc2web.Plugins.Numbering.Stringifiers
 {
     /// <summary>
     /// Append the ordinal format to a number. Ex: 1st, 2nd, 3rd, 4th, etc...
     /// </summary>
-    public class OrdinalNumberRenderer : INumberFormatRenderer
+    public class OrdinalNumberStringifier : IStringifier
     {
         public string Render(int value)
         {

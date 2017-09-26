@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Doc2web.Plugins.Numbering.NumberFormatRenderers
+namespace Doc2web.Plugins.Numbering.Stringifiers
 {
-    public class BulletNumberFormatRenderer : INumberFormatRenderer
+    public class BulletStringifier : IStringifier
     {
         public string Render(int value) => "•";
     }

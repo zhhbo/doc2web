@@ -10,10 +10,10 @@ using Doc2web.Tests.Plugins.Numbering.Fixtures;
 
 namespace Doc2web.Tests.Plugins.Numbering
 {
-    [TestClass()]
+    [TestClass]
     public class NumberingConfigFactoryTests
     {
-        [TestMethod()]
+        [TestMethod]
         public void CreateFromAbstractNumbering_Test()
         {
             var abstractNum = NumberingSample1.GenerateAbstractNum();
@@ -64,7 +64,7 @@ namespace Doc2web.Tests.Plugins.Numbering
             Assert.AreEqual(expectedCount, results.LevelCount);
         }
 
-        [TestMethod()]
+        [TestMethod]
         public void CreateFromNumberingInstance_AbstractWithoutOverrideTest()
         {
             var (instance, numberingInstance, abstractNumConfig) = CreateNumberingInstanceContext();

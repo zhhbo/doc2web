@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace Doc2web.Plugins.Numbering.NumberFormatRenderers
+namespace Doc2web.Plugins.Numbering.Stringifiers
 {
-    public class OrdinalTextNumberFormatRenderer : INumberFormatRenderer
+    public class OrdinalTextStringifier : IStringifier
     {
         public static string NumberToWords(int number)
         {

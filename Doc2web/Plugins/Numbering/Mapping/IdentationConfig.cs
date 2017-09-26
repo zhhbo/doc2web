@@ -1,6 +1,6 @@
 ﻿using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Wordprocessing;
-using Doc2web.Plugins.Numbering.NumberFormatRenderers;
+using Doc2web.Plugins.Numbering.Stringifiers;
 
 namespace Doc2web.Plugins.Numbering
 {
@@ -31,6 +31,6 @@ namespace Doc2web.Plugins.Numbering
         };
 
         public string RenderNumber(int number) =>
-          NumberRendererFactory.Create(NumberingFormat).Render(number);
+          StringifierFactory.Create(NumberingFormat).Render(number);
     }
 }

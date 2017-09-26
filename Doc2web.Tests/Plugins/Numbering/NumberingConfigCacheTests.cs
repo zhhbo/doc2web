@@ -12,11 +12,11 @@ using Doc2web.Tests.Plugins.Numbering.Fixtures;
 
 namespace Doc2web.Tests.Plugins.Numbering
 {
-    [TestClass()]
+    [TestClass]
     public class NumberingConfigCacheTests
     {
 
-        [TestMethod()]
+        [TestMethod]
         public void Get_CacheLevel1Test()
         {
             var numberingPart = NumberingSample1.GenerateNumbering();

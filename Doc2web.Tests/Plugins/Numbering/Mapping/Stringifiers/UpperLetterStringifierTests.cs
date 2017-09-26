@@ -1,4 +1,4 @@
-﻿using Doc2web.Plugins.Numbering.NumberFormatRenderers;
+﻿using Doc2web.Plugins.Numbering.Stringifiers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
@@ -6,10 +6,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Doc2web.Tests.Plugins.Numbering.NumberFormatRenderers
+namespace Doc2web.Tests.Plugins.Numbering.Stringifiers
 {
-    [TestClass()]
-    public class LetterNumberFormatRendererTests
+    [TestClass]
+    public class UpperLetterStringifierTests
     {
         private (int, string)[] _tests = new(int, string)[]
         {
@@ -22,18 +22,10 @@ namespace Doc2web.Tests.Plugins.Numbering.NumberFormatRenderers
             (79, "aaaa"),
         };
 
-        [TestMethod()]
-        public void RenderLowerTest()
+        [TestMethod]
+        public void RenderTest()
         {
-            var instance = new LowerLetterNumberFormatRenderer();
-            foreach (var (input, expected) in _tests)
-                Assert.AreEqual(instance.Render(input), expected);
-        }
-
-        [TestMethod()]
-        public void RenderUpperTest()
-        {
-            var instance = new UpperLetterNumberFormatRenderer();
+            var instance = new UpperLetterStringifier();
             foreach (var (input, expected) in _tests)
                 Assert.AreEqual(instance.Render(input), expected.ToUpperInvariant());
         }

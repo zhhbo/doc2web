@@ -9,10 +9,10 @@ using Doc2web.Plugins.Numbering;
 
 namespace Doc2web.Tests.Plugins.Numbering
 {
-    [TestClass()]
+    [TestClass]
     public class NumberingConfigTests
     {
-        [TestMethod()]
+        [TestMethod]
         public void Render_FailTest()
         {
             var instance = BuildInstance();
@@ -20,7 +20,7 @@ namespace Doc2web.Tests.Plugins.Numbering
             Assert.ThrowsException<ArgumentException>(() => instance.Render(Enumerable.Repeat(1, 100)));
         }
 
-        [TestMethod()]
+        [TestMethod]
         public void Render_Test1()
         {
             var instance = BuildInstance();
@@ -29,7 +29,7 @@ namespace Doc2web.Tests.Plugins.Numbering
             Assert.AreEqual("ARTICLE - I", result);
         }
 
-        [TestMethod()]
+        [TestMethod]
         public void Render_Test2()
         {
             var instance = BuildInstance();

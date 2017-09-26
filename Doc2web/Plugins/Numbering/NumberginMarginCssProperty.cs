@@ -1,14 +1,18 @@
 ﻿using Doc2web.Plugins.Numbering;
+using Doc2web.Plugins.Style;
+using Doc2web.Plugins.Style.Properties;
 using DocumentFormat.OpenXml.Wordprocessing;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Doc2web.Plugins.Style.Properties
+namespace Doc2web.Plugins.Numbering
 {
     [NumberingCssProperty]
     public class NumberingMarginCssProperty : IdentationCssProperty
     {
+        private static string PageMaxMediaQuery = @"(min-width: 21.59cm)";
+
         private NumberingProcessorPluginConfig _numConfig;
 
         public NumberingMarginCssProperty(
@@ -28,24 +32,6 @@ namespace Doc2web.Plugins.Style.Properties
             }
         }
 
-        protected string ContainerMaxSelector => Selector + "." + _numConfig.NumberingContainerMaxCls;
-        protected string ContainerMinSelector => Selector + " ." + _numConfig.NumberingContainerMinCls;
-        protected string NumberMaxSelector => Selector + " ." + _numConfig.NumberingNumberMaxCls;
-        protected string NumberMinSelector => Selector + " ." + _numConfig.NumberingNumberMinCls;
-
-
-        private static string PageMaxMediaQuery = @"(min-width: 21.59cm)";
-
-        private string ContainerMaxWidthVW =>
-             Math.Round(Utils.TwipsToPageRatio(LeftIndent.Value) * 100, 3) + "vw";
-        private string NumberMaxWidthVW =>
-            Math.Round(Utils.TwipsToPageRatio(Hanging.Value) * -100, 3) + "vw";
-        private string NumberMaxWidthCM =>
-            Math.Round(Utils.TwipsToCm(Hanging.Value) * -1, 3) + "cm";
-        private string ContainerMaxWidthCM =>
-            Math.Round(Utils.TwipsToCm(LeftIndent.Value), 3) + "cm";
-
-
         private void SetupLeftKindIdentation(CssData cssData)
         {
             cssData.AddAttribute(ContainerMaxSelector, "min-width", ContainerMaxWidthVW);
@@ -62,5 +48,28 @@ namespace Doc2web.Plugins.Style.Properties
             cssData.AddAttribute(PageMaxMediaQuery, NumberMaxSelector, "width", NumberMaxWidthCM);
         }
 
+        private string ContainerMaxSelector => 
+            Selector + "." + _numConfig.NumberingContainerMaxCls;
+
+        private string ContainerMinSelector => 
+            Selector + " ." + _numConfig.NumberingContainerMinCls;
+        
+        private string NumberMaxSelector => 
+            Selector + " ." + _numConfig.NumberingNumberMaxCls;
+
+        private string NumberMinSelector => 
+            Selector + " ." + _numConfig.NumberingNumberMinCls;
+
+        private string ContainerMaxWidthVW =>
+             Math.Round(Utils.TwipsToPageRatio(LeftIndent.Value) * 100, 3) + "vw";
+
+        private string NumberMaxWidthVW =>
+            Math.Round(Utils.TwipsToPageRatio(Hanging.Value) * -100, 3) + "vw";
+
+        private string NumberMaxWidthCM =>
+            Math.Round(Utils.TwipsToCm(Hanging.Value) * -1, 3) + "cm";
+
+        private string ContainerMaxWidthCM =>
+            Math.Round(Utils.TwipsToCm(LeftIndent.Value), 3) + "cm";
     }
 }

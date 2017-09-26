@@ -4,12 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Doc2web.Plugins.Numbering.NumberFormatRenderers
+namespace Doc2web.Plugins.Numbering.Stringifiers
 {
     /// <summary>
     /// Provider a method to render a number into a specific format.
     /// </summary>
-    public interface INumberFormatRenderer
+    public interface IStringifier
     {
         /// <summary>
         /// Render a number into a formatted string.

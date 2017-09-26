@@ -1,4 +1,4 @@
-﻿using Doc2web.Plugins.Numbering.NumberFormatRenderers;
+﻿using Doc2web.Plugins.Numbering.Stringifiers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
@@ -6,9 +6,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Doc2web.Tests.Plugins.Numbering.NumberFormatRenderers
+namespace Doc2web.Tests.Plugins.Numbering.Stringifiers
 {
-    [TestClass()]
+    [TestClass]
     public class OrdinalNumberFormatRendererTests
     {
 
@@ -26,10 +26,10 @@ namespace Doc2web.Tests.Plugins.Numbering.NumberFormatRenderers
             (121, "121st"),
         };
 
-        [TestMethod()]
+        [TestMethod]
         public void RenderTest()
         {
-            var instance = new OrdinalNumberRenderer();
+            var instance = new OrdinalNumberStringifier();
             foreach (var (input, expected) in _tests)
                 Assert.AreEqual(instance.Render(input), expected);
         }
