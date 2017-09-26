@@ -16,7 +16,7 @@ namespace Doc2web.Benchmark
     public class StyleBenchmark
     {
         private WordprocessingDocument _wpDoc;
-        private StyleProcessorPlugin _plugin;
+        private StylePlugin _plugin;
         private ContainerBuilder _containerBuilder;
         private IContainer _container;
         private ILifetimeScope _lts;
@@ -31,10 +31,9 @@ namespace Doc2web.Benchmark
         public void Setup()
         {
             _wpDoc = WordprocessingDocument.Open(Utils.GetAssetPath("transaction-formatted.docx"), false);
-            _plugin = new StyleProcessorPlugin(_wpDoc);
+            _plugin = new StylePlugin(_wpDoc);
             _containerBuilder = new ContainerBuilder();
             _plugin.InitEngine(_containerBuilder);
-            _plugin.InitProcessing(_containerBuilder);
             _container = _containerBuilder.Build();
         }
 

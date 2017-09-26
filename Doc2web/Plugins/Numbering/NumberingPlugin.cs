@@ -1,10 +1,12 @@
 ﻿using Autofac;
 using Doc2web.Plugins.Numbering.Mapping;
 using Doc2web.Plugins.Style;
+using Doc2web.Plugins.Style.Properties;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Text;
 
 namespace Doc2web.Plugins.Numbering
@@ -31,6 +33,9 @@ namespace Doc2web.Plugins.Numbering
                 .Register(x => new NumberingMapper(_wpDoc))
                 .As<INumberingMapper>()
                 .SingleInstance();
+            builder.RegisterAssemblyTypes(Assembly.GetExecutingAssembly())
+                .Where(t => t.Name.EndsWith("CssProperty") && !t.IsAbstract && t.Namespace.StartsWith("Doc2web.Plugins.Numbering"))
+                .As(x => x.AsRegistrableCssProperty());
         }
 
         [ElementProcessing]

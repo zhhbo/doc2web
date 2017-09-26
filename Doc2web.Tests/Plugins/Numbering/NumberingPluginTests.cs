@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Linq;
+using Doc2web.Plugins.Style.Properties;
 
 namespace Doc2web.Tests.Plugins.Numbering
 {
@@ -63,12 +64,16 @@ namespace Doc2web.Tests.Plugins.Numbering
             MockDocument();
             Initialize();
             var containerBuilder = new ContainerBuilder();
+            containerBuilder.RegisterInstance(new StyleConfig());
 
             _instance.InitEngine(containerBuilder);
             var container = containerBuilder.Build();
 
             Assert.IsNotNull(container.Resolve<INumberingMapper>());
             Assert.AreEqual(_config, container.Resolve<NumberingConfig>());
+            Assert.IsTrue(container.TryResolve(
+                typeof(CssProperty<Indentation>),
+                out object t));
         }
 
         [TestMethod]

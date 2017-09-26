@@ -1,5 +1,6 @@
 ﻿using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Attributes.Jobs;
+using Doc2web.Plugins.Numbering;
 using Doc2web.Plugins.Style;
 using Doc2web.Plugins.TextFixes;
 using Doc2web.Plugins.TextProcessor;
@@ -19,8 +20,9 @@ namespace Doc2web.Benchmark
         public ConversionEngine BuildConversionEngine()
         {
             return new ConversionEngine(
-                new StyleProcessorPlugin(_wpDoc),
+                new StylePlugin(_wpDoc),
                 new TextProcessorPlugin(),
+                new NumberingPlugin(_wpDoc),
                 new CrossReferencesCleanupPlugin(),
                 new HyphenInsertionPlugin(),
                 new BreakInsertionPlugin(),

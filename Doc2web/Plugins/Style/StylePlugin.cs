@@ -11,13 +11,13 @@ using DocumentFormat.OpenXml.Drawing;
 
 namespace Doc2web.Plugins.Style
 {
-    public class StyleProcessorPlugin
+    public class StylePlugin
     {
         private WordprocessingDocument _wpDoc;
 
         private StyleConfig _config = new StyleConfig();
 
-        public StyleProcessorPlugin(WordprocessingDocument wpDoc)
+        public StylePlugin(WordprocessingDocument wpDoc)
         {
             _wpDoc = wpDoc;
         }
@@ -28,9 +28,10 @@ namespace Doc2web.Plugins.Style
         [InitializeEngine]
         public void InitEngine(ContainerBuilder builder)
         {
+            builder.RegisterInstance(_config);
             builder.RegisterAssemblyTypes(Assembly.GetExecutingAssembly())
-                .Where(t => t.Name.EndsWith("CssProperty") && !t.IsAbstract)
-                .As(x => RegisterCssProp(x));
+                .Where(t => t.Name.EndsWith("CssProperty") && !t.IsAbstract && t.Namespace.StartsWith("Doc2web.Plugin.Style"))
+                .As(x => x.AsRegistrableCssProperty());
             builder
                 .Register(r => new ThemeColorsProvider(Theme))
                 .As<IThemeColorsProvider>()
@@ -47,7 +48,6 @@ namespace Doc2web.Plugins.Style
                 _wpDoc.MainDocumentPart.NumberingDefinitionsPart.Numbering,
                 _wpDoc.MainDocumentPart.StyleDefinitionsPart.Styles))
                 .As<INumberingCrawler>();
-
             builder
                 .Register(r => new CssClassFactory(
                     Styles, 
@@ -56,24 +56,6 @@ namespace Doc2web.Plugins.Style
                     r.Resolve<INumberingCrawler>()))
                 .As<ICssClassFactory>()
                 .InstancePerLifetimeScope();
-        }
-
-        private static Type RegisterCssProp(Type x)
-        {
-            var t = typeof(CssProperty<>);
-            while(x.GetGenericArguments().Length != 1)
-            {
-                if (x.BaseType == typeof(object))
-                    throw new InvalidProgramException("A classs ending in CssProperty is invalid");
-                x = x.BaseType;
-            }
-            return t.MakeGenericType(x.GetGenericArguments());
-        }
-
-        [InitializeProcessing]
-        public void InitProcessing(ContainerBuilder builder)
-        {
-            builder.RegisterInstance(_config.Clone());
             builder
                 .RegisterType<CssRegistrator>()
                 .As<ICssRegistrator>()

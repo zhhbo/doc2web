@@ -14,7 +14,7 @@ namespace Doc2web
         public static string ConvertCompleteDocument(WordprocessingDocument wpDoc)
         {
             using (var conversionEngine = new ConversionEngine(
-                new StyleProcessorPlugin(wpDoc),
+                new StylePlugin(wpDoc),
                 new TextProcessorPlugin(),
                 new NumberingPlugin(wpDoc),
                 new CrossReferencesCleanupPlugin(),

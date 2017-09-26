@@ -6,6 +6,21 @@ using System.Text;
 
 namespace Doc2web.Plugins.Style.Properties
 {
+    public static class TypeExtension
+    {
+        public static Type AsRegistrableCssProperty(this Type x)
+        {
+            var t = typeof(CssProperty<>);
+            while(x.GetGenericArguments().Length != 1)
+            {
+                if (x.BaseType == typeof(object))
+                    throw new InvalidProgramException("A classs ending in CssProperty is invalid");
+                x = x.BaseType;
+            }
+            return t.MakeGenericType(x.GetGenericArguments());
+        }
+    }
+
     public static class Utils
     {
         public static CssData AsCss(this ICssProperty prop)
