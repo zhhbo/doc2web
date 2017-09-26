@@ -116,10 +116,10 @@ namespace Doc2web.Plugins.Numbering
 
             if (level.LevelSuffix?.Val?.Value == LevelSuffixValues.Space)
             {
-                node.SetStyle("padding-right", "1em");
+                node.SetStyle("padding-right", "0.5em");
             } else
             {
-                node.SetStyle("padding-right", "2em");
+                node.SetStyle("padding-right", "1.5em");
             }
 
             return node;
