@@ -10,7 +10,7 @@ using Doc2web.Plugins.Numbering;
 namespace Doc2web.Tests.Plugins.Numbering
 {
     [TestClass]
-    public class NumberingConfigTests
+    public class ConfigTests
     {
         [TestMethod]
         public void Render_FailTest()
@@ -47,29 +47,29 @@ namespace Doc2web.Tests.Plugins.Numbering
             Assert.AreEqual("3.1", result);
         }
 
-        private NumberingConfig BuildInstance()
+        private Config BuildInstance()
         {
-            var instance = new NumberingConfig();
+            var instance = new Config();
 
-            var iConfig1 = Substitute.For<IIndentationConfig>();
+            var iConfig1 = Substitute.For<ILevelConfig>();
             iConfig1.RenderNumber(Arg.Is(1)).Returns("I");
             iConfig1.Text.Returns("ARTICLE - %1");
             iConfig1.StartValue.Returns(1);
 
-            var iConfig2 = Substitute.For<IIndentationConfig>();
+            var iConfig2 = Substitute.For<ILevelConfig>();
             iConfig2.RenderNumber(Arg.Is(1)).Returns("1");
             iConfig2.StartValue.Returns(1);
 
-            var iConfig3 = Substitute.For<IIndentationConfig>();
+            var iConfig3 = Substitute.For<ILevelConfig>();
             iConfig3.RenderNumber(Arg.Is(2)).Returns("2");
             iConfig3.StartValue.Returns(1);
 
-            var iConfig4 = Substitute.For<IIndentationConfig>();
+            var iConfig4 = Substitute.For<ILevelConfig>();
             iConfig4.RenderNumber(Arg.Is(3)).Returns("b");
             iConfig4.StartValue.Returns(2);
             iConfig4.Text.Returns("%2.%3 (%4)");
 
-            var iConfig5 = Substitute.For<IIndentationConfig>();
+            var iConfig5 = Substitute.For<ILevelConfig>();
             iConfig5.RenderNumber(Arg.Is(1)).Returns("1");
             iConfig5.StartValue.Returns(1);
             iConfig5.Text.Returns("%4.%5");

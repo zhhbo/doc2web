@@ -13,8 +13,8 @@ namespace Doc2web.Plugins.Numbering
         private Body _body;
         private DocumentFormat.OpenXml.Wordprocessing.Numbering _numbering;
         private Styles _styles;
-        private NumberingConfigCache _nconfCache;
-        private ParagraphNumberingStateCache _pstateCache;
+        private ConfigCache _nconfCache;
+        private ParagraphStateCache _pstateCache;
 
         public NumberingMapper(WordprocessingDocument wpDoc)
         {
@@ -32,35 +32,40 @@ namespace Doc2web.Plugins.Numbering
         {
             try
             {
-                _nconfCache = new NumberingConfigCache(_numbering, _styles, new NumberingConfigFactory());
-                _pstateCache = new ParagraphNumberingStateCacheFactory(_styles, _body).Create();
+                _nconfCache = new ConfigCache(_numbering, _styles, new ConfigFactory());
+                _pstateCache = new ParagraphStateCacheFactory(_styles, _body).Create();
             }
             catch { }
         }
 
         public bool IsValid => _nconfCache != null && _pstateCache != null;
 
-        public ParagraphNumberingData GetNumbering(Paragraph p)
+        public ParagraphData GetNumbering(Paragraph p)
         {
             try
             {
-                if (!IsValid) return null;
-
-                var state = _pstateCache.Get(p);
-                if (state == null) return null;
-
-                var nconf = _nconfCache.Get(state.NumberingInstanceId);
-                var numId = nconf.NumberingId.Value;
-                var text = nconf.Render(state.Indentations);
-                var levelIndex = state.Indentations.Count() - 1;
-                var level = nconf[levelIndex].LevelNode;
-
-                return new ParagraphNumberingData(nconf, state);
+                return TryGetNumbering(p);
             }
             catch (CircularNumberingException)
             {
                 return null;
             }
+        }
+
+        private ParagraphData TryGetNumbering(Paragraph p)
+        {
+            if (!IsValid) return null;
+
+            var state = _pstateCache.Get(p);
+            if (state == null) return null;
+
+            var nconf = _nconfCache.Get(state.NumberingInstanceId);
+            var numId = nconf.NumberingId.Value;
+            var text = nconf.Render(state.Indentations);
+            var levelIndex = state.Indentations.Count() - 1;
+            var level = nconf[levelIndex].LevelNode;
+
+            return new ParagraphData(nconf, state);
         }
     }
 }

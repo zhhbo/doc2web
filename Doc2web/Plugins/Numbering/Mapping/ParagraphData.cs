@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 
 namespace Doc2web.Plugins.Numbering
 {
-    public class ParagraphNumberingData
+    public class ParagraphData
     {
-        private NumberingConfig nconf;
-        private ParagraphNumberingState state;
+        private Config nconf;
+        private ParagraphState state;
 
-        public ParagraphNumberingData(NumberingConfig nconf, ParagraphNumberingState state)
+        public ParagraphData(Config nconf, ParagraphState state)
         {
             this.nconf = nconf;
             this.state = state;

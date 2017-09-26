@@ -10,12 +10,12 @@ using System.Threading.Tasks;
 namespace Doc2web.Tests.Plugins.Numbering
 {
     [TestClass]
-    public class IndentationConfigTests
+    public class LevelConfigTests
     {
         [TestMethod]
         public void RenderNumberTest()
         {
-            var instance = new IndentationConfig
+            var instance = new LevelConfig
             {
                 NumberingFormat = NumberFormatValues.Decimal
             };

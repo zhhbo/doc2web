@@ -8,36 +8,36 @@ using System.Collections.Concurrent;
 
 namespace Doc2web.Plugins.Numbering
 {
-    public class NumberingConfigCache
+    public class ConfigCache
     {
-        private readonly INumberingConfigFactory _numberingConfigFactory;
+        private readonly IConfigFactory _numberingConfigFactory;
         private readonly DocumentFormat.OpenXml.Wordprocessing.Numbering _numbering;
-        private readonly ConcurrentDictionary<int, NumberingConfig> _cache = new ConcurrentDictionary<int, NumberingConfig>();
+        private readonly ConcurrentDictionary<int, Config> _cache = new ConcurrentDictionary<int, Config>();
         private Styles _styles;
 
-        public NumberingConfigCache(
+        public ConfigCache(
           DocumentFormat.OpenXml.Wordprocessing.Numbering numbering,
           DocumentFormat.OpenXml.Wordprocessing.Styles styles,
-          INumberingConfigFactory numberingConfigFac)
+          IConfigFactory numberingConfigFac)
         {
             _numbering = numbering;
             _styles = styles;
             _numberingConfigFactory = numberingConfigFac;
 
         }
-        public NumberingConfig Get(int numberingId)
+        public Config Get(int numberingId)
         {
-            NumberingConfig cachedValue;
+            Config cachedValue;
             if (_cache.TryGetValue(numberingId, out cachedValue))
                 return cachedValue;
             else
                 return GetNumberingConfigFromNumberingInstance(numberingId);
         }
 
-        private NumberingConfig GetNumberingConfigFromNumberingInstance(int numberingId)
+        private Config GetNumberingConfigFromNumberingInstance(int numberingId)
         {
             NumberingInstance numberingInstance = FindNumberingInstancFromId(numberingId);
-            NumberingConfig abstractNumConfig = GetNumberingConfigFromAbstract(numberingInstance);
+            Config abstractNumConfig = GetNumberingConfigFromAbstract(numberingInstance);
 
             var result = _numberingConfigFactory.CreateFromNumbering(abstractNumConfig, numberingInstance);
 
@@ -52,9 +52,9 @@ namespace Doc2web.Plugins.Numbering
               .Single(x => x.NumberID.Value == numberingId);
         }
 
-        private NumberingConfig GetNumberingConfigFromAbstract(NumberingInstance numberingInstance)
+        private Config GetNumberingConfigFromAbstract(NumberingInstance numberingInstance)
         {
-            NumberingConfig result = null;
+            Config result = null;
             var abstractNumberingId = numberingInstance.AbstractNumId.Val.Value;
             try
             {
@@ -78,9 +78,9 @@ namespace Doc2web.Plugins.Numbering
           .Single()
           .Val.Value;
 
-        private NumberingConfig GetNumberingFromAbstractId(int abstractNumberingId)
+        private Config GetNumberingFromAbstractId(int abstractNumberingId)
         {
-            NumberingConfig result;
+            Config result;
             AbstractNum abtractNum = FindAbstractNumFromId(abstractNumberingId);
             result = _numberingConfigFactory.CreateFromAbstractNumbering(abtractNum);
             return result;

@@ -11,13 +11,13 @@ using Doc2web.Tests.Plugins.Numbering.Fixtures;
 namespace Doc2web.Tests.Plugins.Numbering
 {
     [TestClass]
-    public class NumberingConfigFactoryTests
+    public class ConfigFactoryTests
     {
         [TestMethod]
         public void CreateFromAbstractNumbering_Test()
         {
             var abstractNum = NumberingSample1.GenerateAbstractNum();
-            var instance = new NumberingConfigFactory();
+            var instance = new ConfigFactory();
 
             var results = instance.CreateFromAbstractNumbering(abstractNum);
 
@@ -168,9 +168,9 @@ namespace Doc2web.Tests.Plugins.Numbering
             Assert.AreEqual(@abstract.StartValue, result.StartValue);
             Assert.AreEqual(@abstract.Text, result.Text);
         }
-        private (NumberingConfigFactory, NumberingInstance, NumberingConfig) CreateNumberingInstanceContext()
+        private (ConfigFactory, NumberingInstance, Config) CreateNumberingInstanceContext()
         {
-            var instance = new NumberingConfigFactory();
+            var instance = new ConfigFactory();
             var numberingInstance = NumberingSample1.GenerateNumberingInstance();
             var abstractNumConfig = instance.CreateFromAbstractNumbering(NumberingSample1.GenerateAbstractNum());
             return (instance, numberingInstance, abstractNumConfig);
@@ -179,7 +179,7 @@ namespace Doc2web.Tests.Plugins.Numbering
         [TestMethod]
         public void CreateFromAbstractNumbering_NumStyleLinkTest()
         {
-            var instance = new NumberingConfigFactory();
+            var instance = new ConfigFactory();
             var abstractNum = NumberingSample2.GenerateAbstractNum18();
 
             Assert.ThrowsException<LinkedStyleNumberingException>(() =>

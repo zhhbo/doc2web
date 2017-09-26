@@ -7,19 +7,19 @@ using System.Threading.Tasks;
 
 namespace Doc2web.Plugins.Numbering
 {
-    public class ParagraphNumberingStateCache
+    public class ParagraphStateCache
     {
-        private Dictionary<int, ParagraphNumberingState> _cache = new Dictionary<int, ParagraphNumberingState>();
+        private Dictionary<int, ParagraphState> _cache = new Dictionary<int, ParagraphState>();
 
 
-        public ParagraphNumberingState Get(Paragraph paragraph)
+        public ParagraphState Get(Paragraph paragraph)
         {
-            ParagraphNumberingState output = null;
+            ParagraphState output = null;
             _cache.TryGetValue(paragraph.GetHashCode(), out output);
             return output;
         }
 
-        public void Add(Paragraph p, ParagraphNumberingState state)
+        public void Add(Paragraph p, ParagraphState state)
         {
             _cache.Add(p.GetHashCode(), state);
         }

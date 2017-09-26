@@ -13,7 +13,7 @@ using Doc2web.Tests.Plugins.Numbering.Fixtures;
 namespace Doc2web.Tests.Plugins.Numbering
 {
     [TestClass]
-    public class NumberingConfigCacheTests
+    public class ConfigCacheTests
     {
 
         [TestMethod]
@@ -23,15 +23,15 @@ namespace Doc2web.Tests.Plugins.Numbering
             var abstractNum = numberingPart.Elements<AbstractNum>().Single();
             var numberingInstance = numberingPart.Elements<NumberingInstance>().Single();
 
-            var numberingConfigFac = Substitute.For<INumberingConfigFactory>();
-            var mockAbstractNumConfig = new NumberingConfig();
+            var numberingConfigFac = Substitute.For<IConfigFactory>();
+            var mockAbstractNumConfig = new Config();
             numberingConfigFac.CreateFromAbstractNumbering(Arg.Is(abstractNum)).Returns(mockAbstractNumConfig);
-            var mockNumberingConfig = new NumberingConfig();
+            var mockNumberingConfig = new Config();
             numberingConfigFac
               .CreateFromNumbering(Arg.Is(mockAbstractNumConfig), Arg.Is(numberingInstance))
               .Returns(mockNumberingConfig);
 
-            var instance = new NumberingConfigCache(numberingPart, null, numberingConfigFac);
+            var instance = new ConfigCache(numberingPart, null, numberingConfigFac);
 
             instance.Get(numberingInstance.NumberID.Value);
             var result = instance.Get(numberingInstance.NumberID.Value);
@@ -46,7 +46,7 @@ namespace Doc2web.Tests.Plugins.Numbering
         {
             var numberingPart = NumberingSample2.GenerateNumbering();
             var stylePart = NumberingSample2.GenerateStyles();
-            var numberingConfig = new NumberingConfig();
+            var numberingConfig = new Config();
 
             var anum1 = numberingPart
               .Elements<AbstractNum>()
@@ -64,7 +64,7 @@ namespace Doc2web.Tests.Plugins.Numbering
               .Elements<NumberingInstance>()
               .Single(x => x.NumberID.Value == 7);
 
-            var numberingConfigFac = Substitute.For<INumberingConfigFactory>();
+            var numberingConfigFac = Substitute.For<IConfigFactory>();
 
             numberingConfigFac.CreateFromAbstractNumbering(Arg.Is(anum1))
               .Returns(x => { throw new LinkedStyleNumberingException("ListBullets"); });
@@ -75,7 +75,7 @@ namespace Doc2web.Tests.Plugins.Numbering
             numberingConfigFac.CreateFromNumbering(Arg.Is(numberingConfig), Arg.Is(numI1))
               .Returns(numberingConfig);
 
-            var instance = new NumberingConfigCache(numberingPart, stylePart, numberingConfigFac);
+            var instance = new ConfigCache(numberingPart, stylePart, numberingConfigFac);
             var result = instance.Get(numI1.NumberID.Value);
 
             Assert.AreEqual(numberingConfig, result);
@@ -86,12 +86,12 @@ namespace Doc2web.Tests.Plugins.Numbering
         {
             var numberingPart = NumberingCircularSample.GenerateNumbering();
             var stylePart = NumberingCircularSample.GenerateStyles();
-            var numConfigFac = Substitute.For<INumberingConfigFactory>();
+            var numConfigFac = Substitute.For<IConfigFactory>();
             numConfigFac
               .CreateFromAbstractNumbering(Arg.Any<AbstractNum>())
               .Returns(_ => throw new LinkedStyleNumberingException("ImportedStyle1"));
 
-            var numberingConfigCache = new NumberingConfigCache(numberingPart, stylePart, numConfigFac);
+            var numberingConfigCache = new ConfigCache(numberingPart, stylePart, numConfigFac);
 
             Assert.ThrowsException<CircularNumberingException>(() => numberingConfigCache.Get(1));
         }

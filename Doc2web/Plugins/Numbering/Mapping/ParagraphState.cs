@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace Doc2web.Plugins.Numbering
 {
-    public class ParagraphNumberingState
+    public class ParagraphState
     {
-        public ParagraphNumberingState() { }
+        public ParagraphState() { }
 
         public int NumberingInstanceId { get; set; }
 

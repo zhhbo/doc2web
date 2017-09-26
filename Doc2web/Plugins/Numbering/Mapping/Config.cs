@@ -8,12 +8,12 @@ using System.Threading.Tasks;
 
 namespace Doc2web.Plugins.Numbering
 {
-    public class NumberingConfig : IEnumerable<IIndentationConfig>
+    public class Config : IEnumerable<ILevelConfig>
     {
 
         private static readonly Regex _textParser = new Regex(@"\%(?<I>\d)", RegexOptions.Compiled);
 
-        private readonly List<IIndentationConfig> _identations = new List<IIndentationConfig>();
+        private readonly List<ILevelConfig> _identations = new List<ILevelConfig>();
 
         public int AbstractNumberingId { get; set; }
 
@@ -21,16 +21,16 @@ namespace Doc2web.Plugins.Numbering
 
         public int LevelCount => _identations.Count;
 
-        public void AddLevel(IIndentationConfig identationConfig)
+        public void AddLevel(ILevelConfig identationConfig)
         {
             _identations.Add(identationConfig);
         }
 
-        public IEnumerator<IIndentationConfig> GetEnumerator() => _identations.GetEnumerator();
+        public IEnumerator<ILevelConfig> GetEnumerator() => _identations.GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator() => _identations.GetEnumerator();
 
-        public IIndentationConfig this[int index]
+        public ILevelConfig this[int index]
         {
             get => _identations[index];
         }
@@ -46,7 +46,7 @@ namespace Doc2web.Plugins.Numbering
             return RenderText(targetedLevel, indentationVector.ToArray());
         }
 
-        private string RenderText(IIndentationConfig targetedLevel, int[] indentationVector)
+        private string RenderText(ILevelConfig targetedLevel, int[] indentationVector)
         {
             var text = targetedLevel.Text;
             foreach (Match m in _textParser.Matches(targetedLevel.Text))

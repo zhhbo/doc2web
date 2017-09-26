@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Doc2web.Plugins.Numbering
 {
-    public class NumberingConfigFactory : INumberingConfigFactory
+    public class ConfigFactory : IConfigFactory
     {
         /// <summary>
         /// Create a numbering config from a numbering instance using an other numbering config as template.
@@ -15,9 +15,9 @@ namespace Doc2web.Plugins.Numbering
         /// <param name="abstractNumConfig">NumberingConfig used as template.</param>
         /// <param name="numberingInstance">NumberingInstance overriding the template.</param>
         /// <returns>New NumberingConfig combining the two parameters.</returns>
-        public NumberingConfig CreateFromNumbering(NumberingConfig abstractNumConfig, NumberingInstance numberingInstance)
+        public Config CreateFromNumbering(Config abstractNumConfig, NumberingInstance numberingInstance)
         {
-            var numberingConfig = new NumberingConfig();
+            var numberingConfig = new Config();
             numberingConfig.AbstractNumberingId = abstractNumConfig.AbstractNumberingId;
             numberingConfig.NumberingId = numberingInstance.NumberID;
 
@@ -45,21 +45,21 @@ namespace Doc2web.Plugins.Numbering
             return numberingConfig;
         }
 
-        private IEnumerable<(IIndentationConfig, LevelOverride)> FindMatchingLevelOverride(IIndentationConfig identationConfig, IEnumerable<LevelOverride> levelOverrides)
+        private IEnumerable<(ILevelConfig, LevelOverride)> FindMatchingLevelOverride(ILevelConfig identationConfig, IEnumerable<LevelOverride> levelOverrides)
         {
             var level = levelOverrides.Where(y => y.LevelIndex.Value == identationConfig.LevelIndex).SingleOrDefault();
             if (level != null)
                 return Enumerable.Repeat((identationConfig, level), 1);
             else
-                return Enumerable.Empty<(IIndentationConfig, LevelOverride)>();
+                return Enumerable.Empty<(ILevelConfig, LevelOverride)>();
         }
 
-        private IIndentationConfig CreateFromOverride(LevelOverride lvlOverride, IIndentationConfig template = null)
+        private ILevelConfig CreateFromOverride(LevelOverride lvlOverride, ILevelConfig template = null)
         {
             var level = lvlOverride.Level;
             //if (level == null && template == null) throw new ArgumentException("Cannot create level from scratch");
 
-            var result = template?.Clone() ?? new IndentationConfig();
+            var result = template?.Clone() ?? new LevelConfig();
 
             result.LevelIndex = lvlOverride.LevelIndex.Value;
             result.IsFromAbstract = false;
@@ -81,9 +81,9 @@ namespace Doc2web.Plugins.Numbering
         /// </summary>
         /// <param name="abstractNum">AbstractNum used as template for the numbering config.</param>
         /// <returns>NumeringConfig created from the AbstractNum.</returns>
-        public NumberingConfig CreateFromAbstractNumbering(AbstractNum abstractNum)
+        public Config CreateFromAbstractNumbering(AbstractNum abstractNum)
         {
-            var numberingConfig = new NumberingConfig();
+            var numberingConfig = new Config();
             numberingConfig.AbstractNumberingId = abstractNum.AbstractNumberId.Value;
 
             var levels = abstractNum.Descendants<Level>();
@@ -101,16 +101,16 @@ namespace Doc2web.Plugins.Numbering
             return numberingConfig;
         }
 
-        private IndentationConfig CreateIndentationConfigForAbstract(int abstractNumbId, Level level)
+        private LevelConfig CreateIndentationConfigForAbstract(int abstractNumbId, Level level)
         {
             var indentationConfig = CreateIndentationConfigFromLevel(level);
             indentationConfig.IsFromAbstract = true;
             return indentationConfig;
         }
 
-        private IndentationConfig CreateIndentationConfigFromLevel(Level arg)
+        private LevelConfig CreateIndentationConfigFromLevel(Level arg)
         {
-            var identationConfig = new IndentationConfig()
+            var identationConfig = new LevelConfig()
             {
                 IsFromAbstract = true,
                 LevelIndex = arg.LevelIndex.Value,

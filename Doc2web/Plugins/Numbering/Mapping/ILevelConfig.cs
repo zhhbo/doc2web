@@ -2,7 +2,7 @@
 
 namespace Doc2web.Plugins.Numbering
 {
-    public interface IIndentationConfig
+    public interface ILevelConfig
     {
         bool IsFromAbstract { get; set; }
         int LevelIndex { get; set; }
@@ -14,7 +14,7 @@ namespace Doc2web.Plugins.Numbering
         string Text { get; set; }
         bool ForceNumbericRendering { get; set; }
 
-        IIndentationConfig Clone();
+        ILevelConfig Clone();
         string RenderNumber(int number);
     }
 }

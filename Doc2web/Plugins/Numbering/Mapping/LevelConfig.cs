@@ -4,7 +4,7 @@ using Doc2web.Plugins.Numbering.Stringifiers;
 
 namespace Doc2web.Plugins.Numbering
 {
-    public class IndentationConfig : IIndentationConfig
+    public class LevelConfig : ILevelConfig
     {
         public int NumberId { get; set; }
         public int LevelIndex { get; set; }
@@ -18,7 +18,7 @@ namespace Doc2web.Plugins.Numbering
 
         public Level LevelNode { get; set; }
 
-        public IIndentationConfig Clone() => new IndentationConfig
+        public ILevelConfig Clone() => new LevelConfig
         {
             NumberId = NumberId,
             LevelIndex = LevelIndex,

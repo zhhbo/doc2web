@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Doc2web.Plugins.Numbering
 {
-    public class ParagraphNumberingStateCacheFactory
+    public class ParagraphStateCacheFactory
     {
         private Styles _styles;
         private Body _body;
@@ -24,20 +24,20 @@ namespace Doc2web.Plugins.Numbering
             public int IndentationLevel { get; set; }
         }
 
-        public ParagraphNumberingStateCacheFactory(Styles styles, Body body)
+        public ParagraphStateCacheFactory(Styles styles, Body body)
         {
             _styles = styles;
             _body = body;
         }
 
-        public ParagraphNumberingStateCache Create()
+        public ParagraphStateCache Create()
         {
-            var cache = new ParagraphNumberingStateCache();
+            var cache = new ParagraphStateCache();
             CacheNumberLists(cache);
             return cache;
         }
 
-        private void CacheNumberLists(ParagraphNumberingStateCache cache)
+        private void CacheNumberLists(ParagraphStateCache cache)
         {
             foreach (var numberList in NumberLists)
             {
@@ -53,7 +53,7 @@ namespace Doc2web.Plugins.Numbering
 
         private static void CacheItem(
           int numberingInstanceId,
-          ParagraphNumberingStateCache cache,
+          ParagraphStateCache cache,
           List<int> vector,
           NumberItem item)
         {
@@ -74,7 +74,7 @@ namespace Doc2web.Plugins.Numbering
             var itemVector = new int[vector.Count];
             vector.CopyTo(itemVector);
 
-            cache.Add(item.Paragraph, new ParagraphNumberingState
+            cache.Add(item.Paragraph, new ParagraphState
             {
                 Indentations = itemVector,
                 NumberingInstanceId = numberingInstanceId

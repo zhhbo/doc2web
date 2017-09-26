@@ -11,12 +11,12 @@ using Doc2web.Tests.Plugins.Numbering.Fixtures;
 namespace Doc2web.Tests.Plugins.Numbering
 {
     [TestClass]
-    public class ParagraphNumberingStateCacheFactoryTests
+    public class ParagraphStateCacheFactoryTests
     {
         [TestMethod]
         public void FindNubmerindId_NestedElementTest()
         {
-            var instance = new ParagraphNumberingStateCacheFactory(
+            var instance = new ParagraphStateCacheFactory(
               null,
               null
             );
@@ -30,7 +30,7 @@ namespace Doc2web.Tests.Plugins.Numbering
         [TestMethod]
         public void FindPNumberingId_StyleTest()
         {
-            var instance = new ParagraphNumberingStateCacheFactory(
+            var instance = new ParagraphStateCacheFactory(
               DocumentSample1.GenerateStyles(),
               null
             );
@@ -44,7 +44,7 @@ namespace Doc2web.Tests.Plugins.Numbering
         [TestMethod]
         public void FindPNumbringStyleID_BaseOnStyleTest()
         {
-            var instance = new ParagraphNumberingStateCacheFactory(
+            var instance = new ParagraphStateCacheFactory(
               DocumentSample1.GenerateStyles(),
               null
             );
@@ -58,7 +58,7 @@ namespace Doc2web.Tests.Plugins.Numbering
         [TestMethod]
         public void FindPNumberingLevel_NoProperties()
         {
-            var instance = new ParagraphNumberingStateCacheFactory(
+            var instance = new ParagraphStateCacheFactory(
               null,
               null
             );
@@ -72,7 +72,7 @@ namespace Doc2web.Tests.Plugins.Numbering
         [TestMethod]
         public void FindPNumberingLevel_NestedElementTest()
         {
-            var instance = new ParagraphNumberingStateCacheFactory(null, null);
+            var instance = new ParagraphStateCacheFactory(null, null);
             var p = DocumentSample1.GenerateParagraph1();
 
             var result = instance.FindAssociatedNumberingLevel(p);
@@ -83,7 +83,7 @@ namespace Doc2web.Tests.Plugins.Numbering
         [TestMethod]
         public void FindPNumberingLevel_StyleTest()
         {
-            var instance = new ParagraphNumberingStateCacheFactory(
+            var instance = new ParagraphStateCacheFactory(
               DocumentSample1.GenerateStyles(),
               null
             );
@@ -98,7 +98,7 @@ namespace Doc2web.Tests.Plugins.Numbering
         [TestMethod]
         public void FindPNumberingLevel_BasedOnStyleTest()
         {
-            var instance = new ParagraphNumberingStateCacheFactory(
+            var instance = new ParagraphStateCacheFactory(
               DocumentSample1.GenerateStyles(),
               null
             );
@@ -113,7 +113,7 @@ namespace Doc2web.Tests.Plugins.Numbering
         public void CreateCache_Test()
         {
             var body = DocumentSample1.GenerateBody();
-            var instance = new ParagraphNumberingStateCacheFactory(
+            var instance = new ParagraphStateCacheFactory(
               DocumentSample1.GenerateStyles(),
               body
             );
@@ -143,7 +143,7 @@ namespace Doc2web.Tests.Plugins.Numbering
         public void CreateCache_StairsTest()
         {
             var body = DocumentSample2.GenerateBody();
-            var instance = new ParagraphNumberingStateCacheFactory(null, body);
+            var instance = new ParagraphStateCacheFactory(null, body);
             var cache = instance.Create();
 
             var ps = body.Elements<Paragraph>().ToArray();
@@ -166,7 +166,7 @@ namespace Doc2web.Tests.Plugins.Numbering
         public void CreateCache_SkipTest()
         {
             var p = DocumentSample2.GenerateParagraph(1, "test", true);
-            var instance = new ParagraphNumberingStateCacheFactory(null, null);
+            var instance = new ParagraphStateCacheFactory(null, null);
 
             Assert.IsNull(instance.FindAssociatedNumberingInstance(p));
         }
