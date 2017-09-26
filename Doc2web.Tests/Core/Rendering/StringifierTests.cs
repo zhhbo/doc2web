@@ -1,5 +1,4 @@
 ﻿using Doc2web.Core.Rendering;
-using Doc2web.Core.Rendering.Step3;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 using System;
@@ -12,12 +11,10 @@ namespace Doc2web.Tests.Core.Rendering
     [TestClass]
     public class Rendering2Tests
     {
-
-
         [TestMethod]
-        public void Render_OffLimitsTests()
+        public void Stringify_OffLimitsTests()
         {
-            var r = new Renderer2()
+            var r = new Stringifier()
             {
                 Text = "Something.",
                 Elements = new IRenderable[]
@@ -27,13 +24,13 @@ namespace Doc2web.Tests.Core.Rendering
                 }
             };
 
-            Assert.AreEqual("<div>Something.</div>", r.Render());
+            Assert.AreEqual("<div>Something.</div>", r.Stringify());
         }
 
         [TestMethod]
-        public void Render_MultipleTests()
+        public void Stringify_MultipleTests()
         {
-            var r = new Renderer2
+            var r = new Stringifier
             {
                 Text = "Some doggy bag",
                 Elements = Build(
@@ -43,15 +40,15 @@ namespace Doc2web.Tests.Core.Rendering
                     (double.MaxValue, 0, "</div>")
                 )
             };
-            Assert.AreEqual("<div>Some <span>doggy</span> bag</div>", r.Render());
+            Assert.AreEqual("<div>Some <span>doggy</span> bag</div>", r.Stringify());
         }
 
         [TestMethod]
-        public void Render_OffsetTests()
+        public void Stringify_OffsetTests()
         {
             var t = "Something is gone.";
             var w = "gone";
-            var r = new Renderer2()
+            var r = new Stringifier()
             {
                 Text = t,
                 Elements = new IRenderable[]
@@ -60,15 +57,15 @@ namespace Doc2web.Tests.Core.Rendering
                 }
             };
 
-            Assert.AreEqual("Something is .", r.Render());
+            Assert.AreEqual("Something is .", r.Stringify());
         }
 
         [TestMethod]
-        public void Render_OverlapseOffsetTest()
+        public void Stringify_OverlapseOffsetTest()
         {
             var t = "Something is gone.";
             var w = "gone";
-            var r = new Renderer2()
+            var r = new Stringifier()
             {
                 Text = t,
                 Elements = new IRenderable[]
@@ -78,7 +75,7 @@ namespace Doc2web.Tests.Core.Rendering
                 }
             };
 
-            Assert.AreEqual("Something is not gone here.", r.Render());
+            Assert.AreEqual("Something is not gone here.", r.Stringify());
         }
 
         private IRenderable[] Build(params (double, double, string)[] elems) =>

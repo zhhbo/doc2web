@@ -40,7 +40,7 @@ namespace Doc2web.Tests.Core.Rendering
         public void BuildNodes_Test()
         {
 
-            var result = ContextRenderer.BuildNodes(_elementContext);
+            var result = ContextRenderer.Step1(_elementContext);
 
             Assert.IsTrue(_elementContext.Nodes.Count() < result.Length);
         }

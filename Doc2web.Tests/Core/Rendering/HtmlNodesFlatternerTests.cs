@@ -3,13 +3,12 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Doc2web.Core.Rendering;
-using Doc2web.Core.Rendering.Step1;
 using System.Linq;
 
 namespace Doc2web.Tests.Core.Rendering
 {
     [TestClass]
-    public class HtmlNodeFlatternTests
+    public class HtmlNodesFlatternerTests
     {
         private List<HtmlNode> ColisionEndInput =>
             new List<HtmlNode>
@@ -159,7 +158,7 @@ namespace Doc2web.Tests.Core.Rendering
         private void Test(List<HtmlNode> input, List<HtmlNode> expected)
         {
             var result = input.Select(x => x.Clone()).ToList();
-            FlatternHtmlNodes.Apply(result);
+            HtmlNodesFlatterner.Flattern(result);
 
             Assert.AreEqual(expected.Count, result.Count);
 

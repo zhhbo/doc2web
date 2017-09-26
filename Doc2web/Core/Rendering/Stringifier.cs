@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Doc2web.Core.Rendering.Step3
+namespace Doc2web.Core.Rendering
 {
-    public class Renderer2 : IComparer<IRenderable>
+    public class Stringifier : IComparer<IRenderable>
     {
         public string Text { get; set; }
 
@@ -14,7 +14,7 @@ namespace Doc2web.Core.Rendering.Step3
 
         private int LimText => Text.Length;
 
-        public string Render()
+        public string Stringify()
         {
             StringBuilder sb = new StringBuilder();
             top = double.MinValue;

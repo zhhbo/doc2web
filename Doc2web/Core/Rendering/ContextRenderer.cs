@@ -1,6 +1,4 @@
-﻿using Doc2web.Core.Rendering.Step1;
-using Doc2web.Core.Rendering.Step2;
-using Doc2web.Core.Rendering.Step3;
+﻿using Doc2web.Core.Rendering;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,40 +10,34 @@ namespace Doc2web.Core.Rendering
     {
         public string Render(IElementContext elementContext)
         {
-            HtmlNode[] nodes = BuildNodes(elementContext);
+            HtmlNode[] nodes = Step1(elementContext);
+            ITag[] tags = Step2(nodes);
 
-            ITag[] tags = BuildTags(nodes);
-            return Render(elementContext.RootElement.InnerText, elementContext.Mutations.ToArray(), tags);
+            var renderables =
+                tags.Cast<IRenderable>()
+                .Concat(elementContext.Mutations.Cast<IRenderable>())
+                .ToArray();
+            return Step3(
+                elementContext.RootElement.InnerText,
+                renderables
+            );
         }
 
-        public static HtmlNode[] BuildNodes(IElementContext elementContext)
+        public static HtmlNode[] Step1(IElementContext elementContext)
         {
             var nodes = elementContext.Nodes.ToList();
-
-            FlatternHtmlNodes.Apply(nodes);
-
+            HtmlNodesFlatterner.Flattern(nodes);
             return nodes.ToArray();
         }
 
-        public static ITag[] BuildTags(HtmlNode[] nodes)
-        {
-            return TagsFactory.Build(nodes);
-        }
+        public static ITag[] Step2(HtmlNode[] nodes) =>
+           TagsFactory.Build(nodes);
 
-        public static string Render(string text, Mutation[] mutations, ITag[] tags)
-        {
-            var renderer = new Renderer2()
-            {
+        public static string Step3(string text, IRenderable[] renderables) =>
+            new Stringifier() {
                 Text = text,
-                Elements =
-                    tags
-                    .Cast<IRenderable>()
-                    .Concat(mutations.Cast<IRenderable>())
-                    .ToArray()
-            };
-
-            return renderer.Render();
-        }
+                Elements = renderables
+            }.Stringify();
 
     }
 }

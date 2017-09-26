@@ -6,10 +6,7 @@ using System.Threading.Tasks;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
 using BenchmarkDotNet.Attributes;
-using Doc2web.Core.Rendering.Step1;
-using Doc2web.Core.Rendering.Step2;
 using Doc2web.Core.Rendering;
-using Doc2web.Core.Rendering.Step3;
 using BenchmarkDotNet.Attributes.Jobs;
 
 namespace Doc2web.Benchmark
@@ -69,7 +66,7 @@ namespace Doc2web.Benchmark
         }
 
         [Benchmark]
-        public void FlatternNodes () => FlatternHtmlNodes.Apply(_tempNodes);
+        public void FlatternNodes () => HtmlNodesFlatterner.Flattern(_tempNodes);
 
         [Benchmark]
         public ITag[] BuildTags() => TagsFactory.Build(_tempNodesAr);
@@ -77,12 +74,12 @@ namespace Doc2web.Benchmark
         [Benchmark]
         public void RenderTags()
         {
-            var r = new Renderer2()
+            var r = new Stringifier()
             {
                 Elements = _tempsTags,
                 Text = _bodyText
             };
-            r.Render();
+            r.Stringify();
         }
             
 

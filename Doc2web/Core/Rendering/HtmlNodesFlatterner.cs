@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Doc2web.Core.Rendering.Step1
+namespace Doc2web.Core.Rendering
 {
-    public static class FlatternHtmlNodes
+    public static class HtmlNodesFlatterner
     {
 
         private class FirstComparer : IComparer<HtmlNode>
@@ -20,7 +20,7 @@ namespace Doc2web.Core.Rendering.Step1
             }
         }
 
-        public static void Apply(List<HtmlNode> nodes)
+        public static void Flattern(List<HtmlNode> nodes)
         {
             nodes.Sort(new FirstComparer());
 
