@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Doc2web.Tests.Plugins.Numbering.Fixtures
+namespace Doc2web.Tests.Samples
 {
     public static class DocumentSample2
     {

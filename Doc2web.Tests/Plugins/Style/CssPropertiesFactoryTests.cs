@@ -21,7 +21,7 @@ namespace Doc2web.Tests.Plugins.Style
         {
             var containerBuilder = new ContainerBuilder();
             containerBuilder.RegisterType<StyleConfiguration>();
-            containerBuilder.RegisterType<NumberingProcessorPluginConfig>();
+            containerBuilder.RegisterType<NumberingPluginConfig>();
             containerBuilder
                 .RegisterType<BoldCssProperty>()
                 .As<CssProperty<Bold>>();
@@ -29,7 +29,7 @@ namespace Doc2web.Tests.Plugins.Style
                 .RegisterType<IdentationCssProperty>()
                 .As<CssProperty<Indentation>>();
             containerBuilder
-                .RegisterType<NumberingMarginCssProperty>()
+                .RegisterType<NumberingIndentationCssProperty>()
                 .As<CssProperty<Indentation>>();
             var container = containerBuilder.Build();
             var lifetimeScope = container.BeginLifetimeScope();
@@ -83,7 +83,7 @@ namespace Doc2web.Tests.Plugins.Style
             var result = instance.BuildNumbering(element);
 
             Assert.AreEqual(1, result.Length);
-            Assert.IsInstanceOfType(result[0], typeof(NumberingMarginCssProperty));
+            Assert.IsInstanceOfType(result[0], typeof(NumberingIndentationCssProperty));
             Assert.AreSame(result[0].OpenXmlElement, element.Indentation);
         }
     }

@@ -9,17 +9,17 @@ using System.Text;
 
 namespace Doc2web.Plugins.Numbering
 {
-    public class NumberingProcessorPlugin
+    public class NumberingPlugin
     {
         private WordprocessingDocument _wpDoc;
-        private NumberingProcessorPluginConfig _config;
+        private NumberingPluginConfig _config;
 
-        public NumberingProcessorPlugin(WordprocessingDocument wpDoc) : this(wpDoc, new NumberingProcessorPluginConfig())
+        public NumberingPlugin(WordprocessingDocument wpDoc) : this(wpDoc, new NumberingPluginConfig())
         {
 
         }
 
-        public NumberingProcessorPlugin(WordprocessingDocument wpDoc, NumberingProcessorPluginConfig config)
+        public NumberingPlugin(WordprocessingDocument wpDoc, NumberingPluginConfig config)
         {
             _wpDoc = wpDoc;
             _config = config;

@@ -6,8 +6,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Doc2web.Tests.Plugins.Numbering.Fixtures;
 using Doc2web.Plugins.Numbering.Mapping;
+using Doc2web.Tests.Samples;
 
 namespace Doc2web.Tests.Plugins.Numbering.Mapping
 {

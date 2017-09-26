@@ -9,15 +9,15 @@ using System.Text;
 namespace Doc2web.Plugins.Numbering
 {
     [NumberingCssProperty]
-    public class NumberingMarginCssProperty : IdentationCssProperty
+    public class NumberingIndentationCssProperty : IdentationCssProperty
     {
         private static string PageMaxMediaQuery = @"(min-width: 21.59cm)";
 
-        private NumberingProcessorPluginConfig _numConfig;
+        private NumberingPluginConfig _numConfig;
 
-        public NumberingMarginCssProperty(
+        public NumberingIndentationCssProperty(
             StyleConfiguration config, 
-            NumberingProcessorPluginConfig numConfig) : base(config)
+            NumberingPluginConfig numConfig) : base(config)
         {
             _numConfig = numConfig;
         }

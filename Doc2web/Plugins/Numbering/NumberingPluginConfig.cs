@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Doc2web.Plugins.Numbering
 {
-    public class NumberingProcessorPluginConfig
+    public class NumberingPluginConfig
     {
         public double NumberingIndex { get; set; }
         public double NumberingDelta { get; }
@@ -21,7 +21,7 @@ namespace Doc2web.Plugins.Numbering
         public int NumberingNumberZ { get; set; }
 
 
-        public NumberingProcessorPluginConfig()
+        public NumberingPluginConfig()
         {
             NumberingIndex = -1_000_000 + 0.011;
             NumberingDelta = 0.001;

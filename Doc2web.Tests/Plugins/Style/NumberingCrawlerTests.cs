@@ -1,5 +1,4 @@
-﻿using Doc2web.Tests.Plugins.Numbering.Fixtures;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -7,6 +6,7 @@ using DocumentFormat.OpenXml.Packaging;
 using Doc2web.Plugins.Style;
 using DocumentFormat.OpenXml.Wordprocessing;
 using System.Linq;
+using Doc2web.Tests.Samples;
 
 namespace Doc2web.Tests.Plugins.Style
 {

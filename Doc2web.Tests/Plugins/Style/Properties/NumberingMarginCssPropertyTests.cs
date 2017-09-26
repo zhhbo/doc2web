@@ -12,14 +12,14 @@ namespace Doc2web.Tests.Plugins.Style.Properties
     [TestClass]
     public class NumberingMarginCssPropertyTests
     {
-        private NumberingMarginCssProperty _instance;
+        private NumberingIndentationCssProperty _instance;
 
         [TestInitialize]
         public void Initialize()
         {
-            _instance = new NumberingMarginCssProperty(
+            _instance = new NumberingIndentationCssProperty(
                 new StyleConfiguration(),
-                new NumberingProcessorPluginConfig())
+                new NumberingPluginConfig())
             {
                 Element = new Indentation()
             };

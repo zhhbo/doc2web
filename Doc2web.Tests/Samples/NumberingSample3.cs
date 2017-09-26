@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-namespace Doc2web.Tests.Plugins.Numbering.Fixtures
+namespace Doc2web.Tests.Samples
 {
     public static class NumberingSample3
     {
