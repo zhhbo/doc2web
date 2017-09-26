@@ -1,16 +1,15 @@
 ﻿using DocumentFormat.OpenXml.Wordprocessing;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
-using Doc2web.Plugins.Numbering;
-using Doc2web.Tests.Plugins.Numbering;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Doc2web.Tests.Plugins.Numbering.Fixtures;
+using Doc2web.Plugins.Numbering.Mapping;
 
-namespace Doc2web.Tests.Plugins.Numbering
+namespace Doc2web.Tests.Plugins.Numbering.Mapping
 {
     [TestClass]
     public class ConfigCacheTests

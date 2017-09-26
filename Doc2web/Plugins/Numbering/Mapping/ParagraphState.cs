@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Doc2web.Plugins.Numbering
+namespace Doc2web.Plugins.Numbering.Mapping
 {
     public class ParagraphState
     {

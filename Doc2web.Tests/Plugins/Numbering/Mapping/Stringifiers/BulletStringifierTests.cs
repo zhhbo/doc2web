@@ -1,12 +1,7 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Doc2web.Plugins.Numbering.Stringifiers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Doc2web.Plugins.Numbering.Mapping.Stringifiers;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Doc2web.Tests.Plugins.Numbering.Stringifiers
+namespace Doc2web.Tests.Plugins.Numbering.Mapping.Stringifiers
 {
     [TestClass]
     public class BulletStringifierTests

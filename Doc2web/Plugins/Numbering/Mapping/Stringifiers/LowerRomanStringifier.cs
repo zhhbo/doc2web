@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Doc2web.Plugins.Numbering.Stringifiers
+namespace Doc2web.Plugins.Numbering.Mapping.Stringifiers
 {
     /// <summary>
     /// Render a number into the roman format. Uses lower case.

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Doc2web.Plugins.Numbering.Stringifiers
+namespace Doc2web.Plugins.Numbering.Mapping.Stringifiers
 {
     /// <summary>
     /// Render numbers like A = 1, B = 2, AA = 27, BB = 28, etc...

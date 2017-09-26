@@ -1,13 +1,13 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Doc2web.Plugins.Numbering.Mapping;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Doc2web.Plugins.Numbering;
 
-namespace Doc2web.Tests.Plugins.Numbering
+namespace Doc2web.Tests.Plugins.Numbering.Mapping
 {
     [TestClass]
     public class ConfigTests

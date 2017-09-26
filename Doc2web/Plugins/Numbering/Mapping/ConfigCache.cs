@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using DocumentFormat.OpenXml.Wordprocessing;
 using System.Collections.Concurrent;
 
-namespace Doc2web.Plugins.Numbering
+namespace Doc2web.Plugins.Numbering.Mapping
 {
     public class ConfigCache
     {

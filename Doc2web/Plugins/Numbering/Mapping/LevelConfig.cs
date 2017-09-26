@@ -1,8 +1,8 @@
 ﻿using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Wordprocessing;
-using Doc2web.Plugins.Numbering.Stringifiers;
+using Doc2web.Plugins.Numbering.Mapping.Stringifiers;
 
-namespace Doc2web.Plugins.Numbering
+namespace Doc2web.Plugins.Numbering.Mapping
 {
     public class LevelConfig : ILevelConfig
     {

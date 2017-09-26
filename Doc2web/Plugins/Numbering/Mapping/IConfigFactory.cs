@@ -1,6 +1,6 @@
 ﻿using DocumentFormat.OpenXml.Wordprocessing;
 
-namespace Doc2web.Plugins.Numbering
+namespace Doc2web.Plugins.Numbering.Mapping
 {
     public interface IConfigFactory
     {

@@ -6,7 +6,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace Doc2web.Plugins.Numbering
+namespace Doc2web.Plugins.Numbering.Mapping
 {
     public class Config : IEnumerable<ILevelConfig>
     {

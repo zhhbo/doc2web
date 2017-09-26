@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Doc2web.Plugins.Numbering.Stringifiers
+namespace Doc2web.Plugins.Numbering.Mapping.Stringifiers
 {
     public class OrdinalTextStringifier : IStringifier
     {

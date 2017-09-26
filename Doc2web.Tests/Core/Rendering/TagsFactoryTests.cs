@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Doc2web.Tests.Core.Rendering.Step2
+namespace Doc2web.Tests.Core.Rendering
 {
     [TestClass]
     public class TagsFactoryTests

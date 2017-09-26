@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Doc2web.Plugins.Numbering.Stringifiers
+namespace Doc2web.Plugins.Numbering.Mapping.Stringifiers
 {
     /// <summary>
     /// Append the ordinal format to a number. Ex: 1st, 2nd, 3rd, 4th, etc...

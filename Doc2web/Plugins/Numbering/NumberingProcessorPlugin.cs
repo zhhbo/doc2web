@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using Doc2web.Plugins.Numbering.Mapping;
 using Doc2web.Plugins.Style;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;

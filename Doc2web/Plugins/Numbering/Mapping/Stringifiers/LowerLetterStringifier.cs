@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Doc2web.Plugins.Numbering.Stringifiers
+namespace Doc2web.Plugins.Numbering.Mapping.Stringifiers
 {
     /// <summary>
     /// Render numbers like a = 1, b = 2, aa = 27, bb = 28, etc...
