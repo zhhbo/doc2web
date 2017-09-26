@@ -118,7 +118,7 @@ namespace Doc2web.Plugins.Style
         [PostProcessing]
         public void InjectCss(IGlobalContext context)
         {
-            var cssRegistrator = context.Container.Resolve<ICssRegistrator>() as CssRegistrator;
+            var cssRegistrator = context.Resolve<ICssRegistrator>() as CssRegistrator;
             var sb = new StringBuilder(".container { display: flex; } .container > p { flex: 1;  margin-top: 0; }");
             cssRegistrator.RenderInto(sb);
             context.AddCss(sb.ToString());

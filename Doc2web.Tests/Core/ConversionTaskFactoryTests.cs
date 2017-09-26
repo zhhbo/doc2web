@@ -25,8 +25,6 @@ namespace Doc2web.Tests.Core
         {
             _instance = new ConversionTaskFactory();
             _engineContainer = Substitute.For<IContainer>();
-            _taskContainer = Substitute.For<ILifetimeScope>();
-            _engineContainer.BeginLifetimeScope().Returns(_taskContainer);
             _processor = Substitute.For<IProcessor>();
             _contextRenderer = Substitute.For<IContextRenderer>();
             _instance.EngineContainer = _engineContainer;
@@ -46,8 +44,8 @@ namespace Doc2web.Tests.Core
             var conversionTask = _instance.Build(elements) as ConversionTask;
 
             Assert.IsNotNull(conversionTask);
-            Assert.AreSame(_taskContainer, conversionTask.GlobalContext.Container);
-            Assert.AreSame(elements, conversionTask.GlobalContext.RootElements);
+            Assert.AreSame(_engineContainer, conversionTask.Container);
+            Assert.AreSame(elements, conversionTask.RootElements);
             Assert.AreSame(_processor, conversionTask.Processor);
             Assert.AreSame(_contextRenderer, conversionTask.ContextRenderer);
         }

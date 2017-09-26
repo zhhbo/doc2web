@@ -13,17 +13,14 @@ namespace Doc2web.Tests.Core
     public class ChildElementContextTests
     {
         private ChildElementContext _instance;
-        private IGlobalContext _globalContext;
         private IContextNestingHandler _nestingHandler;
         private INestableElementContext _parent;
 
         [TestInitialize]
         public void Initialize()
         {
-            _globalContext = Substitute.For<IGlobalContext>();
             _nestingHandler = Substitute.For<IContextNestingHandler>();
             _parent = Substitute.For<INestableElementContext>();
-            _parent.GlobalContext.Returns(_globalContext);
             _parent.RootElement.Returns(BuildParagraph());
             _parent.Element.Returns(_parent.RootElement);
             _parent.Nodes.Returns(Enumerable.Empty<HtmlNode>());
@@ -37,7 +34,6 @@ namespace Doc2web.Tests.Core
         [TestMethod]
         public void ChildElementContext_Test()
         {
-            Assert.AreSame(_globalContext, _instance.GlobalContext);
             Assert.AreEqual(0, _instance.TextIndex);
             Assert.AreSame(_parent.RootElement, _instance.RootElement);
             Assert.AreSame(_parent.Nodes, _instance.Nodes);
@@ -104,6 +100,21 @@ namespace Doc2web.Tests.Core
             
             Assert.AreSame(_instance.Element.ChildElements[1], nestedContexts[1].Element);
             Assert.AreEqual(_instance.Element.ChildElements[0].InnerText.Length, nestedContexts[1].TextIndex);
+        }
+
+        public class Test { }
+
+        [TestMethod]
+        public void Resolve_Test()
+        {
+            var t = new Test();
+            _parent.Resolve<Test>().Returns(t);
+            _parent.ClearReceivedCalls();
+
+            var t2 = _instance.Resolve<Test>();
+
+            Assert.AreSame(t, t2);
+            _parent.Received(1).Resolve<Test>();
         }
 
         private static Paragraph BuildParagraph() =>

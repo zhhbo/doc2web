@@ -12,8 +12,6 @@ namespace Doc2web.Core
             _parent = rootElementContext;
         }
 
-        public IGlobalContext GlobalContext => _parent.GlobalContext;
-
         public OpenXmlElement RootElement => _parent.RootElement;
 
         public OpenXmlElement Element { get; set; }
@@ -60,6 +58,8 @@ namespace Doc2web.Core
                 textIndex += elem.InnerText.Length;
             }
         }
+
+        public T Resolve<T>() => _parent.Resolve<T>();
 
     }
 }

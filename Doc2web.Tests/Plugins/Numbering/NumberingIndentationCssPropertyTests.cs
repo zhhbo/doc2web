@@ -7,10 +7,10 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Doc2web.Tests.Plugins.Style.Properties
+namespace Doc2web.Tests.Plugins.Numbering
 {
     [TestClass]
-    public class NumberingMarginCssPropertyTests
+    public class NumberingIndentationCssPropertyTests
     {
         private NumberingIndentationCssProperty _instance;
 

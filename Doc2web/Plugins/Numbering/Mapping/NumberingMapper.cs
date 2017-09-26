@@ -8,7 +8,7 @@ using DocumentFormat.OpenXml.Wordprocessing;
 
 namespace Doc2web.Plugins.Numbering.Mapping
 {
-    public class NumberingMapper
+    public class NumberingMapper : INumberingMapper
     {
         private Body _body;
         private DocumentFormat.OpenXml.Wordprocessing.Numbering _numbering;

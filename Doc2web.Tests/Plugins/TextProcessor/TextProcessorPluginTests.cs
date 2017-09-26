@@ -19,9 +19,6 @@ namespace Doc2web.Tests.Plugins.TextProcessor
         private TextProcessorConfig _config;
         private TextProcessorPlugin _instance;
         private Run _r;
-        private ContainerBuilder _containerBuilder;
-        private IContainer _container;
-        private ILifetimeScope _lifetimeScope;
         private IGlobalContext _globalContext;
         private RootElementContext _pContext;
         private ChildElementContext _rContext;
@@ -38,14 +35,8 @@ namespace Doc2web.Tests.Plugins.TextProcessor
             _p = new Paragraph(_r);
             _nestingHandler = Substitute.For<IContextNestingHandler>();
             _cssRegistrator = Substitute.For<ICssRegistrator>();
-
-            _containerBuilder = new ContainerBuilder();
-            _containerBuilder.RegisterInstance(_cssRegistrator).As<ICssRegistrator>().SingleInstance();
-            _container = _containerBuilder.Build();
-            _lifetimeScope = _container.BeginLifetimeScope();
-
             _globalContext = Substitute.For<IGlobalContext>();
-            _globalContext.Container.Returns(_lifetimeScope);
+            _globalContext.Resolve<ICssRegistrator>().Returns(_cssRegistrator);
 
             _pContext = new RootElementContext(_globalContext, _p)
             {
@@ -55,13 +46,6 @@ namespace Doc2web.Tests.Plugins.TextProcessor
             {
                 Element = _r
             };
-        }
-
-        [TestCleanup]
-        public void Cleanup()
-        {
-            _lifetimeScope.Dispose();
-            _container.Dispose();
         }
 
         [TestMethod]

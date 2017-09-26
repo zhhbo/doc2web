@@ -16,6 +16,8 @@ namespace Doc2web.Tests.Core
     {
         private ConversionTask _instance;
         private IGlobalContext _globalContext;
+        private IContainer _engineContainer;
+        private OpenXmlElement[] _rootElements;
         private IProcessor _processor;
         private IContextRenderer _contextRenderer;
 
@@ -23,7 +25,8 @@ namespace Doc2web.Tests.Core
         public void Initialize()
         {
             _globalContext = Substitute.For<IGlobalContext>();
-            _globalContext.Container.Returns(new ContainerBuilder().Build().BeginLifetimeScope());
+            _engineContainer = Substitute.For<IContainer>();
+            _rootElements = new OpenXmlElement[] { };
             _processor = Substitute.For<IProcessor>();
             _contextRenderer = Substitute.For<IContextRenderer>();
 
@@ -36,18 +39,20 @@ namespace Doc2web.Tests.Core
             {
                 GlobalContext = _globalContext,
                 Processor = _processor,
-                ContextRenderer = _contextRenderer
+                ContextRenderer = _contextRenderer,
+                Container = _engineContainer,
+                RootElements = _rootElements
             };
         }
 
         [TestMethod]
         public void Initialize_Test()
         {
+            _instance.GlobalContext = null;
             _instance.Initialize();
 
-            _processor.Received(1).InitProcess(Arg.Any<ContainerBuilder>());
-            _globalContext.Received(1).Container = Arg.Any<ILifetimeScope>();
-
+            Assert.IsNotNull(_instance.GlobalContext);
+            _engineContainer.Received(1).BeginLifetimeScope(_processor.InitProcess);
         }
 
         [TestMethod]
@@ -122,7 +127,7 @@ namespace Doc2web.Tests.Core
         }
 
         private IElementContext BuildProcessArgValidator(OpenXmlElement elem) => 
-            Arg.Is<IElementContext>(c => c.GlobalContext == _globalContext && c.RootElement == elem);
+            Arg.Is<IElementContext>(c => c.RootElement == elem);
 
         private void MockContextAndRendering(string[] rootElementsResults)
         {
@@ -132,6 +137,7 @@ namespace Doc2web.Tests.Core
                 .ToArray();
 
             _globalContext.RootElements.Returns(elements);
+            _instance.GlobalContext = _globalContext;
             MockConvertElements(rootElementsResults);
         }
 

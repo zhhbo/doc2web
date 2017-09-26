@@ -14,17 +14,13 @@ namespace Doc2web.Plugins.Numbering
         private WordprocessingDocument _wpDoc;
         private NumberingPluginConfig _config;
 
-        public NumberingPlugin(WordprocessingDocument wpDoc) : this(wpDoc, new NumberingPluginConfig())
-        {
-
-        }
+        public NumberingPlugin(WordprocessingDocument wpDoc) : this(wpDoc, new NumberingPluginConfig()) { }
 
         public NumberingPlugin(WordprocessingDocument wpDoc, NumberingPluginConfig config)
         {
             _wpDoc = wpDoc;
             _config = config;
         }
-
 
         [InitializeEngine]
         public void InitEngine(ContainerBuilder builder)
@@ -33,18 +29,19 @@ namespace Doc2web.Plugins.Numbering
                 .RegisterInstance(_config);
             builder
                 .Register(x => new NumberingMapper(_wpDoc))
+                .As<INumberingMapper>()
                 .SingleInstance();
         }
 
         [ElementProcessing]
         public void InsertNumbering(IElementContext context, Paragraph p)
         {
-            var numberingMapper = context.GlobalContext.Container.Resolve<NumberingMapper>();
+            var numberingMapper = context.Resolve<INumberingMapper>();
 
             var numbering = numberingMapper.GetNumbering(p);
             if (numbering != null)
             {
-                var cssRegistrator = context.GlobalContext.Container.Resolve<ICssRegistrator>();
+                var cssRegistrator = context.Resolve<ICssRegistrator>();
                 var cssClass = cssRegistrator.RegisterNumbering(numbering.NumberingId, numbering.LevelIndex);
 
                 context.AddNode(BuildContainerMax(cssClass));

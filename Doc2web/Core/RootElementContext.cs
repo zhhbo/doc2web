@@ -9,16 +9,16 @@ namespace Doc2web.Core
     {
         private List<HtmlNode> _nodes;
         private List<Mutation> _transformations;
+        private IGlobalContext _globalContext;
 
         public RootElementContext(IGlobalContext context, OpenXmlElement rootElement)
         {
-            GlobalContext = context;
+            _globalContext = context;
             RootElement = rootElement;
             _nodes = new List<HtmlNode>();
             _transformations = new List<Mutation>();
         }
 
-        public IGlobalContext GlobalContext { get; private set; }
 
         public OpenXmlElement RootElement { get; private set; }
 
@@ -57,5 +57,6 @@ namespace Doc2web.Core
             }
         }
 
+        public T Resolve<T>() => _globalContext.Resolve<T>();
     }
 }

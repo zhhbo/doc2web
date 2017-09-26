@@ -28,7 +28,6 @@ namespace Doc2web.Tests.Core
         [TestMethod]
         public void RootElementContext_Test()
         {
-            Assert.AreSame(_globalContext, _instance.GlobalContext);
             Assert.AreSame(_rootElement, _instance.RootElement);
             Assert.AreSame(_rootElement, _instance.Element);
             Assert.IsNull(_instance.NestingHandler);
@@ -96,6 +95,21 @@ namespace Doc2web.Tests.Core
                 Arg.Is<ChildElementContext>(context =>
                     context.Element == _instance.Element.FirstChild
                 ));
+        }
+
+        public class Test { }
+
+        [TestMethod]
+        public void Resolve_Test()
+        {
+            var t = new Test();
+            _globalContext.Resolve<Test>().Returns(t);
+            _globalContext.ClearReceivedCalls();
+
+            var t2 = _instance.Resolve<Test>();
+
+            Assert.AreSame(t, t2);
+            _globalContext.Received(1).Resolve<Test>();
         }
 
         private static Paragraph BuildParagraph() =>

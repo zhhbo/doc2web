@@ -17,11 +17,11 @@ namespace Doc2web.Core
 
         public IConversionTask Build(IEnumerable<OpenXmlElement> elements)
         {
-            var container = EngineContainer.BeginLifetimeScope();
             return new ConversionTask
             {
-                GlobalContext = new GlobalContext(container, elements),
                 Processor = Processor,
+                RootElements = elements,
+                Container = EngineContainer,
                 ContextRenderer = ContextRenderer
             };
         }

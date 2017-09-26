@@ -8,6 +8,7 @@ namespace Doc2web.Core
 {
     public class GlobalContext : IGlobalContext
     {
+        private ILifetimeScope _container;
         private IEnumerable<OpenXmlElement> _rootElements;
         private StringBuilder _html;
         private StringBuilder _css;
@@ -15,14 +16,13 @@ namespace Doc2web.Core
 
         public GlobalContext(ILifetimeScope container, IEnumerable<OpenXmlElement> rootElements)
         {
+            _container = container;
             _rootElements = rootElements;
             _html = new StringBuilder();
             _css = new StringBuilder();
             _js = new StringBuilder();
-            Container = container;
         }
 
-        public ILifetimeScope Container { get; set; }
 
         public IEnumerable<OpenXmlElement> RootElements => _rootElements;
 
@@ -37,6 +37,8 @@ namespace Doc2web.Core
         public void AddCss(string css) => _css.AppendLine(css);
 
         public void AddJs(string js) => _js.AppendLine(js);
+
+        public T Resolve<T>() => _container.Resolve<T>();
     }
 }
 

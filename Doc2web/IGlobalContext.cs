@@ -10,8 +10,6 @@ namespace Doc2web
     {
         IEnumerable<OpenXmlElement> RootElements { get; }
 
-        ILifetimeScope Container { get; set; }
-
         string Html { get; }
 
         string Css { get; }
@@ -23,5 +21,7 @@ namespace Doc2web
         void AddCss(string css);
 
         void AddJs(string js);
+
+        T Resolve<T>();
     }
 }

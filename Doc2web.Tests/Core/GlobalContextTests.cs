@@ -28,7 +28,6 @@ namespace Doc2web.Tests.Core
         [TestMethod]
         public void GlobalContext_Test()
         {
-            Assert.AreSame(_container, _instance.Container);
             Assert.AreSame(_rootElements, _instance.RootElements);
             Assert.AreEqual("", _instance.Html.ToString());
             Assert.AreEqual("", _instance.Css.ToString());
@@ -63,6 +62,22 @@ namespace Doc2web.Tests.Core
             _instance.AddJs(js);
 
             Assert.AreEqual(js + "\r\n", _instance.Js.ToString());
+        }
+
+        public class Test { }
+
+        [TestMethod]
+        public void Resolve_Test()
+        {
+            var t = new Test();
+            var containerBuilder = new ContainerBuilder();
+            containerBuilder.RegisterInstance(t);
+            var container = containerBuilder.Build();
+            _instance = new GlobalContext(container, _rootElements);
+
+            var t2 = _instance.Resolve<Test>();
+
+            Assert.AreSame(t, t2);
         }
     }
 }

@@ -7,7 +7,7 @@ namespace Doc2web
 {
     public interface IElementContext
     {
-        IGlobalContext GlobalContext { get; }
+        T Resolve<T>();
 
         OpenXmlElement RootElement { get; }
 
