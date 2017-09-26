@@ -36,16 +36,14 @@ namespace Doc2web.Plugins.Numbering
         {
             cssData.AddAttribute(ContainerMaxSelector, "min-width", ContainerMaxWidthVW);
             cssData.AddAttribute(ContainerMinSelector, "width", "auto");
-            //cssData.AddAttribute(ContainerMinSelector, "display", "flex");
             cssData.AddAttribute(ContainerMinSelector, "flex-direction", "row-reverse");
-
-            cssData.AddAttribute(PageMaxMediaQuery, ContainerMaxSelector, "width", ContainerMaxWidthCM);
+            cssData.AddAttribute(PageMaxMediaQuery, ContainerMaxSelector, "min-width", ContainerMaxWidthCM);
                 
             if (!Hanging.HasValue) return;
 
             cssData.AddAttribute(NumberMaxSelector, "min-width", NumberMaxWidthVW);
             cssData.AddAttribute(NumberMinSelector, "width", "auto");
-            cssData.AddAttribute(PageMaxMediaQuery, NumberMaxSelector, "width", NumberMaxWidthCM);
+            cssData.AddAttribute(PageMaxMediaQuery, NumberMaxSelector, "min-width", NumberMaxWidthCM);
         }
 
         private string ContainerMaxSelector => 

@@ -10,14 +10,14 @@ namespace Doc2web.Core
 {
     public class ConversionTask : IConversionTask
     {
-        private StringBuilder _result;
+        private StringBuilder _elementBuffer;
 
         public ConversionTask()
         {
-            _result = new StringBuilder();
+            _elementBuffer = new StringBuilder();
         }
 
-        public string Result => _result.ToString();
+        public string Result => new string(_buffer);
 
         public IEnumerable<OpenXmlElement> RootElements { get; set; }
 
@@ -51,7 +51,7 @@ namespace Doc2web.Core
             for(int i = 0; i < tasks.Length; i++)
             {
                 tasks[i].Wait();
-                _result.AppendLine(tasks[i].Result);
+                _elementBuffer.AppendLine(tasks[i].Result);
             }
         }
 
@@ -63,9 +63,42 @@ namespace Doc2web.Core
 
         public void AssembleDocument()
         {
-            AddCss();
-            AddJs();
-            _result.AppendLine(GlobalContext.Html);
+            _buffer = new char[RequiredSpace];
+            int i = 0;
+
+            i = CopyToBuffer(i, Part1);
+            i = CopyToBuffer(i, GlobalContext.Css);
+            i = CopyToBuffer(i, Part2);
+
+            _elementBuffer.CopyTo(0, _buffer, i, _elementBuffer.Length);
+            i += _elementBuffer.Length;
+
+            i = CopyToBuffer(i, GlobalContext.Html);
+            i = CopyToBuffer(i, Part3);
+            i = CopyToBuffer(i, GlobalContext.Js);
+            i = CopyToBuffer(i, Part4);
+        }
+
+        private int RequiredSpace => 
+                GlobalContext.Css.Length +
+                GlobalContext.Js.Length +
+                GlobalContext.Html.Length +
+                Part1.Length +
+                Part2.Length +
+                Part3.Length + 
+                Part4.Length +
+                _elementBuffer.Length;
+
+        private static string Part1 = @"<!DOCTYPE html><html><head><style>";
+        private static string Part2 = @"</style></head><body>";
+        private static string Part3 = @"<script>";
+        private static string Part4 = @"</script></body></html>";
+        private char[] _buffer;
+
+        private int CopyToBuffer(int i, string value)
+        {
+            value.CopyTo(0, _buffer, i, value.Length);
+            return i + value.Length;
         }
 
         private string ConvertRootElement(OpenXmlElement rootElement)
@@ -79,15 +112,15 @@ namespace Doc2web.Core
 
         private void AddCss()
         {
-            _result.AppendLine(@"<style>");
-            _result.AppendLine(GlobalContext.Css);
-            _result.AppendLine(@"</style>");
+            _elementBuffer.AppendLine(@"<style>");
+            _elementBuffer.AppendLine(GlobalContext.Css);
+            _elementBuffer.AppendLine(@"</style>");
         }
         private void AddJs()
         {
-            _result.AppendLine(@"<script>");
-            _result.AppendLine(GlobalContext.Js);
-            _result.AppendLine(@"</script>");
+            _elementBuffer.AppendLine(@"<script>");
+            _elementBuffer.AppendLine(GlobalContext.Js);
+            _elementBuffer.AppendLine(@"</script>");
         }
     }
 }

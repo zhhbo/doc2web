@@ -30,7 +30,7 @@ namespace Doc2web.Plugins.Style
         {
             builder.RegisterInstance(_config);
             builder.RegisterAssemblyTypes(Assembly.GetExecutingAssembly())
-                .Where(t => t.Name.EndsWith("CssProperty") && !t.IsAbstract && t.Namespace.StartsWith("Doc2web.Plugin.Style"))
+                .Where(t => t.Name.EndsWith("CssProperty") && !t.IsAbstract && t.Namespace.StartsWith("Doc2web.Plugins.Style"))
                 .As(x => x.AsRegistrableCssProperty());
             builder
                 .Register(r => new ThemeColorsProvider(Theme))

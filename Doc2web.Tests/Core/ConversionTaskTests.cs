@@ -66,19 +66,15 @@ namespace Doc2web.Tests.Core
         [TestMethod]
         public void ConvertElements_Test()
         {
-            var elementsOutput = new string[] {
-                @"<div>First paragraph</div>",
-                @"<div>Second paragraph</div>",
-                @"<div>Third paragraph</div>"
+            var elements = new OpenXmlElement[] { 
+                new Paragraph(),
+                new Paragraph()
             };
-            MockContextAndRendering(elementsOutput);
-            string expectedResult = BuildExpectedOutput(elementsOutput);
+            _globalContext.RootElements.Returns(elements);
 
             _instance.ConvertElements();
-            var result = _instance.Result;
 
             AssertHasProcessedAllRootElements();
-            Assert.AreEqual(expectedResult, result);
         }
 
         [TestMethod]
@@ -95,16 +91,14 @@ namespace Doc2web.Tests.Core
             _globalContext.Css.Returns("body { background: blue; }");
             _globalContext.Js.Returns("window.alert('hello')");
             _globalContext.Html.Returns(@"<div>some additional tag</div>");
-            var expectedOutput = BuildExpectedOutput(new string[]
-            {
-                @"<style>",
-                _globalContext.Css,
-                @"</style>",
-                @"<script>",
-                _globalContext.Js,
-                @"</script>",
-                _globalContext.Html
-            });
+            var expectedOutput =
+                @"<!DOCTYPE html><html><head><style>" +
+                _globalContext.Css +
+                @"</style></head><body>" +
+                _globalContext.Html +
+                @"<script>" +
+                _globalContext.Js +
+                @"</script></body></html>";
 
             _instance.AssembleDocument();
             var result = _instance.Result;
@@ -128,33 +122,6 @@ namespace Doc2web.Tests.Core
 
         private IElementContext BuildProcessArgValidator(OpenXmlElement elem) => 
             Arg.Is<IElementContext>(c => c.RootElement == elem);
-
-        private void MockContextAndRendering(string[] rootElementsResults)
-        {
-            var elements =
-                rootElementsResults
-                .Select(x => new Paragraph())
-                .ToArray();
-
-            _globalContext.RootElements.Returns(elements);
-            _instance.GlobalContext = _globalContext;
-            MockConvertElements(rootElementsResults);
-        }
-
-        private void MockConvertElements(string[] results)
-        {
-            var resultAssociation =
-                Enumerable.Zip(_globalContext.RootElements, results, (a, b) => (a, b));
-            foreach (var (elem, result) in resultAssociation)
-                MockConvertElement(elem, result);
-        }
-
-        private void MockConvertElement(OpenXmlElement elem, string result)
-        {
-            _contextRenderer
-                .Render(Arg.Is<IElementContext>(context => context.RootElement == elem))
-                .Returns(result);
-        }
 
     }
 }
