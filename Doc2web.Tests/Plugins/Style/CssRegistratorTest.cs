@@ -13,7 +13,7 @@ namespace Doc2web.Tests.Plugins.Style
     {
         private List<ICssClass> _defaultCls;
         private ICssClassFactory _clsFactory;
-        private StyleConfiguration _config;
+        private StyleConfig _config;
         private CssRegistrator _instance;
 
         [TestInitialize]
@@ -22,7 +22,7 @@ namespace Doc2web.Tests.Plugins.Style
             _defaultCls = new List<ICssClass>();
             _clsFactory = Substitute.For<ICssClassFactory>();
             _clsFactory.BuildDefaults().Returns(_defaultCls);
-            _config = new StyleConfiguration();
+            _config = new StyleConfig();
             _instance = new CssRegistrator(_config, _clsFactory);
         }
 

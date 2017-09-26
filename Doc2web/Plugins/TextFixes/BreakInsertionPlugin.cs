@@ -8,14 +8,11 @@ namespace Doc2web.Plugins.TextFixes
 {
     public class BreakInsertionPlugin
     {
-        private BreakInsertionPluginConfig _config;
+        private BreakInsertionConfig _config;
 
-        public BreakInsertionPlugin() : this(new BreakInsertionPluginConfig())
-        {
+        public BreakInsertionPlugin() : this(new BreakInsertionConfig()) { }
 
-        }
-
-        public BreakInsertionPlugin(BreakInsertionPluginConfig config)
+        public BreakInsertionPlugin(BreakInsertionConfig config)
         {
             _config = config;
         }
@@ -68,13 +65,15 @@ namespace Doc2web.Plugins.TextFixes
 
         private string BreakAtStartSelector =>
             $".{_config.ContainerCls}.{_config.BreakAtStartCls}";
+        private string BreakAtStartLeftSpacerSelector =>
+            $"{BreakAtStartSelector} .{_config.NumberingContainerCls}";
 
         private string BreakAtStartNumberingSelector =>
-            $"{BreakAtStartSelector} .{_config.NumberingContainerCls}";
+            $"{BreakAtStartSelector} .{_config.LeftSpacerCls}";
 
         private string CSS =>
             $"{BreakAtStartSelector} {{flex-direction: column;}}" +
-            $"{BreakAtStartNumberingSelector} {{width: 100%;}}" +
+            $"{BreakAtStartNumberingSelector}, {BreakAtStartLeftSpacerSelector} {{display: inline-block;}}" +
             $"{BreakAtStartNumberingSelector} * {{padding: 0!important;}}";
 
     }

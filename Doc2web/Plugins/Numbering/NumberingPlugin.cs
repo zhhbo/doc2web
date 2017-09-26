@@ -12,11 +12,11 @@ namespace Doc2web.Plugins.Numbering
     public class NumberingPlugin
     {
         private WordprocessingDocument _wpDoc;
-        private NumberingPluginConfig _config;
+        private NumberingConfig _config;
 
-        public NumberingPlugin(WordprocessingDocument wpDoc) : this(wpDoc, new NumberingPluginConfig()) { }
+        public NumberingPlugin(WordprocessingDocument wpDoc) : this(wpDoc, new NumberingConfig()) { }
 
-        public NumberingPlugin(WordprocessingDocument wpDoc, NumberingPluginConfig config)
+        public NumberingPlugin(WordprocessingDocument wpDoc, NumberingConfig config)
         {
             _wpDoc = wpDoc;
             _config = config;
@@ -115,7 +115,9 @@ namespace Doc2web.Plugins.Numbering
             if (level.LevelSuffix?.Val?.Value == LevelSuffixValues.Space)
             {
                 node.SetStyle("padding-right", "0.5em");
-            } else
+            }
+            else if (level.LevelSuffix?.Val?.Value == LevelSuffixValues.Nothing) { }
+            else
             {
                 node.SetStyle("padding-right", "1.5em");
             }
@@ -130,12 +132,22 @@ namespace Doc2web.Plugins.Numbering
         };
 
         [PostProcessing]
-        public void PostProcessingCss(IGlobalContext context)
+        public void PostProcessing(IGlobalContext context)
         {
-            context.AddCss(CSS);
+            var styleConfig = context.Resolve<StyleConfig>();
+            var numConfig = context.Resolve<NumberingConfig>();
+            context.AddCss(
+                CSS(
+                    styleConfig.LeftIdentationCssClassPrefix,
+                    numConfig.NumberingContainerMinCls,
+                    numConfig.NumberingNumberMinCls));
         }
 
-        private static string CSS =>
-            $".leftspacer {{ display: flex; }} .numbering-container {{ display: flex; }} .numbering-number-min {{ white-space: pre;}}";
+        private static string CSS(
+            string leftSpacerCls, 
+            string numContainerMinCls, 
+            string numNumberMinCls) =>
+            $"{leftSpacerCls}, .{numContainerMinCls} {{ display: flex; }} " +
+            $".{numNumberMinCls} {{ white-space: pre; }}";
     }
 }

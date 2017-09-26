@@ -18,8 +18,8 @@ namespace Doc2web.Tests.Plugins.Numbering
         public void Initialize()
         {
             _instance = new NumberingIndentationCssProperty(
-                new StyleConfiguration(),
-                new NumberingPluginConfig())
+                new StyleConfig(),
+                new NumberingConfig())
             {
                 Element = new Indentation()
             };
@@ -33,7 +33,6 @@ namespace Doc2web.Tests.Plugins.Numbering
             var expected = new CssData();
             expected.AddAttribute(".numbering-x-x.numbering-container-max", "min-width", "17.645vw");
             expected.AddAttribute(".numbering-x-x .numbering-container-min", "width", "auto");
-            expected.AddAttribute(".numbering-x-x .numbering-container-min", "display", "flex");
             expected.AddAttribute(".numbering-x-x .numbering-container-min", "flex-direction", "row-reverse");
             expected.AddAttribute(".numbering-x-x .numbering-number-max", "min-width", "4.632vw");
             expected.AddAttribute(".numbering-x-x .numbering-number-min", "width", "auto");

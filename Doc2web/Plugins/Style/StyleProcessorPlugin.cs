@@ -14,41 +14,12 @@ namespace Doc2web.Plugins.Style
     public class StyleProcessorPlugin
     {
         private WordprocessingDocument _wpDoc;
-        //private static string[] restricted = new string[]
-        //{
-        //    //"Bold",
-        //    //"Caps",
-        //    //"Color",
-        //    //"FontSize",
-        //    //"Highlight",
-        //    //"Italic",
-        //    //"Justification",
-        //    //"RunFonts",
-        //    //"SmallCaps",
-        //    //"Underline"
-        //};
 
-        private StyleConfiguration _config = new StyleConfiguration();
-
-        public string ParagraphClassCssPrefix
-        {
-            get => _config.ParagraphCssClassPrefix;
-            set => _config.ParagraphCssClassPrefix = value;
-        }
-
-        public string RunClassCssPrefix
-        {
-            get => _config.RunCssClassPrefix;
-            set => _config.RunCssClassPrefix = value;
-        }
+        private StyleConfig _config = new StyleConfig();
 
         public StyleProcessorPlugin(WordprocessingDocument wpDoc)
         {
             _wpDoc = wpDoc;
-            ParagraphClassCssPrefix = "div.container";
-            RunClassCssPrefix = "span";
-            _config.LeftIdentationCssClassPrefix = "> .leftspacer";
-            _config.RightIdentationCssClassPrefix = "> .rightspacer";
         }
 
         private Styles Styles => _wpDoc.MainDocumentPart.StyleDefinitionsPart.Styles;
@@ -59,12 +30,6 @@ namespace Doc2web.Plugins.Style
         {
             builder.RegisterAssemblyTypes(Assembly.GetExecutingAssembly())
                 .Where(t => t.Name.EndsWith("CssProperty") && !t.IsAbstract)
-                //.Where(t =>
-                //{
-                //    foreach (var r in restricted)
-                //        if (t.Name.StartsWith(r)) return false;
-                //    return true;
-                //})
                 .As(x => RegisterCssProp(x));
             builder
                 .Register(r => new ThemeColorsProvider(Theme))
@@ -86,7 +51,7 @@ namespace Doc2web.Plugins.Style
             builder
                 .Register(r => new CssClassFactory(
                     Styles, 
-                    r.Resolve<StyleConfiguration>(),
+                    r.Resolve<StyleConfig>(),
                     r.Resolve<ICssPropertiesFactory>(),
                     r.Resolve<INumberingCrawler>()))
                 .As<ICssClassFactory>()

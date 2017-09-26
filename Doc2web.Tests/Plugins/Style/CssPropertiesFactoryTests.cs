@@ -20,8 +20,8 @@ namespace Doc2web.Tests.Plugins.Style
         private static ILifetimeScope BuildContainer()
         {
             var containerBuilder = new ContainerBuilder();
-            containerBuilder.RegisterType<StyleConfiguration>();
-            containerBuilder.RegisterType<NumberingPluginConfig>();
+            containerBuilder.RegisterType<StyleConfig>();
+            containerBuilder.RegisterType<NumberingConfig>();
             containerBuilder
                 .RegisterType<BoldCssProperty>()
                 .As<CssProperty<Bold>>();

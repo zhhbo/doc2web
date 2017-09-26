@@ -4,14 +4,14 @@ using System.Text;
 
 namespace Doc2web.Plugins.Style
 {
-    public class StyleConfiguration
+    public class StyleConfig
     {
         public string ParagraphCssClassPrefix { get; set; }
         public string RunCssClassPrefix { get; set; }
         public string LeftIdentationCssClassPrefix { get; set; }
         public string RightIdentationCssClassPrefix { get; set; }
 
-        public StyleConfiguration()
+        public StyleConfig()
         {
             ParagraphCssClassPrefix = "div.container";
             RunCssClassPrefix = "span";
@@ -19,8 +19,8 @@ namespace Doc2web.Plugins.Style
             RightIdentationCssClassPrefix = ".rightspacer";
         }
 
-        public StyleConfiguration Clone() =>
-            new StyleConfiguration
+        public StyleConfig Clone() =>
+            new StyleConfig
             {
                 ParagraphCssClassPrefix = ParagraphCssClassPrefix,
                 RunCssClassPrefix = RunCssClassPrefix,

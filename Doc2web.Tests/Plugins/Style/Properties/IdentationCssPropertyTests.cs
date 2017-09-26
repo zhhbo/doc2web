@@ -12,13 +12,13 @@ namespace Doc2web.Tests.Plugins.Style.Properties
     [TestClass]
     public class IdentationCssPropertyTests
     {
-        private StyleConfiguration _config;
+        private StyleConfig _config;
         private IdentationCssProperty _instance;
 
         [TestInitialize]
         public void Initialize()
         {
-            _config = new StyleConfiguration()
+            _config = new StyleConfig()
             {
                 ParagraphCssClassPrefix = "div.container",
                 RunCssClassPrefix = "span",

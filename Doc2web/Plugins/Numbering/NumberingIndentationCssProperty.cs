@@ -13,11 +13,11 @@ namespace Doc2web.Plugins.Numbering
     {
         private static string PageMaxMediaQuery = @"(min-width: 21.59cm)";
 
-        private NumberingPluginConfig _numConfig;
+        private NumberingConfig _numConfig;
 
         public NumberingIndentationCssProperty(
-            StyleConfiguration config, 
-            NumberingPluginConfig numConfig) : base(config)
+            StyleConfig config, 
+            NumberingConfig numConfig) : base(config)
         {
             _numConfig = numConfig;
         }
@@ -36,7 +36,7 @@ namespace Doc2web.Plugins.Numbering
         {
             cssData.AddAttribute(ContainerMaxSelector, "min-width", ContainerMaxWidthVW);
             cssData.AddAttribute(ContainerMinSelector, "width", "auto");
-            cssData.AddAttribute(ContainerMinSelector, "display", "flex");
+            //cssData.AddAttribute(ContainerMinSelector, "display", "flex");
             cssData.AddAttribute(ContainerMinSelector, "flex-direction", "row-reverse");
 
             cssData.AddAttribute(PageMaxMediaQuery, ContainerMaxSelector, "width", ContainerMaxWidthCM);

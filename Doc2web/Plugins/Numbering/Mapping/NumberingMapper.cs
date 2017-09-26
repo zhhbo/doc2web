@@ -40,7 +40,7 @@ namespace Doc2web.Plugins.Numbering.Mapping
 
         public bool IsValid => _nconfCache != null && _pstateCache != null;
 
-        public ParagraphData GetNumbering(Paragraph p)
+        public IParagraphData GetNumbering(Paragraph p)
         {
             try
             {

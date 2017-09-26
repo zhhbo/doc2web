@@ -6,6 +6,6 @@ namespace Doc2web.Plugins.Numbering.Mapping
     {
         bool IsValid { get; }
 
-        ParagraphData GetNumbering(Paragraph p);
+        IParagraphData GetNumbering(Paragraph p);
     }
 }

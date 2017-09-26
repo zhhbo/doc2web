@@ -15,7 +15,7 @@ namespace Doc2web.Tests.Plugins.Style
     {
         private Styles _styles;
         private ICssPropertiesFactory _propsFac;
-        private StyleConfiguration _config;
+        private StyleConfig _config;
         private INumberingCrawler _numCrawler;
         private CssClassFactory _instance;
 
@@ -24,7 +24,7 @@ namespace Doc2web.Tests.Plugins.Style
         {
             _styles = Samples.StyleBasedOn1.CreateStyles();
             _propsFac = Substitute.For<ICssPropertiesFactory>();
-            _config = new StyleConfiguration();
+            _config = new StyleConfig();
             _numCrawler = Substitute.For<INumberingCrawler>();
             _instance = new CssClassFactory(_styles, _config, _propsFac, _numCrawler);
         }

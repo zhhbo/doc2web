@@ -9,9 +9,9 @@ namespace Doc2web.Plugins.Style.Properties
     [ParagraphCssProperty]
     public class IdentationCssProperty : CssProperty<Indentation>
     {
-        protected StyleConfiguration _config;
+        protected StyleConfig _config;
 
-        public IdentationCssProperty(StyleConfiguration config) : base()
+        public IdentationCssProperty(StyleConfig config) : base()
         {
             _config = config;
         }

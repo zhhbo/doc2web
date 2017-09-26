@@ -12,7 +12,7 @@ namespace Doc2web.Tests.Plugins.Style
         [TestMethod]
         public void StyleConfiguration_Test()
         {
-            var a = new StyleConfiguration();
+            var a = new StyleConfig();
 
             Assert.AreEqual("div.container", a.ParagraphCssClassPrefix);
             Assert.AreEqual("span", a.RunCssClassPrefix);
@@ -23,7 +23,7 @@ namespace Doc2web.Tests.Plugins.Style
         [TestMethod]
         public void Clone_Test()
         {
-            var a = new StyleConfiguration
+            var a = new StyleConfig
             {
                 ParagraphCssClassPrefix = "a",
                 RunCssClassPrefix = "b",

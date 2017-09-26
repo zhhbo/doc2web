@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Doc2web.Plugins.Numbering.Mapping
 {
-    public class ParagraphData
+    public class ParagraphData : IParagraphData
     {
         private Config nconf;
         private ParagraphState state;
@@ -19,9 +19,13 @@ namespace Doc2web.Plugins.Numbering.Mapping
         }
 
         public int NumberingId => state.NumberingInstanceId;
+
         public int LevelIndex => state.Indentations.Count() - 1;
+
         public Level LevelXmlElement => nconf[LevelIndex].LevelNode;
+
         public string Verbose => nconf.Render(state.Indentations);
+
         public string Location =>
           String.Join(" &rarr; ",
             Enumerable.Range(1, state.Indentations.Count())

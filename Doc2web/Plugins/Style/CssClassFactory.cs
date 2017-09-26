@@ -11,7 +11,7 @@ namespace Doc2web.Plugins.Style
     public class CssClassFactory : ICssClassFactory
     {
         private Dictionary<string, DocumentFormat.OpenXml.Wordprocessing.Style> _styleDictionary;
-        private StyleConfiguration _config;
+        private StyleConfig _config;
         private DocDefaults _docDefaults;
         private Dictionary<string, ParagraphCssClass> _pClassesChache;
         private Dictionary<string, RunCssClass> _rClassesCache;
@@ -20,7 +20,7 @@ namespace Doc2web.Plugins.Style
 
         public CssClassFactory(
             Styles styles, 
-            StyleConfiguration config,
+            StyleConfig config,
             ICssPropertiesFactory cssPropertyFactory,
             INumberingCrawler numberingCrawler)
         {

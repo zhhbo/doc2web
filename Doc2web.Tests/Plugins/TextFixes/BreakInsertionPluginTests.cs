@@ -14,7 +14,7 @@ namespace Doc2web.Tests.Plugins.TextFixes
     [TestClass]
     public class BreakInsertionPluginTests
     {
-        private BreakInsertionPluginConfig _config;
+        private BreakInsertionConfig _config;
         private BreakInsertionPlugin _instance;
         private List<HtmlNode> _nodes;
         private HtmlNode _numberingContainerMax;
@@ -24,7 +24,7 @@ namespace Doc2web.Tests.Plugins.TextFixes
         [TestInitialize]
         public void Initialize()
         {
-            _config = new BreakInsertionPluginConfig();
+            _config = new BreakInsertionConfig();
             _instance = new BreakInsertionPlugin(_config);
             _nodes = new List<HtmlNode>();
 

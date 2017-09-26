@@ -11,7 +11,7 @@ namespace Doc2web.Plugins.Style
 {
     public class CssRegistrator : ICssRegistrator
     {
-        private StyleConfiguration _config;
+        private StyleConfig _config;
         private ICssClassFactory _classFactory;
         private ConcurrentDictionary<string, byte> _stylesToRender;
         private ConcurrentDictionary<(int, int), byte> _numberingToRender;
@@ -19,7 +19,7 @@ namespace Doc2web.Plugins.Style
         private Dictionary<ICssClass, string> _dynamicRunClassesUIDs;
 
         public CssRegistrator(
-            StyleConfiguration config,
+            StyleConfig config,
             ICssClassFactory classFactory)
         {
             _config = config;
