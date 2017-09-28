@@ -1,6 +1,7 @@
 ﻿using Doc2web.Plugins.Numbering;
 using Doc2web.Plugins.Style;
 using Doc2web.Plugins.Style.Properties;
+using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Wordprocessing;
 using System;
 using System.Collections.Generic;
@@ -8,19 +9,34 @@ using System.Text;
 
 namespace Doc2web.Plugins.Numbering
 {
-    [NumberingCssProperty]
-    public class NumberingIndentationCssProperty : IdentationCssProperty
+    [NumberingCssProperty(typeof(Indentation))]
+    public class NumberingIndentationCssProperty : CssProperty<Indentation>
     {
         private static string PageMaxMediaQuery = @"(min-width: 21.59cm)";
-
+        private IdentationCssProperty _indentProp;
         private NumberingConfig _numConfig;
 
         public NumberingIndentationCssProperty(
             StyleConfig config, 
-            NumberingConfig numConfig) : base(config)
+            NumberingConfig numConfig) : base()
         {
+            _indentProp = new IdentationCssProperty(config);
             _numConfig = numConfig;
         }
+
+        public override OpenXmlElement OpenXmlElement
+        {
+            get => base.OpenXmlElement;
+            set {
+                base.OpenXmlElement = value;
+                _indentProp.OpenXmlElement = value;
+            }
+        }
+
+        private int? LeftIndent => _indentProp.LeftIndent;
+        private int? RightIndent => _indentProp.RightIndent;
+        private int? Hanging => _indentProp.Hanging;
+
 
         public override void InsertCss(CssData cssData)
         {
@@ -45,6 +61,12 @@ namespace Doc2web.Plugins.Numbering
             cssData.AddAttribute(NumberMinSelector, "width", "auto");
             cssData.AddAttribute(PageMaxMediaQuery, NumberMaxSelector, "min-width", NumberMaxWidthCM);
         }
+
+        public override short GetSpecificHashcode() => _indentProp.GetSpecificHashcode();
+
+
+        public override bool HaveSameOuput(Indentation element) => _indentProp.HaveSameOuput(element);
+
 
         private string ContainerMaxSelector => 
             Selector + "." + _numConfig.NumberingContainerMaxCls;

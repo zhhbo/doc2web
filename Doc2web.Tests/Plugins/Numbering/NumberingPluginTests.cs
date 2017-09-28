@@ -72,8 +72,9 @@ namespace Doc2web.Tests.Plugins.Numbering
             Assert.IsNotNull(container.Resolve<INumberingMapper>());
             Assert.AreEqual(_config, container.Resolve<NumberingConfig>());
             Assert.IsTrue(container.TryResolve(
-                typeof(CssProperty<Indentation>),
+                typeof(ICssProperty),
                 out object t));
+            Assert.IsInstanceOfType(t, typeof(NumberingIndentationCssProperty));
         }
 
         [TestMethod]

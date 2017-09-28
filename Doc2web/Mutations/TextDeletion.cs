@@ -6,8 +6,6 @@ namespace Doc2web
 {
     public class TextDeletion : Mutation
     {
-        private int _currentIndex;
-
         public int Count { get; set; }
 
         public override double Offset => Count;

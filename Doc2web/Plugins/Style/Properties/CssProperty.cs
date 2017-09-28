@@ -11,7 +11,7 @@ namespace Doc2web.Plugins.Style.Properties
 
         public string Selector { get; set; }
 
-        public OpenXmlElement OpenXmlElement { get; set; }
+        public virtual OpenXmlElement OpenXmlElement { get; set; }
 
         public T Element
         {

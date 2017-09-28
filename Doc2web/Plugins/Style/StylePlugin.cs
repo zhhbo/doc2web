@@ -8,6 +8,7 @@ using System.Reflection;
 using Doc2web.Plugins.Style.Properties;
 using DocumentFormat.OpenXml.Wordprocessing;
 using DocumentFormat.OpenXml.Drawing;
+using System.Linq;
 
 namespace Doc2web.Plugins.Style
 {
@@ -29,9 +30,14 @@ namespace Doc2web.Plugins.Style
         public void InitEngine(ContainerBuilder builder)
         {
             builder.RegisterInstance(_config);
+            builder
+                .RegisterInstance(Styles)
+                .ExternallyOwned();
             builder.RegisterAssemblyTypes(Assembly.GetExecutingAssembly())
-                .Where(t => t.Name.EndsWith("CssProperty") && !t.IsAbstract && t.Namespace.StartsWith("Doc2web.Plugins.Style"))
-                .As(x => x.AsRegistrableCssProperty());
+                .Where(x => x.Namespace.StartsWith("Doc2web.Plugins.Style"))
+                .Where(HasCssProperytAttribute)
+                .WithMetadataFrom<BaseCssPropertyAttribute>()
+                .As<ICssProperty>();
             builder
                 .Register(r => new ThemeColorsProvider(Theme))
                 .As<IThemeColorsProvider>()
@@ -41,26 +47,27 @@ namespace Doc2web.Plugins.Style
                 .As<IThemeFontsProvider>()
                 .InstancePerLifetimeScope();
             builder
-                .RegisterType<CssPropertiesFactory>()
-                .As<ICssPropertiesFactory>()
-                .As<ICssPropertiesFactory>();
+                .RegisterType<CssPropertiesFactory2>()
+                .As<ICssPropertiesFactory2>()
+                .As<ICssPropertiesFactory2>();
             builder.RegisterInstance(new NumberingCrawler(
                 _wpDoc.MainDocumentPart.NumberingDefinitionsPart.Numbering,
                 _wpDoc.MainDocumentPart.StyleDefinitionsPart.Styles))
                 .As<INumberingCrawler>();
             builder
-                .Register(r => new CssClassFactory(
-                    Styles, 
-                    r.Resolve<StyleConfig>(),
-                    r.Resolve<ICssPropertiesFactory>(),
-                    r.Resolve<INumberingCrawler>()))
+                .RegisterType<CssClassFactory>()
                 .As<ICssClassFactory>()
-                .InstancePerLifetimeScope();
+                .SingleInstance();
             builder
                 .RegisterType<CssRegistrator>()
                 .As<ICssRegistrator>()
                 .InstancePerLifetimeScope();
         }
+
+        private bool HasCssProperytAttribute(Type arg) =>
+            arg.CustomAttributes.Where(x =>
+                x.AttributeType.BaseType == typeof(BaseCssPropertyAttribute))
+            .Any();
 
         [PostProcessing]
         public void InjectCss(IGlobalContext context)

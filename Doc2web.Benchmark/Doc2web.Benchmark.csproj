@@ -36,4 +36,8 @@
     <ProjectReference Include="..\Doc2web\Doc2web.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="BenchmarkDotNet.Artifacts\" />
+  </ItemGroup>
+
 </Project>

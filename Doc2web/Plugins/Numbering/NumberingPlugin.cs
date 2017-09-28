@@ -30,12 +30,16 @@ namespace Doc2web.Plugins.Numbering
             builder
                 .RegisterInstance(_config);
             builder
-                .Register(x => new NumberingMapper(_wpDoc))
+                .RegisterInstance(_wpDoc)
+                .ExternallyOwned();
+            builder
+                .RegisterType<NumberingMapper>()
                 .As<INumberingMapper>()
                 .SingleInstance();
-            builder.RegisterAssemblyTypes(Assembly.GetExecutingAssembly())
-                .Where(t => t.Name.EndsWith("CssProperty") && !t.IsAbstract && t.Namespace.StartsWith("Doc2web.Plugins.Numbering"))
-                .As(x => x.AsRegistrableCssProperty());
+            builder
+                .RegisterTypes(typeof(NumberingIndentationCssProperty))
+                .WithMetadataFrom<BaseCssPropertyAttribute>()
+                .As<ICssProperty>();
         }
 
         [ElementProcessing]
@@ -48,6 +52,7 @@ namespace Doc2web.Plugins.Numbering
             {
                 var cssRegistrator = context.Resolve<ICssRegistrator>();
                 var cssClass = cssRegistrator.RegisterNumbering(numbering.NumberingId, numbering.LevelIndex);
+
 
                 context.AddNode(BuildContainerMax(cssClass));
                 context.AddNode(BuildContainerMin());

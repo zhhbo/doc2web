@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Doc2web.Plugins.Style.Properties
 {
-    [RunCssProperty]
+    [RunCssProperty(typeof(Highlight))]
     public class HighlightCssProperty : CssProperty<Highlight>
     {
         public override void InsertCss(CssData cssData)

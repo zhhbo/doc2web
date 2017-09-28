@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Doc2web.Plugins.Style.Properties
 {
-    [RunCssProperty]
+    [RunCssProperty(typeof(Underline))]
     public class UnderlineCssProperty : CssProperty<Underline>
     {
         private IThemeColorsProvider _themeColorProvider;

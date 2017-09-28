@@ -5,12 +5,8 @@ using DocumentFormat.OpenXml;
 
 namespace Doc2web.Plugins.Style
 {
-    public interface ICssPropertiesFactory
+    public interface ICssPropertiesFactory2
     {
-        ICssProperty[] BuildRun(OpenXmlElement element);
-
-        ICssProperty[] BuildParagraph(OpenXmlElement element);
-
-        ICssProperty[] BuildNumbering(OpenXmlElement element);
+        ICssProperty[] Build(OpenXmlElement element);
     }
 }

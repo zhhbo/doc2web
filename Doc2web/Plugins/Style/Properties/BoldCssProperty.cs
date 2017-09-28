@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Doc2web.Plugins.Style.Properties
 {
-    [RunCssProperty]
+    [RunCssProperty(typeof(Bold))]
     public class BoldCssProperty : BooleanCssProperty<Bold>
     {
         public override void SetOff(CssData data)

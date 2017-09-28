@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Doc2web.Plugins.Style.Properties
 {
-    [RunCssProperty]
+    [RunCssProperty(typeof(Italic))]
     public class ItalicCssProperty : BooleanCssProperty<Italic>
     {
         public override void SetOff(CssData data)

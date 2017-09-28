@@ -14,7 +14,9 @@ namespace Doc2web.Tests.Plugins.Style
     public class CssClassFactoryTests
     {
         private Styles _styles;
-        private ICssPropertiesFactory _propsFac;
+        private ICssPropertiesFactory2 _paraPropFac;
+        private ICssPropertiesFactory2 _runPropFac;
+        private ICssPropertiesFactory2 _numPropFac;
         private StyleConfig _config;
         private INumberingCrawler _numCrawler;
         private CssClassFactory _instance;
@@ -23,10 +25,24 @@ namespace Doc2web.Tests.Plugins.Style
         public void Initialize()
         {
             _styles = Samples.StyleBasedOn1.CreateStyles();
-            _propsFac = Substitute.For<ICssPropertiesFactory>();
+            _paraPropFac = Substitute.For<ICssPropertiesFactory2>();
+            _runPropFac = Substitute.For<ICssPropertiesFactory2>();
+            _numPropFac = Substitute.For<ICssPropertiesFactory2>();
+
             _config = new StyleConfig();
             _numCrawler = Substitute.For<INumberingCrawler>();
-            _instance = new CssClassFactory(_styles, _config, _propsFac, _numCrawler);
+            _instance = new CssClassFactory(_styles, _config, CssPropFac, _numCrawler);
+        }
+
+        private ICssPropertiesFactory2 CssPropFac(CssPropertySource source)
+        {
+            switch (source)
+            {
+                case CssPropertySource.Paragraph: return _paraPropFac;
+                case CssPropertySource.Run: return _runPropFac;
+                case CssPropertySource.Numbering: return _numPropFac;
+            }
+            return null;
         }
 
         [TestMethod]
@@ -88,17 +104,17 @@ namespace Doc2web.Tests.Plugins.Style
             _numCrawler
                 .Collect(Arg.Is(0), Arg.Is(1))
                 .Returns(new List<Level>() { level1, level2 });
-            _propsFac
-                .BuildNumbering(Arg.Is(level1.PreviousParagraphProperties))
+            _numPropFac
+                .Build(Arg.Is(level1.PreviousParagraphProperties))
                 .Returns(new ICssProperty[] { mockProp1 });
-            _propsFac
-                .BuildNumbering(Arg.Is(level2.PreviousParagraphProperties))
+            _numPropFac
+                .Build(Arg.Is(level2.PreviousParagraphProperties))
                 .Returns(new ICssProperty[] { mockProp2 });
-            _propsFac
-                .BuildRun(Arg.Is(level1.NumberingSymbolRunProperties))
+            _runPropFac
+                .Build(Arg.Is(level1.NumberingSymbolRunProperties))
                 .Returns(new ICssProperty[] { mockProp3 });
-            _propsFac
-                .BuildRun(Arg.Is(level2.NumberingSymbolRunProperties))
+            _runPropFac
+                .Build(Arg.Is(level2.NumberingSymbolRunProperties))
                 .Returns(new ICssProperty[] { mockProp4 });
 
             var result = _instance.BuildFromNumbering(0, 1) as NumberingCssClass;
@@ -119,7 +135,7 @@ namespace Doc2web.Tests.Plugins.Style
         {
             var mockProps = new ICssProperty[] { Substitute.For<ICssProperty>() };
             var runProps = new RunProperties();
-            _propsFac.BuildRun(Arg.Is(runProps)).Returns(mockProps);
+            _runPropFac.Build(Arg.Is(runProps)).Returns(mockProps);
 
             var cls = _instance.BuildFromRunProperties(runProps);
             Assert.IsNotNull(cls);
@@ -134,7 +150,7 @@ namespace Doc2web.Tests.Plugins.Style
         {
             var mockProps = new ICssProperty[] { new MockProp1() };
             var pPr = new ParagraphProperties();
-            _propsFac.BuildParagraph(Arg.Is(pPr)).Returns(mockProps);
+            _paraPropFac.Build(Arg.Is(pPr)).Returns(mockProps);
 
             var cls = _instance.BuildFromParagraphProperties(pPr);
             Assert.IsNotNull(cls);
@@ -150,13 +166,13 @@ namespace Doc2web.Tests.Plugins.Style
         {
             var pDocDefaults = _styles.DocDefaults.ParagraphPropertiesDefault;
             var pCssProp = new MockProp1();
-            _propsFac
-                .BuildParagraph(Arg.Is(pDocDefaults.ParagraphPropertiesBaseStyle))
+            _paraPropFac
+                .Build(Arg.Is(pDocDefaults.ParagraphPropertiesBaseStyle))
                 .Returns(new ICssProperty[] { pCssProp });
             var rDocDefaults = _styles.DocDefaults.RunPropertiesDefault;
             var rCssProp = new MockProp2();
-            _propsFac
-                .BuildRun(Arg.Is(rDocDefaults.RunPropertiesBaseStyle))
+            _runPropFac
+                .Build(Arg.Is(rDocDefaults.RunPropertiesBaseStyle))
                 .Returns(new ICssProperty[] { rCssProp });
 
             var defaults = _instance.BuildDefaults();
@@ -201,13 +217,13 @@ namespace Doc2web.Tests.Plugins.Style
             var r = map(runPropsBasedOn);
             if (r is StyleParagraphProperties)
             {
-                _propsFac
-                    .BuildParagraph(Arg.Is(r))
+                _paraPropFac
+                    .Build(Arg.Is(r))
                     .Returns(basedOnProps);
             } else
             {
-                _propsFac
-                    .BuildRun(Arg.Is(r))
+                _runPropFac
+                    .Build(Arg.Is(r))
                     .Returns(basedOnProps);
             }
             
