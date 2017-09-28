@@ -32,5 +32,8 @@ namespace Doc2web.Core.Rendering
             foreach(var attribute in Attributes)
                 yield return $" {attribute.Key}=\"{attribute.Value}\"";
         }
+
+        public override string ToString() => Render();
+
     }
 }

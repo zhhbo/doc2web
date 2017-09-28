@@ -32,6 +32,48 @@ namespace Doc2web.Tests.Core.Rendering
            (0, new SelfClosingTag { Position = 0, Name = "br" }),
         };
 
+        private static List<HtmlNode> InputFlatternColision => new List<HtmlNode>
+        {
+            new HtmlNode { Start=00, End=10, Tag="x1" },
+            new HtmlNode { Start=01, End=10, Tag="y1" },
+            new HtmlNode { Start=02, End=10, Tag="z1" },
+
+            new HtmlNode { Start=10, End=10, Tag="x2" },
+            new HtmlNode { Start=10, End=10, Tag="y2" },
+            new HtmlNode { Start=10, End=10, Tag="z2" },
+
+            new HtmlNode { Start=10, End=22, Tag="x3" },
+            new HtmlNode { Start=10, End=21, Tag="y3" },
+            new HtmlNode { Start=10, End=20, Tag="z3" },
+        };
+
+        private static (int, ITag)[] ExpectedFlatternColision => new(int, ITag)[]
+        {
+           (05, new OpeningTag { Position = 00, Name = "x1" }),
+           (04, new OpeningTag { Position = 01, Name = "y1" }),
+           (03, new OpeningTag { Position = 02, Name = "z1" }),
+
+           (02, new ClosingTag { Position = 10 }),
+           (01, new ClosingTag { Position = 10 }),
+           (00, new ClosingTag { Position = 10 }),
+
+           (07, new OpeningTag { Position = 10, Name = "x2" }),
+           (06, new ClosingTag { Position = 10 }),
+           (09, new OpeningTag { Position = 10, Name = "y2" }),
+           (08, new ClosingTag { Position = 10 }),
+           (11, new OpeningTag { Position = 10, Name = "z2" }),
+           (10, new ClosingTag { Position = 10 }),
+
+           (17, new OpeningTag { Position = 10, Name = "x3" }),
+           (16, new OpeningTag { Position = 10, Name = "y3" }),
+           (15, new OpeningTag { Position = 10, Name = "z3" }),
+
+           (14, new ClosingTag { Position = 20 }),
+           (13, new ClosingTag { Position = 21 }),
+           (12, new ClosingTag { Position = 22 }),
+        };
+
+
         [TestMethod]
         public void Build_OpenCloseTest()
         {
@@ -44,8 +86,14 @@ namespace Doc2web.Tests.Core.Rendering
             Test(ExpectedSelfClosing, InputSelfClosing);
         }
 
+        [TestMethod]
+        public void Build_FlatternColisionTest()
+        {
+            Test(ExpectedFlatternColision, InputFlatternColision);
+        }
 
-        private void Test((int, ITag)[] expectedConfig, List<HtmlNode> sample, double minLimit = 0, double maxLimit = double.MaxValue)
+
+        private void Test((int, ITag)[] expectedConfig, List<HtmlNode> sample)
         {
             ITag[] expected = Utils.SetRelatedTag(expectedConfig);
             var result = TagsFactory.Build(sample.ToArray());

@@ -20,6 +20,8 @@ namespace Doc2web.Core.Rendering
 
         public string Render() => $"{TextBefore}</{Related.Name}>";
 
+        public override string ToString() => Render();
+
     }
 
 }
