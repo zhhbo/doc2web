@@ -67,12 +67,14 @@ namespace Doc2web.Core.Rendering
             {
                 Name = node.Tag,
                 Position = node.Start,
-                Attributes = node.Attributes
+                Attributes = node.Attributes,
+                TextAfter = node.TextPrefix
             };
             var closing = new ClosingTag
             {
                 Related = opening,
-                Position = node.End
+                Position = node.End,
+                TextBefore = node.TextSuffix
             };
             opening.Related = closing;
             return new ITag[2] { opening, closing };

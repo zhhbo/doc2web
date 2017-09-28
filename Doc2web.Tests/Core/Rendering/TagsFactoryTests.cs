@@ -12,13 +12,13 @@ namespace Doc2web.Tests.Core.Rendering
     {
         private static List<HtmlNode> InputOpenClose => new List<HtmlNode>
         {
-            new HtmlNode { Start=0, End=10, Z=0, Tag="div" }
+            new HtmlNode { Start=0, End=10, Z=0, Tag="div", TextPrefix="prefix", TextSuffix="suffix" }
         };
 
         private static (int, ITag)[] ExpectedOpenClose => new(int, ITag)[]
         {
-           (1, new OpeningTag { Position = 0, Name = "div" }),
-           (0, new ClosingTag { Position = 10 })
+           (1, new OpeningTag { Position = 0, Name = "div", TextAfter="prefix" }),
+           (0, new ClosingTag { Position = 10, TextBefore="suffix" })
         };
 
 
@@ -95,6 +95,7 @@ namespace Doc2web.Tests.Core.Rendering
             Assert.AreEqual(expected.Name, result.Name);
             Assert.AreEqual(expected.Position, result.Position);
             Assert.AreEqual(expected.Attributes, result.Attributes);
+            Assert.AreEqual(expected.TextAfter, result.TextAfter);
             AssertAttributesAreEquals(expected.Attributes, result.Attributes);
             AssertClosingTagsAreEqual(expected.Related, result.Related);
         }
@@ -104,6 +105,7 @@ namespace Doc2web.Tests.Core.Rendering
             Assert.AreEqual(expected.Position, result.Position);
             Assert.AreEqual(expected.Name, result.Name);
             Assert.AreEqual(expected.RelatedPosition, result.RelatedPosition);
+            Assert.AreEqual(expected.TextBefore, result.TextBefore);
         }
 
         private void AssertAttributesAreEquals
