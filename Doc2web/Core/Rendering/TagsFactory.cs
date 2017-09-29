@@ -9,11 +9,6 @@ namespace Doc2web.Core.Rendering
     {
         public static ITag[] Build(HtmlNode[] nodes)
         {
-            return BuildTags(nodes).OrderBy(x => x.Position).ToArray();
-        }
-
-        private static ITag[] BuildTags(HtmlNode[] nodes)
-        {
             var tags = new ITag[nodes.Length * 2];
             int j = 0;
 

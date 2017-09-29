@@ -30,8 +30,10 @@ namespace Doc2web.Core.Rendering
             return nodes.ToArray();
         }
 
-        public static ITag[] Step2(HtmlNode[] nodes) =>
-           TagsFactory.Build(nodes);
+        public static ITag[] Step2(HtmlNode[] nodes)
+        {
+            return TagsSorter.Sort(TagsFactory.Build(nodes));
+        }
 
         public static string Step3(string text, IRenderable[] renderables) =>
             new Stringifier() {
