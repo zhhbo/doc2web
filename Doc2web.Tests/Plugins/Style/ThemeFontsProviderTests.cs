@@ -65,18 +65,19 @@ namespace Doc2web.Tests.Plugins.Style
         }
 
         [TestMethod]
-        public void GetFont_InvalidTest()
+        public void GetFont_MajorHighAnsiTest()
         {
-            var invalidFonts = new ThemeFontValues[]
-            {
-                ThemeFontValues.MajorHighAnsi,
-                ThemeFontValues.MinorHighAnsi
-            };
-
-            foreach(var font in invalidFonts) 
-                Assert.ThrowsException<ArgumentException>(
-                    () => _instance.GetFontFace(font));
+            var result = _instance.GetFontFace(ThemeFontValues.MajorHighAnsi);
+            Assert.AreEqual("Cambria", result);
         }
+
+        [TestMethod]
+        public void GetFont_MinorHighAnsiTest()
+        {
+            var result = _instance.GetFontFace(ThemeFontValues.MinorHighAnsi);
+            Assert.AreEqual("Calibri", result);
+        }
+
 
         private Theme GenerageTheme() =>
             new Theme

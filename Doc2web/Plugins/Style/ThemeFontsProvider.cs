@@ -29,13 +29,15 @@ namespace Doc2web.Plugins.Style
             switch (value)
             {
                 case ThemeFontValues.MajorAscii: return Major?.LatinFont;
+                case ThemeFontValues.MajorHighAnsi: return Major?.LatinFont;
                 case ThemeFontValues.MajorBidi: return Major?.ComplexScriptFont;
                 case ThemeFontValues.MajorEastAsia: return Major?.EastAsianFont;
-                case ThemeFontValues.MajorHighAnsi: return null;
+                //case ThemeFontValues.MajorHighAnsi: return null;
                 case ThemeFontValues.MinorAscii: return Minor?.LatinFont;
+                case ThemeFontValues.MinorHighAnsi: return Minor?.LatinFont;
                 case ThemeFontValues.MinorBidi: return Minor?.ComplexScriptFont;
                 case ThemeFontValues.MinorEastAsia: return Minor?.EastAsianFont;
-                case ThemeFontValues.MinorHighAnsi: return null;
+                //case ThemeFontValues.MinorHighAnsi: return null;
                 default: return null;
             }
         }
