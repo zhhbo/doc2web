@@ -6,16 +6,19 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace Doc2web.CLI
 {
     class Program
     {
         private static CommandLineArgs cliArgs;
+        private CommandLineArgs _args;
+        private FileListFactory _fileList;
 
         public static void Main(string[] args)
         {
-            cliArgs = new CommandLineArgs();
+            var cliArgs = new CommandLineArgs();
 
             try
             {
@@ -23,7 +26,7 @@ namespace Doc2web.CLI
             }
             catch
             {
-                Debug("Could not parse arguments.");
+                Console.Error.WriteLine("Could not parse arguments.");
                 return;
             }
 
@@ -33,76 +36,39 @@ namespace Doc2web.CLI
                 return;
             }
 
-            var targets = cliArgs.Targets.Where(IsValid).ToArray();
-            if (targets.Length == 0)
-            {
-                Console.WriteLine("No valid document can be used as input.");
-                return;
-            }
+            new Program(cliArgs).Execute();
 
-            ConvertAllDocuments(targets);
-
-            if (cliArgs.IsInteractive)
-            {
-                Console.WriteLine("Press enter to continue...");
-                Console.ReadKey();
-            }
+            Console.WriteLine("Press enter to continue...");
+            Console.ReadKey();
         }
 
-        private static void ConvertAllDocuments(string[] targets)
+        private Program(CommandLineArgs args)
         {
-            Debug("Starting the job");
-            foreach (string target in targets)
-            {
-                ConvertDocument(target);
-            }
-            Debug("Job completed");
+            _args = args;
         }
 
-        private static void ConvertDocument(string target)
+        private void Execute()
         {
-            long ms = 0;
-            string html;
-            string fileName = Regex.Match(target, @"[^\\\/]+$").Value;
-            string directory = target.Substring(0, target.Length - fileName.Length);
-            Debug($"Starting {fileName}");
-            using (var wpDoc = WordprocessingDocument.Open(target, false))
-            {
-                var sw = Stopwatch.StartNew();
-                html = QuickAndEasy.ConvertCompleteDocument(wpDoc);
-                sw.Stop();
-                ms = sw.ElapsedMilliseconds;
-            };
-            if (cliArgs.OutputPath != "") directory = cliArgs.OutputPath;
-            File.WriteAllText($"{directory}{fileName}.html", html);
-            Debug($"Completed conversion of {fileName}");
-            Console.WriteLine($"Converted {fileName} in {ms} ms");
-        }
+            var fileListFactory = new FileListFactory(_args.Targets.ToArray());
+            var fileList = fileListFactory.Build();
 
-        private static bool IsValid(string arg)
-        {
-            if (!File.Exists(arg))
+            var sw = Stopwatch.StartNew();
+
+            foreach (var file in fileList)
             {
-                Debug($"File {arg} does not exist");
-                return false;
+                var task = new FileConversionTask
+                {
+                    InputPath = file,
+                    OutputPath = _args.OutputPath,
+                    Verbose = _args.Verbosity > 1,
+                    Blank = _args.Blank
+                };
+
+                task.Execute();
             }
 
-            if (!Regex.IsMatch(arg, @"\.docx?$"))
-            {
-                Debug($"File {arg} does not end with `.doc` or `.docx`.");
-                return false;
-            }
-
-            return true;
-        }
-
-        private static void Debug(string format, params object[] args)
-        {
-            if (cliArgs.Verbosity > 0)
-            {
-                Console.Write("# ");
-                Console.WriteLine(format, args);
-            }
+            Console.WriteLine(@"-----------------------------------------------------");
+            Console.WriteLine($"Converted {fileList.Count} document(s) in {sw.Elapsed.ToString()}.");
         }
     }
 }

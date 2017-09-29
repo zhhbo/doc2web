@@ -14,20 +14,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Assets\shareholders.docx" />
-    <None Remove="Assets\transaction-formatted.docx" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="Assets\shareholders.docx">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\transaction-formatted.docx">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="BenchmarkDotNet" Version="0.10.9" />
     <PackageReference Include="DocumentFormat.OpenXml" Version="2.7.2" />
   </ItemGroup>
@@ -37,7 +23,19 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Assets\">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Folder>
     <Folder Include="BenchmarkDotNet.Artifacts\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="..\Samples\shareholders.docx" Link="Assets\shareholders.docx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Samples\transaction-formatted.docx" Link="Assets\transaction-formatted.docx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>

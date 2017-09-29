@@ -28,6 +28,14 @@ namespace Doc2web.Tests.Plugins.Style
         }
 
         [TestMethod]
+        public void NumberingCrawler_NullNumberingTest()
+        {
+            var instance = new NumberingCrawler(null, _styles);
+
+            Assert.AreEqual(0, instance.Collect(10, 2).Count);
+        }
+
+        [TestMethod]
         public void Collect_SingleTest()
         {
             var results = _instance.Collect(10, 2);

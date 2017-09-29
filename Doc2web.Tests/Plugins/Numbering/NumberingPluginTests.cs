@@ -78,6 +78,18 @@ namespace Doc2web.Tests.Plugins.Numbering
         }
 
         [TestMethod]
+        public void InsertNumbering_NullNumberingTest()
+        {
+            MockElementContext(1, 2, "1.1.1");
+            _nMapper.IsValid.Returns(false);
+
+            _instance.InsertNumbering(_elementContext, _p);
+
+
+            Assert.AreEqual(0, _nodes.Count);
+        }
+
+        [TestMethod]
         public void InsertNumbering_ContainerMaxTest()
         {
             MockElementContext(1, 2, "1.1.1");
@@ -228,6 +240,7 @@ namespace Doc2web.Tests.Plugins.Numbering
             _pData.Verbose.Returns(verbose);
             _pData.LevelXmlElement.Returns(_level);
             _nMapper = Substitute.For<INumberingMapper>();
+            _nMapper.IsValid.Returns(true);
             _nMapper.GetNumbering(_p).Returns(_pData);
             _cssRegistrator = Substitute.For<ICssRegistrator>();
             _cssRegistrator

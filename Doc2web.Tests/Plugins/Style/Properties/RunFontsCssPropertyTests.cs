@@ -27,6 +27,7 @@ namespace Doc2web.Tests.Plugins.Style.Properties
             };
         }
 
+
         [TestMethod]
         public void AsCss_FontTest()
         {
@@ -48,6 +49,27 @@ namespace Doc2web.Tests.Plugins.Style.Properties
         }
 
         [TestMethod]
+        public void AsCss_DistincFontTests()
+        {
+            SetFontsValues("Arial", "Arial", "Arial", "Arial");
+
+            var result = _instance.AsCss();
+
+            Assert.AreEqual("Arial", result[""]["span.test"]["font-family"]);
+        }
+
+        [TestMethod]
+        public void AsCss_NoFontTests()
+        {
+            SetFontsValues(null, null, null, null);
+
+            var result = _instance.AsCss();
+            result.AddAttribute("span.test", "some", "val");
+
+            Assert.IsFalse(result[""]["span.test"].ContainsKey("font-family"));
+        }
+
+        [TestMethod]
         public void SpecificHashcode_Test()
         {
             _instance.Element.Ascii = new StringValue("A");
@@ -59,6 +81,16 @@ namespace Doc2web.Tests.Plugins.Style.Properties
             _themeFontProvider.GetFontFace(instance2.Element.AsciiTheme.Value).Returns("A");
 
             Assert.AreEqual(instance2.GetSpecificHashcode(), _instance.GetSpecificHashcode());
+        }
+
+        [TestMethod]
+        public void SpecificHashcode_NullTest()
+        {
+            _instance.Element.Ascii = null;
+            _instance.Element.AsciiTheme = null;
+
+            var result = _instance.GetSpecificHashcode();
+            Assert.AreEqual(0, result);
         }
 
         [TestMethod]
@@ -100,12 +132,16 @@ namespace Doc2web.Tests.Plugins.Style.Properties
         static string ExpectedThemeValues = 
             "Arial Theme, ComplexScript Theme, EastAsia Theme, HighAnsi Theme";
 
-        private void SetFontsValues()
+        private void SetFontsValues(
+            string ascii="Arial",
+            string complex="ComplexScript",
+            string eastAsia="EastAsia",
+            string highAnsi="HighAnsi")
         {
-            _instance.Element.Ascii = new StringValue("Arial");
-            _instance.Element.ComplexScript = new StringValue("ComplexScript");
-            _instance.Element.EastAsia = new StringValue("EastAsia");
-            _instance.Element.HighAnsi = new StringValue("HighAnsi");
+            _instance.Element.Ascii = new StringValue(ascii);
+            _instance.Element.ComplexScript = new StringValue(complex);
+            _instance.Element.EastAsia = new StringValue(eastAsia);
+            _instance.Element.HighAnsi = new StringValue(highAnsi);
         }
 
 

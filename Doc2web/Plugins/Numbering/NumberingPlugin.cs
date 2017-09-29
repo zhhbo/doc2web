@@ -47,6 +47,8 @@ namespace Doc2web.Plugins.Numbering
         {
             var numberingMapper = context.Resolve<INumberingMapper>();
 
+            if (!numberingMapper.IsValid) return;
+
             var numbering = numberingMapper.GetNumbering(p);
             if (numbering != null)
             {

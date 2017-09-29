@@ -19,6 +19,7 @@ namespace Doc2web.Plugins.Style.Properties
         public override void InsertCss(CssData cssData)
         {
             var fontFamilyList = BuildFontFamilyList();
+            if (fontFamilyList.Count == 0) return;
             cssData.AddAttribute(Selector, "font-family", String.Join(", ", fontFamilyList));
         }
 
@@ -31,7 +32,8 @@ namespace Doc2web.Plugins.Style.Properties
             for(int i = 0; i< 4; i++)
             {
                 var nextFont = GetRightFontFamily(fontValues[i], themeFontValues[i]);
-                if (nextFont != null) results.Add(nextFont);
+                if (nextFont != null && nextFont != "" && !results.Contains(nextFont))
+                    results.Add(nextFont);
             }
 
             return results;
@@ -58,7 +60,9 @@ namespace Doc2web.Plugins.Style.Properties
         private string GetRightFontFamily(string fontValue, ThemeFontValues? themeFontValue)
         {
             if (fontValue != null) return fontValue;
-            return TryGetFontFromTheme(themeFontValue);
+            var themeFont =  TryGetFontFromTheme(themeFontValue);
+            if (themeFont != null) return themeFont;
+            return "";
         }
 
         private string TryGetFontFromTheme(ThemeFontValues? value)
@@ -76,6 +80,13 @@ namespace Doc2web.Plugins.Style.Properties
 
         public override short GetSpecificHashcode()
         {
+            var asciiFont = GetRightFontFamily(
+                Element.Ascii?.Value,
+                Element.AsciiTheme?.Value
+            );
+
+            if (asciiFont == "") return 0;
+
             return (short)GetRightFontFamily(
                 Element.Ascii?.Value,
                 Element.AsciiTheme?.Value

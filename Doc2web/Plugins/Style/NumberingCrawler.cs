@@ -31,6 +31,8 @@ namespace Doc2web.Plugins.Style
 
         public List<Level> Collect(int numberingId, int level)
         {
+            if (_numbering == null) return new List<Level>();
+
             var num = _numbering
                 .Elements<NumberingInstance>()
                 .FirstOrDefault(x => x.NumberID?.Value == numberingId);
@@ -63,6 +65,8 @@ namespace Doc2web.Plugins.Style
             var anum = _numbering
                 .Elements<AbstractNum>()
                 .FirstOrDefault(x => x.AbstractNumberId?.Value == cursor.anumID.Value);
+
+            if (anum == null) return;
 
             if (anum.StyleLink?.Val?.Value != null)
             {

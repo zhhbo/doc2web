@@ -17,6 +17,7 @@ namespace Doc2web.CLI
         private string[] _targets;
         private int _verbosity;
         private bool _interactive;
+        private bool _blank;
 
         public CommandLineArgs()
         {
@@ -28,7 +29,8 @@ namespace Doc2web.CLI
                 { "s|start=", "the number of paragraph to skip from the begining", n => _start = int.Parse(n) },
                 { "e|end=",   "the number of paragraph to skip from the end",      n => _end = int.Parse(n) },
                 { "o|out=",   "the path of the output folder.",                    n => _outputPath = n },
-                { "v|verbose",        "increase debug message verbosity",                  v => { if (v != null) ++_verbosity; } },
+                { "b|blank",  "toggle on/off if the html output will be written",  n => _blank = n != null },
+                { "v|verbose",        "increase debug message verbosity",          v => { if (v != null) ++_verbosity; } },
                 { "i|interactive", "will stop at the end of the execute and wait to the user to press enter", n => _interactive = n != null },
                 { "h|help",   "show this message and exit",                        h => _shouldShowHelp = h != null },
             };
@@ -42,6 +44,8 @@ namespace Doc2web.CLI
         public int Start => _start;
 
         public int End => _end;
+
+        public bool Blank => _blank;
 
         public string OutputPath => _outputPath;
 

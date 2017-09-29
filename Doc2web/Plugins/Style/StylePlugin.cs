@@ -30,6 +30,7 @@ namespace Doc2web.Plugins.Style
         public void InitEngine(ContainerBuilder builder)
         {
             builder.RegisterInstance(_config);
+            builder.RegisterInstance(_wpDoc).ExternallyOwned();
             builder
                 .RegisterInstance(Styles)
                 .ExternallyOwned();
@@ -50,10 +51,12 @@ namespace Doc2web.Plugins.Style
                 .RegisterType<CssPropertiesFactory2>()
                 .As<ICssPropertiesFactory2>()
                 .As<ICssPropertiesFactory2>();
-            builder.RegisterInstance(new NumberingCrawler(
-                _wpDoc.MainDocumentPart.NumberingDefinitionsPart.Numbering,
-                _wpDoc.MainDocumentPart.StyleDefinitionsPart.Styles))
-                .As<INumberingCrawler>();
+            builder.Register(r => new NumberingCrawler(
+                r.Resolve<WordprocessingDocument>().MainDocumentPart?.NumberingDefinitionsPart?.Numbering,
+                r.Resolve<WordprocessingDocument>().MainDocumentPart?.StyleDefinitionsPart?.Styles
+                ))
+                .As<INumberingCrawler>()
+                .SingleInstance();
             builder
                 .RegisterType<CssClassFactory>()
                 .As<ICssClassFactory>()
