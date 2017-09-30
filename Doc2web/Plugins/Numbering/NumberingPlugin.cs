@@ -121,7 +121,6 @@ namespace Doc2web.Plugins.Numbering
             if (dynProp != null)
             {
                 var cls = icssRegistrator.RegisterRunProperties(dynProp);
-                node.AddClasses("dyn");
                 node.AddClasses(cls);
             }
 
