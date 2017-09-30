@@ -3,7 +3,7 @@
 ##### Word to html converter engine (work in progress)
 
 ### Goals of the project
-This project is an attempt to create an lazy, extensible, cross- [ ]platform and high performance wordprocessingML 
+This project is an attempt to create an lazy, extensible, cross-platform and high performance wordprocessingML 
 (open xml) to html converter.
 
 **We will not accept pull requests until we reach version 1.0.**
