@@ -21,7 +21,7 @@ namespace Doc2web.Tests.Plugins.Style
         {
             _defaultCls = new List<ICssClass>();
             _clsFactory = Substitute.For<ICssClassFactory>();
-            _clsFactory.BuildDefaults().Returns(_defaultCls);
+            _clsFactory.Defaults.Returns(_defaultCls);
             _config = new StyleConfig();
             _instance = new CssRegistrator(_config, _clsFactory);
         }
@@ -103,9 +103,11 @@ namespace Doc2web.Tests.Plugins.Style
             var rClsName2 = _instance.RegisterRunProperties(rProp);
             var output = TestRender();
 
-            Assert.AreEqual(rClsName2, rClsName);
             Assert.AreEqual(expectedStyle1Css, output);
-            cls.Received(1).Selector = _config.RunCssClassPrefix + "." + rClsName;
+            Assert.AreEqual(rClsName2.Length, rClsName.Length);
+            for (int i = 0; i < rClsName.Length; i++)
+                Assert.AreEqual(rClsName[i], rClsName2[i]);
+            cls.Received(1).Selector = _config.RunCssClassPrefix + "." + String.Join("." ,rClsName);
         }
 
         [TestMethod]
@@ -122,9 +124,12 @@ namespace Doc2web.Tests.Plugins.Style
             var rClsName2 = _instance.RegisterParagraphProperties(pProp);
             var output = TestRender();
 
-            Assert.AreEqual(rClsName2, rClsName);
             Assert.AreEqual(expectedStyle1Css, output);
-            cls.Received(1).Selector = _config.ParagraphCssClassPrefix + "." + rClsName;
+            Assert.AreEqual(rClsName2.Length, rClsName.Length);
+            for (int i = 0; i < rClsName.Length; i++)
+                Assert.AreEqual(rClsName[i], rClsName2[i]);
+
+            cls.Received(1).Selector = _config.ParagraphCssClassPrefix + "." + String.Join("." ,rClsName);
         }
 
         [TestMethod]
@@ -137,8 +142,8 @@ namespace Doc2web.Tests.Plugins.Style
             _clsFactory.BuildFromParagraphProperties(Arg.Is(pPr)).Returns(cls);
             _clsFactory.BuildFromRunProperties(Arg.Is(rPr)).Returns(cls);
 
-            Assert.AreEqual("", _instance.RegisterParagraphProperties(pPr));
-            Assert.AreEqual("", _instance.RegisterRunProperties(rPr));
+            Assert.AreEqual(0, _instance.RegisterParagraphProperties(pPr).Length);
+            Assert.AreEqual(0, _instance.RegisterRunProperties(rPr).Length);
         }
 
         [TestMethod]

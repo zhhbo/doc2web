@@ -31,7 +31,7 @@ namespace Doc2web.Plugins.TextProcessor
                 Tag = _config.ContainerTag,
                 Z = _config.ContainerZ,
             };
-            containerNode.AddClass(_config.ContainerCls);
+            containerNode.AddClasses(_config.ContainerCls);
             context.AddNode(containerNode);
             context.AddNode(BuildLeftIdentation());
             context.AddNode(BuildPNode(context, p, containerNode));
@@ -46,14 +46,13 @@ namespace Doc2web.Plugins.TextProcessor
             if (pPr != null)
             {
                 var cssRegistrator = context.Resolve<ICssRegistrator>();
-                var dynamicStyle = cssRegistrator.RegisterParagraphProperties(pPr);
-                if (dynamicStyle != "")
-                    containerNode.AddClass(dynamicStyle);
+                var dynamicClasses = cssRegistrator.RegisterParagraphProperties(pPr);
+                containerNode.AddClasses(dynamicClasses);
 
                 var styleId = p.ParagraphProperties?.ParagraphStyleId?.Val?.Value;
                 if (styleId != null)
                 {
-                    containerNode.AddClass(cssRegistrator.RegisterStyle(styleId));
+                    containerNode.AddClasses(cssRegistrator.RegisterStyle(styleId));
                 }
             }
 
@@ -64,7 +63,7 @@ namespace Doc2web.Plugins.TextProcessor
                 Tag = _config.ParagraphTag,
                 Z = _config.ParagraphZ,
             };
-            pNode.AddClass(_config.ParagraphCls);
+            pNode.AddClasses(_config.ParagraphCls);
             return pNode;
         }
 
@@ -77,7 +76,7 @@ namespace Doc2web.Plugins.TextProcessor
                 Tag = _config.IdentationTag,
                 Z = _config.ParagraphZ
             };
-            node.AddClass(_config.LeftIdentationCls);
+            node.AddClasses(_config.LeftIdentationCls);
             return node;
         }
 
@@ -90,7 +89,7 @@ namespace Doc2web.Plugins.TextProcessor
                 Tag = _config.IdentationTag,
                 Z = _config.ParagraphZ
             };
-            node.AddClass(_config.RightIndentationCls);
+            node.AddClasses(_config.RightIndentationCls);
             return node;
         }
 
@@ -106,19 +105,18 @@ namespace Doc2web.Plugins.TextProcessor
                     Tag = _config.RunTag,
                     Z = _config.RunZ,
                 };
-                node.AddClass(_config.RunCls);
+                node.AddClasses(_config.RunCls);
 
                 var rPr = r.RunProperties;
                 if (rPr != null)
                 {
                     var cssRegistrator = context.Resolve<ICssRegistrator>();
-                    var dynamicStyle = cssRegistrator.RegisterRunProperties(rPr);
-                    if (dynamicStyle != "")
-                        node.AddClass(dynamicStyle);
+                    var dynamicClases = cssRegistrator.RegisterRunProperties(rPr);
+                    node.AddClasses(dynamicClases);
 
                     var styleId = rPr.RunStyle?.Val?.Value;
                     if (styleId != null)
-                        node.AddClass(cssRegistrator.RegisterStyle(styleId));
+                        node.AddClasses(cssRegistrator.RegisterStyle(styleId));
                 }
 
                 context.AddNode(node);

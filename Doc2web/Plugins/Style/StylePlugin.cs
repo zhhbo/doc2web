@@ -48,9 +48,9 @@ namespace Doc2web.Plugins.Style
                 .As<IThemeFontsProvider>()
                 .InstancePerLifetimeScope();
             builder
-                .RegisterType<CssPropertiesFactory2>()
-                .As<ICssPropertiesFactory2>()
-                .As<ICssPropertiesFactory2>();
+                .RegisterType<CssPropertiesFactory>()
+                .As<ICssPropertiesFactory>()
+                .As<ICssPropertiesFactory>();
             builder.Register(r => new NumberingCrawler(
                 r.Resolve<WordprocessingDocument>().MainDocumentPart?.NumberingDefinitionsPart?.Numbering,
                 r.Resolve<WordprocessingDocument>().MainDocumentPart?.StyleDefinitionsPart?.Styles
@@ -71,6 +71,13 @@ namespace Doc2web.Plugins.Style
             arg.CustomAttributes.Where(x =>
                 x.AttributeType.BaseType == typeof(BaseCssPropertyAttribute))
             .Any();
+
+        [PreProcessing]
+        public void Initialize(IGlobalContext context)
+        {
+            var cssFactory = context.Resolve<ICssClassFactory>();
+            cssFactory.Initialize();
+        }
 
         [PostProcessing]
         public void InjectCss(IGlobalContext context)

@@ -11,11 +11,11 @@ using DocumentFormat.OpenXml;
 namespace Doc2web.Tests.Plugins.Style
 {
     [TestClass]
-    public class CssPropertiesFactory2Tests
+    public class CssPropertiesFactoryTests
     {
         private IContainer _container;
-        private CssPropertiesFactory2 _paragraphFac;
-        private CssPropertiesFactory2 _runFac;
+        private CssPropertiesFactory _paragraphFac;
+        private CssPropertiesFactory _runFac;
 
         public class MockBaseBoldCssProp : CssProperty<Bold>
         {
@@ -76,7 +76,7 @@ namespace Doc2web.Tests.Plugins.Style
         {
             _container = BuildContainer();
             var fac = _container
-                .Resolve<Func<CssPropertySource, CssPropertiesFactory2>>();
+                .Resolve<Func<CssPropertySource, CssPropertiesFactory>>();
 
             _paragraphFac = fac(CssPropertySource.Paragraph);
             _runFac = fac(CssPropertySource.Run);
@@ -85,8 +85,6 @@ namespace Doc2web.Tests.Plugins.Style
         private IContainer BuildContainer()
         {
             var containerBuilder = new ContainerBuilder();
-            //containerBuilder
-            //    .RegisterModule<AttributeMetaData>();
             containerBuilder
                 .RegisterTypes(
                     typeof(ParagraphBoldCssProp),
@@ -99,7 +97,7 @@ namespace Doc2web.Tests.Plugins.Style
                 .WithMetadataFrom<BaseCssPropertyAttribute>()
                 .As<ICssProperty>();
 
-            containerBuilder.RegisterType<CssPropertiesFactory2>();
+            containerBuilder.RegisterType<CssPropertiesFactory>();
 
             return containerBuilder.Build();
         }

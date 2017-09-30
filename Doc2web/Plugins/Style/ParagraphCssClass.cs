@@ -24,6 +24,8 @@ namespace Doc2web.Plugins.Style
 
         public ParagraphCssClass BasedOn { get; set; }
 
+        public ParagraphCssClass Defaults { get; set; }
+
         public CssPropertiesSet ParagraphProps { get; private set; }
 
         public CssPropertiesSet RunProps { get; private set; }
@@ -37,6 +39,24 @@ namespace Doc2web.Plugins.Style
             pCssProps.AddMany(ParagraphProps);
             rCssProps.AddMany(RunProps);
 
+            AddInheritance(pCssProps, rCssProps);
+            AddDefaults(pCssProps, rCssProps);
+
+            pCssProps.InsertCss(cssData);
+            rCssProps.InsertCss(cssData);
+        }
+
+        private void AddDefaults(CssPropertiesSet pCssProps, CssPropertiesSet rCssProps)
+        {
+            if (Defaults != null)
+            {
+                pCssProps.AddMany(Defaults.ParagraphProps);
+                rCssProps.AddMany(Defaults.RunProps);
+            }
+        }
+
+        private void AddInheritance(CssPropertiesSet pCssProps, CssPropertiesSet rCssProps)
+        {
             var basedOn = BasedOn;
             while (basedOn != null)
             {
@@ -44,9 +64,6 @@ namespace Doc2web.Plugins.Style
                 rCssProps.AddMany(basedOn.RunProps);
                 basedOn = basedOn.BasedOn;
             }
-
-            pCssProps.InsertCss(cssData);
-            rCssProps.InsertCss(cssData);
         }
 
         public override bool Equals(object obj)

@@ -81,7 +81,7 @@ namespace Doc2web.Tests.Plugins.TextProcessor
                 End = _config.ContainerEnd,
                 Z = _config.ContainerZ,
             };
-            expected.AddClass(_config.ContainerCls);
+            expected.AddClasses(_config.ContainerCls);
             Assert.AreEqual(expected, firstNode);
         }
 
@@ -98,7 +98,7 @@ namespace Doc2web.Tests.Plugins.TextProcessor
                 End = _config.ContainerStart + _config.Delta * 2,
                 Z = _config.ParagraphZ,
             };
-            expected.AddClass(_config.LeftIdentationCls);
+            expected.AddClasses(_config.LeftIdentationCls);
             Assert.AreEqual(expected, firstNode);
         }
 
@@ -115,7 +115,7 @@ namespace Doc2web.Tests.Plugins.TextProcessor
                 End = _config.ContainerEnd - _config.Delta,
                 Z = _config.ParagraphZ,
             };
-            expected.AddClass(_config.RightIndentationCls);
+            expected.AddClasses(_config.RightIndentationCls);
             Assert.AreEqual(expected, firstNode);
         }
 
@@ -132,16 +132,18 @@ namespace Doc2web.Tests.Plugins.TextProcessor
                 End = _p.InnerText.Length + _config.Delta,
                 Z = _config.ParagraphZ,
             };
-            expected.AddClass(_config.ParagraphCls);
+            expected.AddClasses(_config.ParagraphCls);
             Assert.AreEqual(expected, firstNode);
         }
 
         [TestMethod]
         public void ProcessParagraph_AddDynStyleTest()
         {
-            string styleName = "dync-somestuff";
+            string styleName = "dyn-somestuff";
             var pPr = new ParagraphProperties();
-            _cssRegistrator.RegisterParagraphProperties(pPr).Returns(styleName);
+            _cssRegistrator
+                .RegisterParagraphProperties(pPr)
+                .Returns(new string[] { styleName });
             _p.InsertAt(pPr, 0);
 
             _instance.ProcessParagraph(_pContext, _p);
@@ -155,7 +157,7 @@ namespace Doc2web.Tests.Plugins.TextProcessor
         {
             string styleName = "heading1";
             var pPr = new ParagraphProperties(new StyleId() { Val = new StringValue(styleName) });
-            _cssRegistrator.RegisterParagraphProperties(pPr).Returns("");
+            _cssRegistrator.RegisterParagraphProperties(pPr).Returns(new string[] { });
             _cssRegistrator.RegisterStyle(styleName).Returns(styleName);
             _p.InsertAt(pPr, 0);
 
@@ -178,7 +180,7 @@ namespace Doc2web.Tests.Plugins.TextProcessor
                 End = _r.InnerText.Length,
                 Z = _config.RunZ,
             };
-            expected.AddClass(_config.RunCls);
+            expected.AddClasses(_config.RunCls);
             Assert.AreEqual(expected, firstNode);
         }
 
@@ -187,7 +189,9 @@ namespace Doc2web.Tests.Plugins.TextProcessor
         {
             string styleName = "dync-somestuff";
             var rPr = new RunProperties();
-            _cssRegistrator.RegisterRunProperties(rPr).Returns(styleName);
+            _cssRegistrator
+                .RegisterRunProperties(rPr)
+                .Returns(new string[] { styleName });
             _r.InsertAt(rPr, 0);
 
             _instance.ProcessRun(_rContext, _r);
@@ -201,7 +205,7 @@ namespace Doc2web.Tests.Plugins.TextProcessor
         {
             string styleName = "somestyle";
             var rPr = new RunProperties(new StyleId() { Val = styleName });
-            _cssRegistrator.RegisterRunProperties(rPr).Returns("");
+            _cssRegistrator.RegisterRunProperties(rPr).Returns(new string[] { });
             _cssRegistrator.RegisterStyle(styleName).Returns(styleName);
             _r.InsertAt(rPr, 0);
 

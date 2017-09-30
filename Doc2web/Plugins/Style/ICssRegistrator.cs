@@ -28,13 +28,13 @@ namespace Doc2web.Plugins.Style
         /// </summary>
         /// <param name="pPr">Paragraph properties used to create the css class.</param>
         /// <returns>Css class created from the paragraph properties.</returns>
-        string RegisterParagraphProperties(OpenXmlElement pPr);
+        string[] RegisterParagraphProperties(OpenXmlElement pPr);
 
         /// <summary>
         /// Create a css class from run properties.
         /// </summary>
         /// <param name="rPr">Run properties used to create the css class.</param>
         /// <returns>Css class created from the run properties.</returns>
-        string RegisterRunProperties(OpenXmlElement rPr);
+        string[] RegisterRunProperties(OpenXmlElement rPr);
     }
 }

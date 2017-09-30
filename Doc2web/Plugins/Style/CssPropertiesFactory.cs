@@ -7,11 +7,11 @@ using System.Text;
 
 namespace Doc2web.Plugins.Style
 {
-    public class CssPropertiesFactory2 : ICssPropertiesFactory2
+    public class CssPropertiesFactory : ICssPropertiesFactory
     {
         private Dictionary<Type, Func<ICssProperty>> _constructorsDic;
 
-        public CssPropertiesFactory2(
+        public CssPropertiesFactory(
             IEnumerable<Meta<Func<ICssProperty>>> propsConstrutors, 
             CssPropertySource source)
         {

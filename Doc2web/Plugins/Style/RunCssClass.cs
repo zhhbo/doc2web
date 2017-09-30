@@ -17,6 +17,8 @@ namespace Doc2web.Plugins.Style
             set => RunProps.Selector = value;
         }
 
+        public RunCssClass Defaults { get; set; }
+
         public RunCssClass BasedOn { get; set; }
 
         public CssPropertiesSet RunProps { get; private set; }
@@ -25,14 +27,26 @@ namespace Doc2web.Plugins.Style
         {
             var cssPropertySet = new CssPropertiesSet { Selector = Selector };
 
+            AddInheritance(cssPropertySet);
+            AddDefaults(cssPropertySet);
+
+            cssPropertySet.InsertCss(cssData);
+        }
+
+        private void AddDefaults(CssPropertiesSet cssPropertySet)
+        {
+            if (Defaults != null)
+                cssPropertySet.AddMany(Defaults.RunProps);
+        }
+
+        private void AddInheritance(CssPropertiesSet cssPropertySet)
+        {
             var target = this;
             while (target != null)
             {
                 cssPropertySet.AddMany(target.RunProps);
                 target = target.BasedOn;
             }
-
-            cssPropertySet.InsertCss(cssData);
         }
 
         public override bool Equals(object obj)

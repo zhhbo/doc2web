@@ -164,6 +164,7 @@ namespace Doc2web.Tests.Plugins.Numbering
             AssertHasClasses(
                 numberMin,
                 _config.NumberingNumberMinCls,
+                "dyn",
                 clsName);
         }
 
@@ -267,7 +268,7 @@ namespace Doc2web.Tests.Plugins.Numbering
             _p.ParagraphProperties = new ParagraphProperties(pMarkRunProps);
             _cssRegistrator
                 .RegisterRunProperties(Arg.Is(pMarkRunProps))
-                .Returns(clsName);
+                .Returns(new string[] { clsName });
             return clsName;
         }
 

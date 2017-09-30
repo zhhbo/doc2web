@@ -10,6 +10,7 @@ namespace Doc2web.Plugins.Style
         public string RunCssClassPrefix { get; set; }
         public string LeftIdentationCssClassPrefix { get; set; }
         public string RightIdentationCssClassPrefix { get; set; }
+        public string DynamicCssClassPrefix { get; set; }
 
         public StyleConfig()
         {
@@ -17,6 +18,7 @@ namespace Doc2web.Plugins.Style
             RunCssClassPrefix = "span";
             LeftIdentationCssClassPrefix = ".leftspacer";
             RightIdentationCssClassPrefix = ".rightspacer";
+            DynamicCssClassPrefix = "dyn";
         }
 
         public StyleConfig Clone() =>

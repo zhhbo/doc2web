@@ -48,7 +48,7 @@ namespace Doc2web.Plugins.TextFixes
                 context.Nodes
                 .FirstOrDefault(IsContainer);
             if (container != null)
-                container.AddClass(_config.BreakAtStartCls);
+                container.AddClasses(_config.BreakAtStartCls);
         }
 
         private bool IsContainer(HtmlNode n) =>

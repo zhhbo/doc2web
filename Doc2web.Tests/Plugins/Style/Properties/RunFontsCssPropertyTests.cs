@@ -70,6 +70,20 @@ namespace Doc2web.Tests.Plugins.Style.Properties
         }
 
         [TestMethod]
+        public void Extends_Test()
+        {
+            SetFontsValues("A1", null, "A2", null);
+            var instanceA = _instance;
+            Initialize();
+            SetFontsValues("A3", "B1", "A4", "B2");
+            var instanceB = _instance;
+
+            instanceA.Extends(instanceB);
+
+            Assert.AreEqual("A1, B1, A2, B2", instanceA.FontFamilies);
+        }
+
+        [TestMethod]
         public void SpecificHashcode_Test()
         {
             _instance.Element.Ascii = new StringValue("A");

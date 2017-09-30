@@ -37,6 +37,19 @@ namespace Doc2web.Tests.Plugins.Style
         }
 
         [TestMethod]
+        public void AddExtends_Test()
+        {
+            var prop1 = Substitute.For<ICssProperty>();
+            var prop2 = Substitute.For<ICssProperty>();
+            _instance.Add(prop1);
+            _instance.Add(prop2);
+
+            Assert.IsTrue(_instance.Contains(prop1));
+            Assert.IsFalse(_instance.Contains(prop2));
+            prop1.Received(1).Extends(prop2);
+        }
+
+        [TestMethod]
         public void AddMany_Test()
         {
             var props = new ICssProperty[]
@@ -70,15 +83,6 @@ namespace Doc2web.Tests.Plugins.Style
             _instance.Add(prop);
             _instance.Clear();
             Assert.AreEqual(0, _instance.Count);
-        }
-
-        [TestMethod]
-        public void Compare_DiffTypesTest()
-        {
-            var bold = new BoldCssProperty();
-            var caps = new CapsCssProperty();
-
-            Assert.AreNotEqual(0, _instance.Compare(bold, caps));
         }
 
         [TestMethod]

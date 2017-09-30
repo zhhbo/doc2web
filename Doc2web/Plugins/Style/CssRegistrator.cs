@@ -42,22 +42,29 @@ namespace Doc2web.Plugins.Style
             return $"numbering-{numberingInstance}-{level}";
         }
 
-        public string RegisterParagraphProperties(OpenXmlElement pPr)
+        public string[] RegisterParagraphProperties(OpenXmlElement pPr)
         {
             var cls = _classFactory.BuildFromParagraphProperties(pPr);
-            return TryGetDynamicClass(cls, _config.ParagraphCssClassPrefix + ".{0}", _dynamicParagraphClassesUIDs);
+            return TryGetDynamicClass(cls, _config.ParagraphCssClassPrefix, _dynamicParagraphClassesUIDs);
         }
 
-        public string RegisterRunProperties(OpenXmlElement rPr)
+        public string[] RegisterRunProperties(OpenXmlElement rPr)
         {
             var cls = _classFactory.BuildFromRunProperties(rPr);
-            return TryGetDynamicClass(cls, _config.RunCssClassPrefix + ".{0}",_dynamicRunClassesUIDs);
+            return TryGetDynamicClass(cls, _config.RunCssClassPrefix, _dynamicRunClassesUIDs);
         }
 
-        private string TryGetDynamicClass(ICssClass cls, string selectorPrefix, Dictionary<ICssClass, string> dict)
+        private string[] TryGetDynamicClass(ICssClass cls, string selectorPrefix, Dictionary<ICssClass, string> dict)
         {
-            if (cls.IsEmpty) return "";
-            if (dict.TryGetValue(cls, out string uid)) return uid;
+            if (cls.IsEmpty) return new string[] { };
+            if (dict.TryGetValue(cls, out string uid))
+            {
+                return new string[]
+                {
+                    _config.DynamicCssClassPrefix,
+                    uid
+                };
+            }
 
             uid = "dyn-" + Guid.NewGuid().ToString().Replace("-", "");
 
@@ -72,15 +79,14 @@ namespace Doc2web.Plugins.Style
                 uid = dict[cls];
             }
 
-            cls.Selector = String.Format(selectorPrefix, uid);
-            return uid;
+            cls.Selector = $"{selectorPrefix}.{_config.DynamicCssClassPrefix}.{uid}";
+            return new string[] { _config.DynamicCssClassPrefix, uid };
         }
 
 
         public void RenderInto(StringBuilder sb)
         {
             var cssData = new CssData();
-            var defaults = _classFactory.BuildDefaults();
             var numbering =
                 _numberingToRender.Keys
                 .Select(x => _classFactory.BuildFromNumbering(x.Item1, x.Item2))
@@ -92,7 +98,7 @@ namespace Doc2web.Plugins.Style
                     .Concat(numbering)
                     .Concat(_dynamicParagraphClassesUIDs.Keys)
                     .Concat(_dynamicRunClassesUIDs.Keys)
-                    .Concat(defaults)
+                    .Concat(_classFactory.Defaults)
                     .ToArray();
 
             foreach (var cls in clsToRender)

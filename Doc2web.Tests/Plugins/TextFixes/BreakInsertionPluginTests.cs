@@ -35,7 +35,7 @@ namespace Doc2web.Tests.Plugins.TextFixes
                 Z = _config.ContainerZ,
                 Tag = _config.ContainerTag
             };
-            _container.AddClass(_config.ContainerCls);
+            _container.AddClasses(_config.ContainerCls);
 
             _context = Substitute.For<IElementContext>();
             _context.When(x => x.AddNode(Arg.Any<HtmlNode>()))

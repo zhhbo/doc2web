@@ -5,7 +5,7 @@ using DocumentFormat.OpenXml;
 
 namespace Doc2web.Plugins.Style
 {
-    public interface ICssPropertiesFactory2
+    public interface ICssPropertiesFactory
     {
         ICssProperty[] Build(OpenXmlElement element);
     }

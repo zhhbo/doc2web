@@ -22,19 +22,18 @@ namespace Doc2web.Tests
             string className = "test-cls";
             var instance = new HtmlNode();
 
-            instance.AddClass(className);
+            instance.AddClasses(className);
 
             Assert.IsTrue(instance.Classes.Contains(className));
             Assert.AreEqual(className, instance.Attributes["class"]);
         }
 
         [TestMethod]
-        public void AddClass_EmptyTest()
+        public void AddClasses_EmptyTest()
         {
             var instance = new HtmlNode();
 
-            instance.AddClass("");
-            instance.AddClass(null);
+            instance.AddClasses("", null);
 
             Assert.AreEqual(0, instance.Classes.Count);
         }
@@ -149,7 +148,7 @@ namespace Doc2web.Tests
                 Start = 0,
                 End = 100,
             };
-            node1.AddClass("ng-redirect");
+            node1.AddClasses("ng-redirect");
             node1.SetAttribute("id", "10");
             node1.SetStyle("color", "red");
             var node2 = node1.Clone();

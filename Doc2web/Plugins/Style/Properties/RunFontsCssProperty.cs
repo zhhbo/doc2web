@@ -2,6 +2,7 @@
 using DocumentFormat.OpenXml.Wordprocessing;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Doc2web.Plugins.Style.Properties
@@ -10,30 +11,58 @@ namespace Doc2web.Plugins.Style.Properties
     public class RunFontsCssProperty : CssProperty<RunFonts>
     {
         private IThemeFontsProvider _themeFontProvider;
+        private string[] _fontFamilies;
 
         public RunFontsCssProperty(IThemeFontsProvider themeFontProvider)
         {
             _themeFontProvider = themeFontProvider;
         }
 
-        public override void InsertCss(CssData cssData)
+        public string[] FontFaces
         {
-            var fontFamilyList = BuildFontFamilyList();
-            if (fontFamilyList.Count == 0) return;
-            cssData.AddAttribute(Selector, "font-family", String.Join(", ", fontFamilyList));
+            get
+            {
+                if (_fontFamilies == null)
+                    _fontFamilies = BuildFontFamilyList();
+                return _fontFamilies;
+            }
         }
 
-        private List<string> BuildFontFamilyList()
+        public string FontFamilies => String.Join(", ", FontFaces.Where(x => x != null).Distinct());
+
+        public override void InsertCss(CssData cssData)
         {
-            var results = new List<string>(4);
+            string cleanFontFamilies = FontFamilies;
+            if (cleanFontFamilies.Length == 0) return;
+            cssData.AddAttribute(Selector, "font-family", String.Join(", ", cleanFontFamilies));
+        }
+
+
+        public override void Extends(CssProperty<RunFonts> parent)
+        {
+            if (parent is RunFontsCssProperty other)
+            {
+                var parentsFontFaces = other.FontFaces;
+                var current = FontFaces;
+                for(int i = 0; i < 4; i++)
+                {
+                    if (current[i] == null && parentsFontFaces[i] != null)
+                        current[i] = parentsFontFaces[i];
+                }
+            }
+        }
+
+        private string[] BuildFontFamilyList()
+        {
+            var results = new string[4];
             var fontValues = FontValues;
             var themeFontValues = ThemeFontValues;
 
             for(int i = 0; i< 4; i++)
             {
-                var nextFont = GetRightFontFamily(fontValues[i], themeFontValues[i]);
-                if (nextFont != null && nextFont != "" && !results.Contains(nextFont))
-                    results.Add(nextFont);
+                var fontName = GetRightFontFamily(fontValues[i], themeFontValues[i]);
+                if (fontName != null && fontName != "")
+                    results[i] = fontName;
             }
 
             return results;
@@ -96,18 +125,7 @@ namespace Doc2web.Plugins.Style.Properties
         public override bool HaveSameOuput(RunFonts element)
         {
             var other = new RunFontsCssProperty(_themeFontProvider) { Element = element };
-            var otherList = other.BuildFontFamilyList();
-            var myList = BuildFontFamilyList();
-            return AreEqualStringLists(otherList, myList);
-        }
-
-        private static bool AreEqualStringLists(List<string> a, List<string> b)
-        {
-            if (a.Count != b.Count) return false;
-            for (int i = 0; i < b.Count; i++)
-                if (a[i] != b[i])
-                    return false;
-            return true;
+            return other.FontFamilies == FontFamilies;
         }
     }
 }

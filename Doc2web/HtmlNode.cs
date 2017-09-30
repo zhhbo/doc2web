@@ -68,9 +68,18 @@ namespace Doc2web
             return result;
         }
 
-        public void AddClass(string name)
+        public void AddClasses(params string[] names)
         {
-            if (name == null || name.Length == 0) return;
+            for(int i =0; i< names.Length; i++)
+            {
+                string name = names[i];
+                if (name == null || name.Length == 0) continue;
+                AddClass(name);
+            }
+        }
+
+        private void AddClass(string name)
+        {
             _attributes.TryGetValue("class", out string defaultVal);
             _attributes["class"] = (defaultVal + " " + name).Trim();
         }

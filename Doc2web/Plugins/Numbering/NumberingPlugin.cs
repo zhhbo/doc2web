@@ -75,8 +75,8 @@ namespace Doc2web.Plugins.Numbering
                 Tag = _config.NumberingContainerTag,
                 Z = _config.NumberingContainerZ,
             };
-            node.AddClass(_config.NumberingContainerMaxCls);
-            node.AddClass(cssClass);
+            node.AddClasses(_config.NumberingContainerMaxCls);
+            node.AddClasses(cssClass);
             return node;
         }
 
@@ -89,7 +89,7 @@ namespace Doc2web.Plugins.Numbering
                 Tag = _config.NumberingContainerTag,
                 Z = _config.NumberingContainerZ,
             };
-            node.AddClass(_config.NumberingContainerMinCls);
+            node.AddClasses(_config.NumberingContainerMinCls);
             return node;
         }
 
@@ -102,7 +102,7 @@ namespace Doc2web.Plugins.Numbering
                 Tag = _config.NumberingContainerTag,
                 Z = _config.NumberingContainerZ,
             };
-            node.AddClass(_config.NumberingNumberMaxCls);
+            node.AddClasses(_config.NumberingNumberMaxCls);
             return node;
         }
 
@@ -115,13 +115,14 @@ namespace Doc2web.Plugins.Numbering
                 Tag = _config.NumberingNumberTag,
                 Z = _config.NumberingNumberZ,
             };
-            node.AddClass(_config.NumberingNumberMinCls);
+            node.AddClasses(_config.NumberingNumberMinCls);
 
             var dynProp = p.ParagraphProperties?.ParagraphMarkRunProperties;
             if (dynProp != null)
             {
                 var cls = icssRegistrator.RegisterRunProperties(dynProp);
-                node.AddClass(cls);
+                node.AddClasses("dyn");
+                node.AddClasses(cls);
             }
 
             if (level.LevelSuffix?.Val?.Value == LevelSuffixValues.Space)

@@ -32,6 +32,8 @@ namespace Doc2web.Tests.Plugins.Style
         {
             throw new NotImplementedException();
         }
+
+        public void Extends(ICssProperty parent) { }
     }
 
     public class MockProp1 : BaseMockProp { }

@@ -8,7 +8,6 @@ namespace Doc2web.Plugins.Style.Properties
     public abstract class CssProperty<T> : ICssProperty
         where T : OpenXmlElement
     {
-
         public string Selector { get; set; }
 
         public virtual OpenXmlElement OpenXmlElement { get; set; }
@@ -35,13 +34,24 @@ namespace Doc2web.Plugins.Style.Properties
         }
 
         public abstract short GetSpecificHashcode();
+
         public abstract bool HaveSameOuput(T element);
+
+        public virtual void Extends(CssProperty<T> parent) { }
 
         public override string ToString()
         {
             var data = new CssData();
             InsertCss(data);
             return data.ToString();
+        }
+
+        public void Extends(ICssProperty parent)
+        {
+            if (parent is CssProperty<T> casted)
+            {
+                Extends(casted);
+            }
         }
     }
 }

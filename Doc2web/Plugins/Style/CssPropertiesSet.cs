@@ -6,41 +6,53 @@ using System.Text;
 
 namespace Doc2web.Plugins.Style
 {
-    public class CssPropertiesSet : ICollection<ICssProperty>, IComparer<ICssProperty>
+    public class CssPropertiesSet : ICollection<ICssProperty>
     {
-        private SortedSet<ICssProperty> _set;
+        private Dictionary<Type, ICssProperty> _dict;
 
         public CssPropertiesSet()
         {
-            _set = new SortedSet<ICssProperty>(this as IComparer<ICssProperty>);
+            _dict = new Dictionary<Type, ICssProperty>();
         }
 
-        public int Count => _set.Count;
+        public int Count => _dict.Count;
 
         public bool IsReadOnly => false;
 
-        public void Add(ICssProperty item) =>_set.Add(item);
-
-        public void AddMany(IEnumerable<ICssProperty> items) => _set.UnionWith(items);
-
-        public void Clear() => _set.Clear();
-
-        public int Compare(ICssProperty x, ICssProperty y)
+        public void Add(ICssProperty item)
         {
-            if (x.GetType().Equals(y.GetType())) return 0;
-            return -1;
+            if (_dict.TryGetValue(item.GetType(), out ICssProperty current))
+            {
+                current.Extends(item);
+            }
+            else _dict[item.GetType()] = item;
         }
 
-        public bool Contains(ICssProperty item) => _set.Contains(item);
+        public void AddMany(IEnumerable<ICssProperty> items)
+        {
+            foreach (var item in items) Add(item);
+        }
+
+        public void Clear() => _dict.Clear();
+
+        public bool Contains(ICssProperty item)
+        {
+            if (_dict.TryGetValue(item.GetType(), out ICssProperty inside))
+            {
+                return inside.GetHashCode() == item.GetHashCode() &&
+                    inside.Equals(item);
+            }
+            return false;
+        }
 
         public void CopyTo(ICssProperty[] array, int arrayIndex)
         {
             throw new NotImplementedException();
         }
 
-        public IEnumerator<ICssProperty> GetEnumerator() => _set.GetEnumerator();
+        public IEnumerator<ICssProperty> GetEnumerator() => _dict.Values.GetEnumerator();
 
-        public bool Remove(ICssProperty item) => _set.Remove(item);
+        public bool Remove(ICssProperty item) => _dict.Remove(item.GetType());
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 

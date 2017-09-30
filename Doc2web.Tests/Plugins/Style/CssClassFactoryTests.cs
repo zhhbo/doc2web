@@ -14,27 +14,47 @@ namespace Doc2web.Tests.Plugins.Style
     public class CssClassFactoryTests
     {
         private Styles _styles;
-        private ICssPropertiesFactory2 _paraPropFac;
-        private ICssPropertiesFactory2 _runPropFac;
-        private ICssPropertiesFactory2 _numPropFac;
+        private ICssPropertiesFactory _paraPropFac;
+        private ICssPropertiesFactory _runPropFac;
+        private ICssPropertiesFactory _numPropFac;
         private StyleConfig _config;
         private INumberingCrawler _numCrawler;
         private CssClassFactory _instance;
+        private ParagraphPropertiesDefault _pDocDefaults;
+        private MockProp1 _pCssPropDefaults;
+        private RunPropertiesDefault _rDocDefaults;
+        private MockProp2 _rCSsPropDefaults;
 
         [TestInitialize]
         public void Initialize()
         {
             _styles = Samples.StyleBasedOn1.CreateStyles();
-            _paraPropFac = Substitute.For<ICssPropertiesFactory2>();
-            _runPropFac = Substitute.For<ICssPropertiesFactory2>();
-            _numPropFac = Substitute.For<ICssPropertiesFactory2>();
+            _paraPropFac = Substitute.For<ICssPropertiesFactory>();
+            _runPropFac = Substitute.For<ICssPropertiesFactory>();
+            _numPropFac = Substitute.For<ICssPropertiesFactory>();
 
             _config = new StyleConfig();
             _numCrawler = Substitute.For<INumberingCrawler>();
+            MockDefaults();
             _instance = new CssClassFactory(_styles, _config, CssPropFac, _numCrawler);
+            _instance.Initialize();
         }
 
-        private ICssPropertiesFactory2 CssPropFac(CssPropertySource source)
+        public void MockDefaults ()
+        {
+            _pDocDefaults = _styles.DocDefaults.ParagraphPropertiesDefault;
+            _pCssPropDefaults = new MockProp1();
+            _paraPropFac
+                .Build(Arg.Is(_pDocDefaults.ParagraphPropertiesBaseStyle))
+                .Returns(new ICssProperty[] { _pCssPropDefaults });
+            _rDocDefaults = _styles.DocDefaults.RunPropertiesDefault;
+             _rCSsPropDefaults = new MockProp2();
+            _runPropFac
+                .Build(Arg.Is(_rDocDefaults.RunPropertiesBaseStyle))
+                .Returns(new ICssProperty[] { _rCSsPropDefaults });
+        }
+
+        private ICssPropertiesFactory CssPropFac(CssPropertySource source)
         {
             switch (source)
             {
@@ -43,6 +63,22 @@ namespace Doc2web.Tests.Plugins.Style
                 case CssPropertySource.Numbering: return _numPropFac;
             }
             return null;
+        }
+
+
+        [TestMethod]
+        public void BuildDefault_Test()
+        {
+            var defaults = _instance.Defaults;
+
+            Assert.AreEqual(2, defaults.Count);
+            Assert.IsNotNull(_instance.RunDefaults);
+            Assert.IsNotNull(_instance.ParagraphDefault);
+
+            Assert.AreSame(_instance.ParagraphDefault, defaults[0]);
+            AssertContainsSinglePProps(_pCssPropDefaults, defaults[0]);
+            Assert.AreSame(_instance.RunDefaults, defaults[1]);
+            AssertContainsSingleRProp(_rCSsPropDefaults, defaults[1]);
         }
 
         [TestMethod]
@@ -61,6 +97,8 @@ namespace Doc2web.Tests.Plugins.Style
             var basedOnCls = runCssClass.BasedOn;
             Assert.IsNotNull(basedOnCls);
             Assert.AreEqual(mockBasedOn, basedOnCls.RunProps.Single());
+
+            Assert.AreSame(_instance.RunDefaults, runCssClass.Defaults);
         }
 
         [TestMethod]
@@ -84,6 +122,8 @@ namespace Doc2web.Tests.Plugins.Style
             Assert.IsNotNull(basedOnCls);
             Assert.AreEqual(mockBasedOnRun, basedOnCls.RunProps.Single());
             Assert.AreEqual(mockBasedOnPara, basedOnCls.ParagraphProps.Single());
+
+            Assert.AreSame(_instance.ParagraphDefault, paraCssCls.Defaults);
         }
 
         [TestMethod]
@@ -143,6 +183,8 @@ namespace Doc2web.Tests.Plugins.Style
             var runCssClass = cls as RunCssClass;
             Assert.IsNotNull(runCssClass);
             Assert.AreEqual(mockProps[0], runCssClass.RunProps.Single());
+
+            Assert.AreSame(_instance.RunDefaults, runCssClass.Defaults);
         }
 
         [TestMethod]
@@ -159,27 +201,8 @@ namespace Doc2web.Tests.Plugins.Style
             Assert.IsNotNull(pCssClass);
             Assert.AreEqual(mockProps[0], pCssClass.ParagraphProps.Single());
             Assert.AreEqual(0, pCssClass.RunProps.Count());
-        }
 
-        [TestMethod]
-        public void BuildDefault_Test()
-        {
-            var pDocDefaults = _styles.DocDefaults.ParagraphPropertiesDefault;
-            var pCssProp = new MockProp1();
-            _paraPropFac
-                .Build(Arg.Is(pDocDefaults.ParagraphPropertiesBaseStyle))
-                .Returns(new ICssProperty[] { pCssProp });
-            var rDocDefaults = _styles.DocDefaults.RunPropertiesDefault;
-            var rCssProp = new MockProp2();
-            _runPropFac
-                .Build(Arg.Is(rDocDefaults.RunPropertiesBaseStyle))
-                .Returns(new ICssProperty[] { rCssProp });
-
-            var defaults = _instance.BuildDefaults();
-
-            Assert.AreEqual(2, defaults.Count);
-            AssertContainsSinglePProps(pCssProp, defaults[0]);
-            AssertContainsSingleRProp(rCssProp, defaults[1]);
+            Assert.AreSame(_instance.ParagraphDefault, pCssClass.Defaults);
         }
 
         private void AssertContainsSingleRProp(MockProp2 rCssProp, ICssClass cls)

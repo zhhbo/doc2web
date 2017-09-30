@@ -65,6 +65,28 @@ namespace Doc2web.Tests.Plugins.Style
             Assert.AreEqual(expectedCssData, cssData);
         }
 
+        [TestMethod]
+        public void AssCss_DefaultsCombineTest()
+        {
+            var expectedCssData = new CssData();
+            expectedCssData.AddAttribute("span.test-class", "background", "pale");
+            expectedCssData.AddAttribute("span.test-class", "text-transform", "uppercase");
+            expectedCssData.AddAttribute("span.test-class", "border", "1 px solid");
+            expectedCssData.AddAttribute("span.test-class", "font-weight", "bold");
+
+            var defaults = new RunCssClass();
+            defaults.RunProps.Add(new MockProp1{ Out = ("span.test-class", "background", "pale")});
+            defaults.RunProps.Add(new MockProp2{ Out = ("span.test-class", "text-transform", "uppercase")});
+
+            var instance = new RunCssClass();
+            instance.RunProps.Add(new MockProp3{ Out = ("span.test-class", "border", "1 px solid")});
+            instance.RunProps.Add(new MockProp4{ Out = ("span.test-class", "font-weight", "bold")});
+
+            instance.Defaults = defaults;
+            var cssData = instance.AsCss();
+
+            Assert.AreEqual(expectedCssData, cssData);
+        }
 
         [TestMethod]
         public void AssCss_BasedOnOverrideTest()
@@ -87,6 +109,26 @@ namespace Doc2web.Tests.Plugins.Style
             Assert.AreEqual(expectedCssData, cssData);
         }
 
+        [TestMethod]
+        public void AssCss_DefaultsOverrideTest()
+        {
+            var expectedCssData = new CssData();
+            expectedCssData.AddAttribute("span.test-class", "border", "1 px solid");
+            expectedCssData.AddAttribute("span.test-class", "font-weight", "bold");
+
+            var defaults = new RunCssClass();
+            defaults.RunProps.Add(new MockProp1{ Out = ("span.test-class", "background", "pale")});
+            defaults.RunProps.Add(new MockProp2{ Out = ("span.test-class", "text-transform", "uppercase")});
+
+            var instance = new RunCssClass();
+            instance.RunProps.Add(new MockProp1{ Out = ("span.test-class", "border", "1 px solid")});
+            instance.RunProps.Add(new MockProp2{ Out = ("span.test-class", "font-weight", "bold")});
+
+            instance.Defaults = defaults;
+            var cssData = instance.AsCss();
+
+            Assert.AreEqual(expectedCssData, cssData);
+        }
 
         [TestMethod]
         public void Equals_TrueTest()

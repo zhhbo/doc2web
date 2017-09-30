@@ -8,7 +8,9 @@ namespace Doc2web.Plugins.Style
 {
     public interface ICssClassFactory
     {
-        List<ICssClass> BuildDefaults();
+        void Initialize();
+
+        List<ICssClass> Defaults { get; }
 
         ICssClass BuildFromStyle(string styleId);
 

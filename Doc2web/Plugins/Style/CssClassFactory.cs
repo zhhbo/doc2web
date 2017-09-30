@@ -16,14 +16,16 @@ namespace Doc2web.Plugins.Style
         private Dictionary<string, ParagraphCssClass> _pClassesChache;
         private Dictionary<string, RunCssClass> _rClassesCache;
         private INumberingCrawler _numberingCrawler;
-        private ICssPropertiesFactory2 _paragraphPropsFac;
-        private ICssPropertiesFactory2 _runPropsFac;
-        private ICssPropertiesFactory2 _numberingPropsFac;
+        private ICssPropertiesFactory _paragraphPropsFac;
+        private ICssPropertiesFactory _runPropsFac;
+        private ICssPropertiesFactory _numberingPropsFac;
+        private ParagraphCssClass _paragraphDefaults;
+        private RunCssClass _runDefaults;
 
         public CssClassFactory(
-            Styles styles, 
+            Styles styles,
             StyleConfig config,
-            Func<CssPropertySource, ICssPropertiesFactory2> buildPropsFactory,
+            Func<CssPropertySource, ICssPropertiesFactory> buildPropsFactory,
             INumberingCrawler numberingCrawler)
         {
             InitStyleDictionnary(styles);
@@ -47,15 +49,25 @@ namespace Doc2web.Plugins.Style
                 .ToDictionary(x => x.StyleId.Value);
         }
 
-        public List<ICssClass> BuildDefaults()
+        public void Initialize()
         {
-            var cls = new List<ICssClass>(2);
-            TryAddDefaultParagraph(cls);
-            TryAddDefaultRun(cls);
-            return cls;
+            _paragraphDefaults = TryBuildDefaultParagraph();
+            _runDefaults = TryBuildDefaultRun();
         }
 
-        private void TryAddDefaultParagraph(List<ICssClass> cls)
+        public ParagraphCssClass ParagraphDefault => _paragraphDefaults;
+
+        public RunCssClass RunDefaults => _runDefaults;
+
+        public List<ICssClass> Defaults =>
+            new List<ICssClass>(2)
+            {
+                _paragraphDefaults,
+                _runDefaults
+            }.Where(x => x != null).ToList();
+
+
+        private ParagraphCssClass TryBuildDefaultParagraph()
         {
             var pDefaults =
                 _docDefaults
@@ -65,26 +77,28 @@ namespace Doc2web.Plugins.Style
             {
                 var pCls = new ParagraphCssClass { Selector = _config.ParagraphCssClassPrefix };
                 pCls.ParagraphProps.AddMany(_paragraphPropsFac.Build(pDefaults));
-                cls.Add(pCls);
+                return pCls;
             }
+            return null;
         }
 
-        private void TryAddDefaultRun(List<ICssClass> cls)
+        private RunCssClass TryBuildDefaultRun()
         {
             var rDefaults = _docDefaults.RunPropertiesDefault?.RunPropertiesBaseStyle;
             if (rDefaults != null)
             {
                 var rCls = new RunCssClass { Selector = _config.RunCssClassPrefix };
                 rCls.RunProps.AddMany(_runPropsFac.Build(rDefaults));
-                cls.Add(rCls);
+                return rCls;
             }
+            return null;
         }
 
         public ICssClass BuildFromStyle(string styleId)
         {
             if (_pClassesChache.TryGetValue(styleId, out ParagraphCssClass pCls)) return pCls;
             else if (_rClassesCache.TryGetValue(styleId, out RunCssClass rCls)) return rCls;
-            else if (_styleDictionary.TryGetValue(styleId, out DocumentFormat.OpenXml.Wordprocessing.Style style)) 
+            else if (_styleDictionary.TryGetValue(styleId, out DocumentFormat.OpenXml.Wordprocessing.Style style))
                 return BuildAndCache(style);
 
             throw new ArgumentException("Cannot find a style with this id.");
@@ -112,6 +126,8 @@ namespace Doc2web.Plugins.Style
             if (style.BasedOn?.Val?.Value != null)
                 cls.BasedOn = BuildFromStyle(style.BasedOn.Val.Value) as RunCssClass;
 
+            cls.Defaults = _runDefaults;
+
             cls.Selector = $"{_config.RunCssClassPrefix}.{style.StyleId.Value}";
             _rClassesCache.Add(style.StyleId.Value, cls);
 
@@ -131,6 +147,8 @@ namespace Doc2web.Plugins.Style
             if (style.BasedOn?.Val?.Value != null)
                 cls.BasedOn = BuildFromStyle(style.BasedOn.Val.Value) as ParagraphCssClass;
 
+            cls.Defaults = _paragraphDefaults;
+
             cls.Selector = $"{_config.ParagraphCssClassPrefix}.{style.StyleId.Value}";
             _pClassesChache.Add(style.StyleId.Value, cls);
 
@@ -145,7 +163,7 @@ namespace Doc2web.Plugins.Style
                 Level = levelId
             };
             var levels = _numberingCrawler.Collect(numberingId, levelId);
-            foreach(var level in levels)
+            foreach (var level in levels)
             {
                 var container = level.PreviousParagraphProperties;
                 var number = level.NumberingSymbolRunProperties;
@@ -162,6 +180,7 @@ namespace Doc2web.Plugins.Style
         {
             var cls = new ParagraphCssClass();
             cls.ParagraphProps.AddMany(_paragraphPropsFac.Build(pPr));
+            cls.Defaults = _paragraphDefaults; 
             return cls;
         }
 
@@ -169,6 +188,7 @@ namespace Doc2web.Plugins.Style
         {
             var cls = new RunCssClass();
             cls.RunProps.AddMany(_runPropsFac.Build(rPr));
+            cls.Defaults = _runDefaults;
             return cls;
         }
     }
