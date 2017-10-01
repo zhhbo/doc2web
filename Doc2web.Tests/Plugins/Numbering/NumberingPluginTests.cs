@@ -268,7 +268,7 @@ namespace Doc2web.Tests.Plugins.Numbering
             _p.ParagraphProperties = new ParagraphProperties(pMarkRunProps);
             _cssRegistrator
                 .RegisterRunProperties(Arg.Is(pMarkRunProps))
-                .Returns(new string[] { clsName });
+                .Returns(new string[] { "dyn", clsName });
             return clsName;
         }
 
