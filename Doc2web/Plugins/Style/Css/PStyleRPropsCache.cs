@@ -6,21 +6,21 @@ using WStyle = DocumentFormat.OpenXml.Wordprocessing.Style;
 
 namespace Doc2web.Plugins.Style.Css
 {
-    public class ParagraphPropsCache : BasePropsCache
+    public class PStyleRPropsCache : BasePropsCache
     {
         private ICssPropertiesFactory _propsFac;
 
-        public ParagraphPropsCache(
+        public PStyleRPropsCache(
             Func<CssPropertySource, ICssPropertiesFactory> _facBuiler,
             IEnumerable<WStyle> styles) : base(styles)
         {
-            _propsFac = _facBuiler(CssPropertySource.Paragraph);
+            _propsFac = _facBuiler(CssPropertySource.Run);
         }
 
         public override ICssProperty[] BuildProps(WStyle style)
         {
-            if (style.StyleParagraphProperties != null)
-                return _propsFac.Build(style.StyleParagraphProperties);
+            if (style.StyleRunProperties != null)
+                return _propsFac.Build(style.StyleRunProperties);
             return new ICssProperty[0];
         }
 

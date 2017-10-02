@@ -62,14 +62,10 @@ namespace Doc2web.Tests.Plugins.Style.Css
 
             var result = _instance.Build(pPr);
 
-            AssertDynamicClass(result);
-            AssertContainsProps(props, result);
+            Utils.AssertDynamicClass(_config, result);
+            Utils.AssertContainsProps(props, result);
         }
 
-        private void AssertDynamicClass(CssClass2 result)
-        {
-            Assert.IsTrue(result.Name.StartsWith(_config.DynamicCssClassPrefix));
-        }
 
         [TestMethod]
         public void Build_FromStyleTest()
@@ -92,7 +88,7 @@ namespace Doc2web.Tests.Plugins.Style.Css
             var result = _instance.Build(pPr);
 
             Assert.AreEqual(styleId, result.Name);
-            AssertContainsProps(props, result);
+            Utils.AssertContainsProps(props, result);
         }
 
         [TestMethod]
@@ -113,18 +109,10 @@ namespace Doc2web.Tests.Plugins.Style.Css
 
             var result = _instance.Build(pPr);
 
-            AssertDynamicClass(result);
-            AssertContainsProps(
+            Utils.AssertDynamicClass(_config, result);
+            Utils.AssertContainsProps(
                 props.Concat(_defaults.Paragraph).ToArray(),
                 result);
-        }
-
-        private void AssertContainsProps(ICssProperty[] props, CssClass2 result)
-        {
-            Assert.AreEqual(props.Length, result.Props.Count);
-
-            foreach (var prop in props)
-                Assert.IsTrue(result.Props.Contains(prop));
         }
     }
 }

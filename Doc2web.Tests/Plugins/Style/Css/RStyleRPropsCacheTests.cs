@@ -11,10 +11,10 @@ using WStyle = DocumentFormat.OpenXml.Wordprocessing.Style;
 namespace Doc2web.Tests.Plugins.Style.Css
 {
     [TestClass]
-    public class RunPropsCacheTests
+    public class RStyleRPropsCacheTests
     {
         private Func<CssPropertySource, ICssPropertiesFactory> _facBuilder;
-        private RunPropsCache _instance;
+        private RStyleRPropsCache _instance;
         private ICssPropertiesFactory _propsFac;
 
         [TestInitialize]
@@ -22,7 +22,7 @@ namespace Doc2web.Tests.Plugins.Style.Css
         {
             _propsFac = Substitute.For<ICssPropertiesFactory>();
             _facBuilder = buildPropsFactory;
-            _instance = new RunPropsCache(_facBuilder, Enumerable.Empty<WStyle>());
+            _instance = new RStyleRPropsCache(_facBuilder, Enumerable.Empty<WStyle>());
         }
 
         private ICssPropertiesFactory buildPropsFactory(CssPropertySource arg)

@@ -6,11 +6,11 @@ using WStyle = DocumentFormat.OpenXml.Wordprocessing.Style;
 
 namespace Doc2web.Plugins.Style.Css
 {
-    public class RunPropsCache : BasePropsCache
+    public class RStyleRPropsCache : BasePropsCache
     {
         private ICssPropertiesFactory _propsFac;
 
-        public RunPropsCache(
+        public RStyleRPropsCache(
             Func<CssPropertySource, ICssPropertiesFactory> _facBuiler,
             IEnumerable<WStyle> styles) : base(styles)
         {
