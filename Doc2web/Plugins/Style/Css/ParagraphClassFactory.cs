@@ -1,4 +1,5 @@
-﻿using DocumentFormat.OpenXml.Wordprocessing;
+﻿using DocumentFormat.OpenXml;
+using DocumentFormat.OpenXml.Wordprocessing;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -9,38 +10,49 @@ namespace Doc2web.Plugins.Style.Css
     {
         private StyleConfig _config;
         private ICssPropertiesFactory _propsFac;
-        private IStylePropsCache _propsCache;
+        private IStylePropsCache _stylePropsCache;
+        private INumberingPropsCache _numPropsCache;
         private IDefaultsProvider _defaultsProvider;
 
         public ParagraphClassFactory(
             StyleConfig config,
             IDefaultsProvider defaultsProvider,
-            IStylePropsCache propsCache,
+            IStylePropsCache stylePropsCache,
+            INumberingPropsCache numPropsCache,
             Func<CssPropertySource, ICssPropertiesFactory> _facBuiler)
         {
             _config = config;
             _propsFac = _facBuiler(CssPropertySource.Paragraph);
-            _propsCache = propsCache;
+            _stylePropsCache = stylePropsCache;
+            _numPropsCache = numPropsCache;
             _defaultsProvider = defaultsProvider;
         }
 
-        public CssClass2 Build(ParagraphProperties pPr)
+        public CssClass2 Build(ParagraphClassParams param)
         {
             var cssClass = new CssClass2();
-            string styleId = pPr.ParagraphStyleId?.Val;
-            var propsInline = BuildInline(pPr);
+            var propsInline = BuildInline(param.InlineProperties);
 
-            if (propsInline.Count == 0 && styleId == null) return null;
+            if (propsInline.Count == 0 && 
+                param.StyleId == null &&
+                (!param.NumberingId.HasValue || !param.NumberingLevel.HasValue))
+                return null;
 
             cssClass.Props.AddMany(propsInline);
-            if (styleId != null)
+            if (param.StyleId != null)
             {
-                cssClass.Props.AddMany(_propsCache.Get(styleId));
+                cssClass.Props.AddMany(_stylePropsCache.Get(param.StyleId));
             }
 
-            if (propsInline.Count == 0 && styleId != null)
+            if (param.NumberingId.HasValue && param.NumberingLevel.HasValue)
+                cssClass.Props.AddMany(
+                    _numPropsCache.Get(
+                        param.NumberingId.Value,
+                        param.NumberingLevel.Value));
+
+            if (propsInline.Count == 0 && param.StyleId != null)
             {
-                cssClass.Name = styleId;
+                cssClass.Name = param.StyleId;
             } else
             {
                 cssClass.Name = GenerateDynName();
@@ -51,7 +63,7 @@ namespace Doc2web.Plugins.Style.Css
             return cssClass;
         }
 
-        private CssPropertiesSet BuildInline(ParagraphProperties pPr)
+        private CssPropertiesSet BuildInline(OpenXmlElement pPr)
         {
             var propsInline = _propsFac.Build(pPr);
             var set = new CssPropertiesSet();

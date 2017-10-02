@@ -13,7 +13,8 @@ namespace Doc2web.Tests.Plugins.Style.Css
     [TestClass]
     public class ParagraphClassFactoryTests
     {
-        private IStylePropsCache _propsCache;
+        private IStylePropsCache _stylePropsCache;
+        private INumberingPropsCache _numPropsCache;
         private IDefaultsProvider _defaults;
         private StyleConfig _config;
         private ICssPropertiesFactory _propsFac;
@@ -24,13 +25,15 @@ namespace Doc2web.Tests.Plugins.Style.Css
         {
             _config = new StyleConfig();
             _propsFac = Substitute.For<ICssPropertiesFactory>();
-            _propsCache = Substitute.For<IStylePropsCache>();
+            _stylePropsCache = Substitute.For<IStylePropsCache>();
+            _numPropsCache = Substitute.For<INumberingPropsCache>();
             _defaults = Substitute.For<IDefaultsProvider>();
             _defaults.Paragraph.Returns(new CssPropertiesSet());
             _instance = new ParagraphClassFactory(
                 _config,
                 _defaults,
-                _propsCache,
+                _stylePropsCache,
+                _numPropsCache,
                 FactoryBuilder);
         }
 
@@ -44,7 +47,10 @@ namespace Doc2web.Tests.Plugins.Style.Css
         [TestMethod]
         public void Build_EmptyTest()
         {
-            var result = _instance.Build(new ParagraphProperties());
+            var result = _instance.Build(new ParagraphClassParams
+            {
+                InlineProperties = new ParagraphProperties()
+            });
 
             Assert.IsNull(result);
         }
@@ -60,12 +66,31 @@ namespace Doc2web.Tests.Plugins.Style.Css
             };
             _propsFac.Build(Arg.Is(pPr)).Returns(props);
 
-            var result = _instance.Build(pPr);
+            var result = _instance.Build(new ParagraphClassParams
+            {
+                InlineProperties = pPr
+            });
 
             Utils.AssertDynamicClass(_config, result);
             Utils.AssertContainsProps(props, result);
         }
 
+        [TestMethod]
+        public void Build_NumberingPropsTest()
+        {
+            var propSet = new CssPropertiesSet { new MockProp1(), new MockProp2() };
+            _numPropsCache.Get(7, 2).Returns(propSet);
+
+            var result = _instance.Build(new ParagraphClassParams
+            {
+                InlineProperties = new ParagraphProperties(),
+                NumberingId = 7,
+                NumberingLevel = 2
+            });
+
+            Assert.IsTrue(propSet.SetEquals(result.Props));
+            Utils.AssertDynamicClass(_config, result);
+        }
 
         [TestMethod]
         public void Build_FromStyleTest()
@@ -83,9 +108,13 @@ namespace Doc2web.Tests.Plugins.Style.Css
             var propsSet = new CssPropertiesSet();
             propsSet.AddMany(props);
             _propsFac.Build(Arg.Is(pPr)).Returns(new ICssProperty[0]);
-            _propsCache.Get(styleId).Returns(propsSet);
+            _stylePropsCache.Get(styleId).Returns(propsSet);
 
-            var result = _instance.Build(pPr);
+            var result = _instance.Build(new ParagraphClassParams
+            {
+                StyleId = styleId,
+                InlineProperties = pPr
+            });
 
             Assert.AreEqual(styleId, result.Name);
             Utils.AssertContainsProps(props, result);
@@ -107,7 +136,10 @@ namespace Doc2web.Tests.Plugins.Style.Css
                 new MockProp4()
             });
 
-            var result = _instance.Build(pPr);
+            var result = _instance.Build(new ParagraphClassParams
+            {
+                InlineProperties = pPr
+            });
 
             Utils.AssertDynamicClass(_config, result);
             Utils.AssertContainsProps(

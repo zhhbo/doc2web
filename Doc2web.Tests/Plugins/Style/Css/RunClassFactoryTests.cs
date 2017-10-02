@@ -16,6 +16,7 @@ namespace Doc2web.Tests.Plugins.Style.Css
         private StyleConfig _config;
         private IDefaultsProvider _defaults;
         private IStylePropsCache _pStylePropsCache;
+        private INumberingPropsCache _numPropsCache;
         private IStylePropsCache _rStylePropsCache;
         private RunClassFactory _instance;
         private ICssPropertiesFactory _propsFac;
@@ -27,6 +28,7 @@ namespace Doc2web.Tests.Plugins.Style.Css
             _defaults = Substitute.For<IDefaultsProvider>();
             _defaults.Run.Returns(new CssPropertiesSet());
             _pStylePropsCache = Substitute.For<IStylePropsCache>();
+            _numPropsCache = Substitute.For<INumberingPropsCache>();
             _rStylePropsCache = Substitute.For<IStylePropsCache>();
             _propsFac = Substitute.For<ICssPropertiesFactory>();
 
@@ -34,6 +36,7 @@ namespace Doc2web.Tests.Plugins.Style.Css
                 _config,
                 _defaults,
                 _pStylePropsCache,
+                _numPropsCache,
                 _rStylePropsCache,
                 FacBuilder);
         }
@@ -42,6 +45,17 @@ namespace Doc2web.Tests.Plugins.Style.Css
         {
             if (arg == CssPropertySource.Run) return _propsFac;
             throw new ArgumentException("This is not the expected source, should be Run");
+        }
+
+        [TestMethod]
+        public void Build_EmptyTest()
+        {
+            var result = _instance.Build(new RunClassParam
+            {
+                InlineProperties = new RunProperties()
+            });
+
+            Assert.IsNull(result);
         }
 
         [TestMethod]
@@ -57,7 +71,7 @@ namespace Doc2web.Tests.Plugins.Style.Css
 
             var result = _instance.Build(new RunClassParam
             {
-                InlineProps = rPr
+                InlineProperties = rPr
             });
 
             Utils.AssertDynamicClass(_config, result);
@@ -82,11 +96,31 @@ namespace Doc2web.Tests.Plugins.Style.Css
 
             var result = _instance.Build(new RunClassParam {
                 RunStyleId = styleId,
-                InlineProps = rPr
+                InlineProperties = rPr
             });
 
             Assert.AreEqual(styleId, result.Name);
             Utils.AssertContainsProps(props, result);
+        }
+
+        [TestMethod]
+        public void Build_NumberingStyleTest()
+        {
+            var propsSet = new CssPropertiesSet
+            {
+                new MockProp1(),
+                new MockProp2()
+            };
+            _numPropsCache.Get(7, 2).Returns(propsSet);
+
+            var result = _instance.Build(new RunClassParam
+            {
+                NumberingId = 7,
+                NumberingLevel = 2
+            });
+
+            Assert.IsTrue(propsSet.SetEquals(result.Props));
+            Utils.AssertDynamicClass(_config, result);
         }
 
 
@@ -106,7 +140,7 @@ namespace Doc2web.Tests.Plugins.Style.Css
             var result = _instance.Build(new RunClassParam
             {
                 ParagraphStyleId = styleId,
-                InlineProps = rPr,
+                InlineProperties = rPr,
             });
 
             Utils.AssertDynamicClass(_config, result);
@@ -131,7 +165,7 @@ namespace Doc2web.Tests.Plugins.Style.Css
 
             var result = _instance.Build(new RunClassParam
             {
-                InlineProps = rPr
+                InlineProperties = rPr
             });
 
             Utils.AssertDynamicClass(_config, result);

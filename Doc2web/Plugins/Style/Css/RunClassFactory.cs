@@ -12,6 +12,7 @@ namespace Doc2web.Plugins.Style.Css
         private StyleConfig _config;
         private IDefaultsProvider _defaults;
         private IStylePropsCache _pStylePropsCache;
+        private INumberingPropsCache _numPropsCache;
         private IStylePropsCache _rStylePropsCache;
         private ICssPropertiesFactory _propsFac;
 
@@ -19,12 +20,14 @@ namespace Doc2web.Plugins.Style.Css
             StyleConfig config,
             IDefaultsProvider defaults,
             IStylePropsCache pStylePropsCache,
+            INumberingPropsCache numPropsCache,
             IStylePropsCache rStylePropsCache,
             Func<CssPropertySource, ICssPropertiesFactory> factoryBuilder)
         {
             _config = config;
             _defaults = defaults;
             _pStylePropsCache = pStylePropsCache;
+            _numPropsCache = numPropsCache;
             _rStylePropsCache = rStylePropsCache;
             _propsFac = factoryBuilder(CssPropertySource.Run);
         }
@@ -33,7 +36,13 @@ namespace Doc2web.Plugins.Style.Css
         {
             var cssClass = new CssClass2();
             string styleId = param.RunStyleId;
-            var inline = BuildInline(param.InlineProps);
+            var inline = BuildInline(param.InlineProperties);
+
+            if (inline.Count == 0 &&
+                param.RunStyleId == null &&
+                param.ParagraphStyleId == null &&
+                (!param.NumberingId.HasValue || !param.NumberingLevel.HasValue))
+                return null;
 
             cssClass.Props.AddMany(inline);
 
@@ -42,6 +51,9 @@ namespace Doc2web.Plugins.Style.Css
 
             if (param.ParagraphStyleId != null)
                 cssClass.Props.AddMany(_pStylePropsCache.Get(param.ParagraphStyleId));
+
+            if (param.NumberingId.HasValue && param.NumberingLevel.HasValue)
+                cssClass.Props.AddMany(_numPropsCache.Get(param.NumberingId.Value, param.NumberingLevel.Value));
 
             if (inline.Count == 0 && styleId != null && param.ParagraphStyleId == null)
             {
