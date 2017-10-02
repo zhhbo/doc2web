@@ -7,7 +7,7 @@ using DocumentFormat.OpenXml;
 
 namespace Doc2web.Plugins.Style.Css
 {
-    public class RunClassFactory
+    public class RunClassFactory : IRunClassFactory
     {
         private StyleConfig _config;
         private IDefaultsProvider _defaults;

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Doc2web.Plugins.Style.Css
 {
-    public class ParagraphClassParams
+    public class ParagraphClassParam
     {
         public string StyleId { get; set; }
 

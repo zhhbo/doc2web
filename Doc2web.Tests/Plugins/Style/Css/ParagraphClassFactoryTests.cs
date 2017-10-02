@@ -47,7 +47,7 @@ namespace Doc2web.Tests.Plugins.Style.Css
         [TestMethod]
         public void Build_EmptyTest()
         {
-            var result = _instance.Build(new ParagraphClassParams
+            var result = _instance.Build(new ParagraphClassParam
             {
                 InlineProperties = new ParagraphProperties()
             });
@@ -66,7 +66,7 @@ namespace Doc2web.Tests.Plugins.Style.Css
             };
             _propsFac.Build(Arg.Is(pPr)).Returns(props);
 
-            var result = _instance.Build(new ParagraphClassParams
+            var result = _instance.Build(new ParagraphClassParam
             {
                 InlineProperties = pPr
             });
@@ -81,7 +81,7 @@ namespace Doc2web.Tests.Plugins.Style.Css
             var propSet = new CssPropertiesSet { new MockProp1(), new MockProp2() };
             _numPropsCache.Get(7, 2).Returns(propSet);
 
-            var result = _instance.Build(new ParagraphClassParams
+            var result = _instance.Build(new ParagraphClassParam
             {
                 InlineProperties = new ParagraphProperties(),
                 NumberingId = 7,
@@ -110,7 +110,7 @@ namespace Doc2web.Tests.Plugins.Style.Css
             _propsFac.Build(Arg.Is(pPr)).Returns(new ICssProperty[0]);
             _stylePropsCache.Get(styleId).Returns(propsSet);
 
-            var result = _instance.Build(new ParagraphClassParams
+            var result = _instance.Build(new ParagraphClassParam
             {
                 StyleId = styleId,
                 InlineProperties = pPr
@@ -136,7 +136,7 @@ namespace Doc2web.Tests.Plugins.Style.Css
                 new MockProp4()
             });
 
-            var result = _instance.Build(new ParagraphClassParams
+            var result = _instance.Build(new ParagraphClassParam
             {
                 InlineProperties = pPr
             });

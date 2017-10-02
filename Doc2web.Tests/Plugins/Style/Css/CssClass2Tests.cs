@@ -18,7 +18,6 @@ namespace Doc2web.Tests.Plugins.Style.Css
         {
             _instance = new CssClass2
             {
-                Selector = ".some-class",
                 Name = "some-class"
             };
         }

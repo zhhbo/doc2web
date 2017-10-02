@@ -28,7 +28,7 @@ namespace Doc2web.Plugins.Style.Css
             _defaultsProvider = defaultsProvider;
         }
 
-        public CssClass2 Build(ParagraphClassParams param)
+        public CssClass2 Build(ParagraphClassParam param)
         {
             var cssClass = new CssClass2();
             var propsInline = BuildInline(param.InlineProperties);
@@ -45,7 +45,7 @@ namespace Doc2web.Plugins.Style.Css
             return cssClass;
         }
 
-        private void SetClassName(ParagraphClassParams param, CssClass2 cssClass, CssPropertiesSet propsInline)
+        private void SetClassName(ParagraphClassParam param, CssClass2 cssClass, CssPropertiesSet propsInline)
         {
             if (propsInline.Count == 0 && param.StyleId != null)
                 cssClass.Name = param.StyleId;
@@ -58,7 +58,7 @@ namespace Doc2web.Plugins.Style.Css
             cssClass.Props.AddMany(_defaultsProvider.Paragraph);
         }
 
-        private void AddNumberingStyleProps(ParagraphClassParams param, CssClass2 cssClass)
+        private void AddNumberingStyleProps(ParagraphClassParam param, CssClass2 cssClass)
         {
             if (!param.NumberingId.HasValue || !param.NumberingLevel.HasValue) return;
             cssClass.Props.AddMany(
@@ -73,7 +73,7 @@ namespace Doc2web.Plugins.Style.Css
             cssClass.Props.AddMany(_stylePropsCache.Get(styleId));
         }
 
-        private static bool WillBeEmtpyClass(ParagraphClassParams param, CssPropertiesSet propsInline) => 
+        private static bool WillBeEmtpyClass(ParagraphClassParam param, CssPropertiesSet propsInline) => 
             propsInline.Count == 0 &&
             param.StyleId == null &&
             (!param.NumberingId.HasValue || !param.NumberingLevel.HasValue);

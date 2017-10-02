@@ -21,6 +21,7 @@ namespace Doc2web.Tests.Plugins.Style
             }
         }
         public string Selector { get; set; }
+
         public OpenXmlElement OpenXmlElement { get; set; }
 
         public void InsertCss(CssData cssData)
@@ -32,6 +33,13 @@ namespace Doc2web.Tests.Plugins.Style
         {
             throw new NotImplementedException();
         }
+
+        public override int GetHashCode() => GetType().GetHashCode();
+
+        public override bool Equals(object obj) =>
+            obj.GetType().Equals(GetType());
+
+
 
         public void Extends(ICssProperty parent) { }
     }

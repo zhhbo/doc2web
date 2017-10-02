@@ -10,8 +10,6 @@ namespace Doc2web.Plugins.Style.Css
 
         public string Name { get; set; }
 
-        public string Selector { get; set; }
-
         public CssClass2()
         {
             Props = new CssPropertiesSet();
@@ -19,7 +17,7 @@ namespace Doc2web.Plugins.Style.Css
 
         public void InsertCss(CssData data)
         {
-            Props.Selector = Selector;
+            Props.Selector = "." + Name;
             Props.InsertCss(data);
         }
     }
