@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace Doc2web.Plugins.Style.Css
 {
-    public abstract class BasePropsCache
+    public abstract class BasePropsCache : IPropsCache
     {
         private Dictionary<string, CssPropertiesSet> _cache;
         private IEnumerable<DocumentFormat.OpenXml.Wordprocessing.Style> _styles;
@@ -66,7 +66,7 @@ namespace Doc2web.Plugins.Style.Css
             }
         }
 
-        protected abstract ICssProperty[] BuildProps(DocumentFormat.OpenXml.Wordprocessing.Style style);
+        public abstract ICssProperty[] BuildProps(DocumentFormat.OpenXml.Wordprocessing.Style style);
         //{
         //    return _propsFac.Build(style.StyleParagraphProperties);
         //}

@@ -33,7 +33,7 @@ namespace Doc2web.Tests.Plugins.Style.Css
                 _propsFac = propsFac;
             }
 
-            protected override ICssProperty[] BuildProps(WStyle style) =>
+            public override ICssProperty[] BuildProps(WStyle style) =>
                 _propsFac.Build(style);
         }
 

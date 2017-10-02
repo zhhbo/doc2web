@@ -47,7 +47,8 @@ namespace Doc2web.Plugins.Style
 
         public void CopyTo(ICssProperty[] array, int arrayIndex)
         {
-            throw new NotImplementedException();
+            var vals = _dict.Values.ToArray();
+            vals.CopyTo(array, arrayIndex);
         }
 
         public IEnumerator<ICssProperty> GetEnumerator() => _dict.Values.GetEnumerator();
