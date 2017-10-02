@@ -134,16 +134,15 @@ namespace Doc2web.Tests.Plugins.Style.Css
                 "a1",
                 new MockProp3(),
                 new MockProp4()
-                );
+            );
         }
 
         [TestMethod]
         public void Get_NotExistingTest()
         {
-
             var result = _instance.Get("not-there");
 
-            Assert.IsNull(result);
+            Assert.AreEqual(0, result.Count);
         }
 
         private ICssProperty[] MockFactory(

@@ -30,6 +30,7 @@ namespace Doc2web.Plugins.Style
 
         public void AddMany(IEnumerable<ICssProperty> items)
         {
+            //if (items == null) return;
             foreach (var item in items) Add(item);
         }
 

@@ -16,7 +16,7 @@ namespace Doc2web
             using (var conversionEngine = new ConversionEngine(
                 new StylePlugin(wpDoc),
                 new TextProcessorPlugin(),
-                new NumberingPlugin(wpDoc),
+                //new NumberingPlugin(wpDoc),
                 new CrossReferencesCleanupPlugin(),
                 new HyphenInsertionPlugin(),
                 new BreakInsertionPlugin(),

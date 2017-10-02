@@ -60,15 +60,12 @@ namespace Doc2web.Plugins.Style.Css
 
                 return set;
             }
-            catch (InvalidOperationException)
+            catch
             {
-                return null;
+                return new CssPropertiesSet();
             }
         }
 
         public abstract ICssProperty[] BuildProps(DocumentFormat.OpenXml.Wordprocessing.Style style);
-        //{
-        //    return _propsFac.Build(style.StyleParagraphProperties);
-        //}
     }
 }

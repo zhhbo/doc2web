@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Doc2web.Plugins.Style.Css
 {
-    public class ParagraphClassFactory
+    public class ParagraphClassFactory : IParagraphClassFactory
     {
         private StyleConfig _config;
         private ICssPropertiesFactory _propsFac;
@@ -34,7 +34,7 @@ namespace Doc2web.Plugins.Style.Css
             var propsInline = BuildInline(param.InlineProperties);
 
             if (WillBeEmtpyClass(param, propsInline))
-                return null;
+                return new CssClass2();
 
             cssClass.Props.AddMany(propsInline);
             AddStyleProps(param.StyleId, cssClass);

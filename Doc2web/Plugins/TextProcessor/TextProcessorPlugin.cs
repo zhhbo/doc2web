@@ -1,5 +1,6 @@
 ﻿using Autofac;
 using Doc2web.Plugins.Style;
+using Doc2web.Plugins.Style.Css;
 using DocumentFormat.OpenXml.Wordprocessing;
 using System;
 using System.Collections.Generic;
@@ -45,15 +46,9 @@ namespace Doc2web.Plugins.TextProcessor
             var pPr = p.ParagraphProperties;
             if (pPr != null)
             {
-                var cssRegistrator = context.Resolve<ICssRegistrator>();
-                var dynamicClasses = cssRegistrator.RegisterParagraphProperties(pPr);
-                containerNode.AddClasses(dynamicClasses);
-
-                var styleId = p.ParagraphProperties?.ParagraphStyleId?.Val?.Value;
-                if (styleId != null)
-                {
-                    containerNode.AddClasses(cssRegistrator.RegisterStyle(styleId));
-                }
+                var cssRegistrator = context.Resolve<ICssRegistrator2>();
+                var cssClass = cssRegistrator.RegisterParagraph(pPr);
+                containerNode.AddClasses(cssClass.Name);
             }
 
             var pNode = new HtmlNode
@@ -96,6 +91,7 @@ namespace Doc2web.Plugins.TextProcessor
         [ElementProcessing]
         public void ProcessRun(IElementContext context, Run r)
         {
+            var cssRegistrator = context.Resolve<ICssRegistrator2>();
             if (r.InnerText.Length > 0)
             {
                 var node = new HtmlNode
@@ -107,17 +103,10 @@ namespace Doc2web.Plugins.TextProcessor
                 };
                 node.AddClasses(_config.RunCls);
 
+                var pPr = (context.RootElement as Paragraph)?.ParagraphProperties;
                 var rPr = r.RunProperties;
-                if (rPr != null)
-                {
-                    var cssRegistrator = context.Resolve<ICssRegistrator>();
-                    var dynamicClases = cssRegistrator.RegisterRunProperties(rPr);
-                    node.AddClasses(dynamicClases);
-
-                    var styleId = rPr.RunStyle?.Val?.Value;
-                    if (styleId != null)
-                        node.AddClasses(cssRegistrator.RegisterStyle(styleId));
-                }
+                var cls = cssRegistrator.RegisterRun(pPr, rPr, null);
+                node.AddClasses(cls.Name);
 
                 context.AddNode(node);
 

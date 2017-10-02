@@ -55,7 +55,7 @@ namespace Doc2web.Tests.Plugins.Style.Css
                 InlineProperties = new RunProperties()
             });
 
-            Assert.IsNull(result);
+            Assert.AreEqual(0, result.Props.Count);
         }
 
         [TestMethod]

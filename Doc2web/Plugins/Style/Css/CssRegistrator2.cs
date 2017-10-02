@@ -38,7 +38,7 @@ namespace Doc2web.Plugins.Style.Css
             var cssClass = _paragraphClassFactory.Build(new ParagraphClassParam
             {
                 InlineProperties = inlineProps,
-                StyleId = inlineProps.ParagraphStyleId?.Val,
+                StyleId = inlineProps?.ParagraphStyleId?.Val,
                 NumberingId = numbering?.Item1,
                 NumberingLevel = numbering?.Item2
             });
@@ -54,7 +54,7 @@ namespace Doc2web.Plugins.Style.Css
             var cssClass = _runClassFactory.Build(new RunClassParam
             {
                 ParagraphStyleId = parentProps?.ParagraphStyleId?.Val,
-                RunStyleId = inlineProps.Elements<RunStyle>().SingleOrDefault()?.Val,
+                RunStyleId = inlineProps?.Elements<RunStyle>().SingleOrDefault()?.Val,
                 InlineProperties = inlineProps,
                 NumberingId = numbering?.Item1,
                 NumberingLevel = numbering?.Item2

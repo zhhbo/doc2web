@@ -13,13 +13,18 @@ namespace Doc2web.Tests.Plugins.Style.Css
         {
             Assert.IsTrue(result.Name.StartsWith(config.DynamicCssClassPrefix));
         }
+        public static void AssertContainsProps(ICssProperty[] props, CssPropertiesSet result)
+        {
+            Assert.AreEqual(props.Length, result.Count);
+
+            foreach (var prop in props)
+                Assert.IsTrue(result.Contains(prop));
+
+        }
 
         public static void AssertContainsProps(ICssProperty[] props, CssClass2 result)
         {
-            Assert.AreEqual(props.Length, result.Props.Count);
-
-            foreach (var prop in props)
-                Assert.IsTrue(result.Props.Contains(prop));
+            AssertContainsProps(props, result.Props);
         }
     }
 }

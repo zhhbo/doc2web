@@ -9,6 +9,8 @@ using Doc2web.Plugins.Style.Properties;
 using DocumentFormat.OpenXml.Wordprocessing;
 using DocumentFormat.OpenXml.Drawing;
 using System.Linq;
+using WStyle = DocumentFormat.OpenXml.Wordprocessing.Style;
+using Doc2web.Plugins.Style.Css;
 
 namespace Doc2web.Plugins.Style
 {
@@ -23,48 +25,125 @@ namespace Doc2web.Plugins.Style
             _wpDoc = wpDoc;
         }
 
-        private Styles Styles => _wpDoc.MainDocumentPart.StyleDefinitionsPart.Styles;
-        private Theme Theme => _wpDoc.MainDocumentPart.ThemePart.Theme;
-
         [InitializeEngine]
         public void InitEngine(ContainerBuilder builder)
         {
-            builder.RegisterInstance(_config);
-            builder.RegisterInstance(_wpDoc).ExternallyOwned();
+            // Starting point, wpDoc disceted
+            RegisterWpDoc(builder);
+
+            // Providers
+            RegisterProviders(builder);
+
+            // Props and Prop factory
+            RegisterCssProps(builder);
+
+            // Caches
+            RegisterCache(builder);
+
+            // Class factories
+            RegisterClassFactories(builder);
+
+            // Registrator
+            RegisterApi(builder);
+        }
+
+        private static void RegisterApi(ContainerBuilder builder)
+        {
             builder
-                .RegisterInstance(Styles)
-                .ExternallyOwned();
-            builder.RegisterAssemblyTypes(Assembly.GetExecutingAssembly())
+                .RegisterType<CssRegistrator2>()
+                .As<ICssRegistrator2>()
+                .InstancePerLifetimeScope();
+        }
+
+        private static void RegisterClassFactories(ContainerBuilder builder)
+        {
+            builder.Register(c =>
+                new ParagraphClassFactory(
+                    c.Resolve<StyleConfig>(),
+                    c.Resolve<IDefaultsProvider>(),
+                    c.Resolve<PStylePPropsCache>(),
+                    c.Resolve<ContainerNumberingPropsCache>(),
+                    c.Resolve<Func<CssPropertySource, ICssPropertiesFactory>>()))
+                .As<IParagraphClassFactory>()
+                .SingleInstance();
+            builder.Register(c =>
+                new RunClassFactory(
+                    c.Resolve<StyleConfig>(),
+                    c.Resolve<IDefaultsProvider>(),
+                    c.Resolve<PStyleRPropsCache>(),
+                    c.Resolve<NumberNumberingPropsCache>(),
+                    c.Resolve<RStyleRPropsCache>(),
+                    c.Resolve<Func<CssPropertySource, ICssPropertiesFactory>>()))
+                .As<IRunClassFactory>();
+        }
+
+        private static void RegisterCache(ContainerBuilder builder)
+        {
+            builder.RegisterTypes(
+                    typeof(PStylePPropsCache),
+                    typeof(PStyleRPropsCache),
+                    typeof(RStyleRPropsCache),
+                    typeof(ContainerNumberingPropsCache),
+                    typeof(NumberNumberingPropsCache))
+                .SingleInstance();
+        }
+
+        private void RegisterCssProps(ContainerBuilder builder)
+        {
+            builder
+                .RegisterAssemblyTypes(Assembly.GetExecutingAssembly())
                 .Where(x => x.Namespace.StartsWith("Doc2web.Plugins.Style"))
                 .Where(HasCssProperytAttribute)
                 .WithMetadataFrom<BaseCssPropertyAttribute>()
                 .As<ICssProperty>();
             builder
-                .Register(r => new ThemeColorsProvider(Theme))
-                .As<IThemeColorsProvider>()
-                .InstancePerLifetimeScope();
-            builder
-                .Register(r => new ThemeFontsProvider(Theme))
-                .As<IThemeFontsProvider>()
-                .InstancePerLifetimeScope();
-            builder
                 .RegisterType<CssPropertiesFactory>()
-                .As<ICssPropertiesFactory>()
                 .As<ICssPropertiesFactory>();
+        }
+
+        private static void RegisterProviders(ContainerBuilder builder)
+        {
+            builder
+                .Register(r => new ThemeColorsProvider(r.Resolve<Theme>()))
+                .As<IThemeColorsProvider>()
+                .SingleInstance();
+            builder
+                .Register(r => new ThemeFontsProvider(r.Resolve<Theme>()))
+                .As<IThemeFontsProvider>()
+                .SingleInstance();
             builder.Register(r => new NumberingProvider(
-                r.Resolve<WordprocessingDocument>().MainDocumentPart?.NumberingDefinitionsPart?.Numbering,
-                r.Resolve<WordprocessingDocument>().MainDocumentPart?.StyleDefinitionsPart?.Styles
-                ))
+                    r.Resolve<WordprocessingDocument>()
+                    .MainDocumentPart?.NumberingDefinitionsPart?.Numbering,
+                    r.Resolve<WordprocessingDocument>()
+                    .MainDocumentPart?.StyleDefinitionsPart?.Styles))
                 .As<INumberingProvider>()
                 .SingleInstance();
             builder
-                .RegisterType<CssClassFactory>()
-                .As<ICssClassFactory>()
+                .RegisterType<DefaultsProvider>()
+                .As<IDefaultsProvider>()
                 .SingleInstance();
+        }
+
+        private void RegisterWpDoc(ContainerBuilder builder)
+        {
             builder
-                .RegisterType<CssRegistrator>()
-                .As<ICssRegistrator>()
-                .InstancePerLifetimeScope();
+                .RegisterInstance(_config)
+                .ExternallyOwned();
+            builder
+                .RegisterInstance(_wpDoc)
+                .ExternallyOwned();
+            builder
+                .Register(c =>
+                    c.Resolve<WordprocessingDocument>()
+                    .MainDocumentPart.StyleDefinitionsPart.Styles)
+                .ExternallyOwned();
+            builder
+                .Register(c => c.Resolve<Styles>().Elements<WStyle>());
+            builder
+                .Register(c =>
+                    c.Resolve<WordprocessingDocument>()
+                    .MainDocumentPart.ThemePart.Theme)
+                .ExternallyOwned();
         }
 
         private bool HasCssProperytAttribute(Type arg) =>
@@ -72,20 +151,20 @@ namespace Doc2web.Plugins.Style
                 x.AttributeType.BaseType == typeof(BaseCssPropertyAttribute))
             .Any();
 
-        [PreProcessing]
-        public void Initialize(IGlobalContext context)
-        {
-            var cssFactory = context.Resolve<ICssClassFactory>();
-            cssFactory.Initialize();
-        }
-
         [PostProcessing]
         public void InjectCss(IGlobalContext context)
         {
-            var cssRegistrator = context.Resolve<ICssRegistrator>() as CssRegistrator;
-            var sb = new StringBuilder(".container { display: flex; } .container > p { flex: 1;  margin-top: 0; }");
-            cssRegistrator.RenderInto(sb);
+            var cssRegistrator = context.Resolve<ICssRegistrator2>();
+            var data = new CssData();
+            var sb = new StringBuilder();
+
+            cssRegistrator.InsertCss(data);
+            data.RenderInto(sb);
+            context.AddCss(BaseCss);
             context.AddCss(sb.ToString());
         }
+
+        public static string BaseCss =
+             ".container { display: flex; } .container > p { flex: 1;  margin-top: 0; }";
     }
 }

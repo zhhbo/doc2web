@@ -38,7 +38,7 @@ namespace Doc2web.Plugins.Style.Css
             var inline = BuildInline(param.InlineProperties);
 
             if (WillBeEmptyClass(param, inline))
-                return null;
+                return new CssClass2();
 
             cssClass.Props.AddMany(inline);
 
@@ -100,8 +100,9 @@ namespace Doc2web.Plugins.Style.Css
 
         private CssPropertiesSet BuildInline(OpenXmlElement rProps)
         {
-            var props = _propsFac.Build(rProps);
             var set = new CssPropertiesSet();
+            if (rProps == null) return set;
+            var props = _propsFac.Build(rProps);
             set.AddMany(props);
             return set;
         }

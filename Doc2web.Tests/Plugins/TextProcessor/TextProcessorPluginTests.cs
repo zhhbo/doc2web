@@ -1,6 +1,7 @@
 ﻿using Autofac;
 using Doc2web.Core;
 using Doc2web.Plugins.Style;
+using Doc2web.Plugins.Style.Css;
 using Doc2web.Plugins.TextProcessor;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Wordprocessing;
@@ -24,7 +25,7 @@ namespace Doc2web.Tests.Plugins.TextProcessor
         private ChildElementContext _rContext;
         private Paragraph _p;
         private IContextNestingHandler _nestingHandler;
-        private ICssRegistrator _cssRegistrator;
+        private ICssRegistrator2 _cssRegistrator;
 
         [TestInitialize]
         public void Initialize()
@@ -34,9 +35,11 @@ namespace Doc2web.Tests.Plugins.TextProcessor
             _r = new Run(new Text("Some text."));
             _p = new Paragraph(_r);
             _nestingHandler = Substitute.For<IContextNestingHandler>();
-            _cssRegistrator = Substitute.For<ICssRegistrator>();
+            _cssRegistrator = Substitute.For<ICssRegistrator2>();
             _globalContext = Substitute.For<IGlobalContext>();
-            _globalContext.Resolve<ICssRegistrator>().Returns(_cssRegistrator);
+            _globalContext.Resolve<ICssRegistrator2>().Returns(_cssRegistrator);
+            _cssRegistrator.RegisterParagraph(null, null).ReturnsForAnyArgs(x => new CssClass2());
+            _cssRegistrator.RegisterRun(null, null, null).ReturnsForAnyArgs(x => new CssClass2());
 
             _pContext = new RootElementContext(_globalContext, _p)
             {
@@ -137,28 +140,13 @@ namespace Doc2web.Tests.Plugins.TextProcessor
         }
 
         [TestMethod]
-        public void ProcessParagraph_AddDynStyleTest()
+        public void ProcessParagraph_AddStyleTest()
         {
             string styleName = "dyn-somestuff";
             var pPr = new ParagraphProperties();
             _cssRegistrator
-                .RegisterParagraphProperties(pPr)
-                .Returns(new string[] { styleName });
-            _p.InsertAt(pPr, 0);
-
-            _instance.ProcessParagraph(_pContext, _p);
-            var node = _pContext.Nodes.First();
-
-            node.Classes.Contains(styleName);
-        }
-
-        [TestMethod]
-        public void ProcessParagraph_AddStyleIdTest()
-        {
-            string styleName = "heading1";
-            var pPr = new ParagraphProperties(new StyleId() { Val = new StringValue(styleName) });
-            _cssRegistrator.RegisterParagraphProperties(pPr).Returns(new string[] { });
-            _cssRegistrator.RegisterStyle(styleName).Returns(styleName);
+                .RegisterParagraph(pPr)
+                .Returns(new CssClass2 { Name = styleName });
             _p.InsertAt(pPr, 0);
 
             _instance.ProcessParagraph(_pContext, _p);
@@ -185,28 +173,13 @@ namespace Doc2web.Tests.Plugins.TextProcessor
         }
 
         [TestMethod]
-        public void ProcessRun_DynStyleTest()
+        public void ProcessRun_StyleTest()
         {
-            string styleName = "dync-somestuff";
+            string styleName = "dyn-somestuff";
             var rPr = new RunProperties();
             _cssRegistrator
-                .RegisterRunProperties(rPr)
-                .Returns(new string[] { styleName });
-            _r.InsertAt(rPr, 0);
-
-            _instance.ProcessRun(_rContext, _r);
-            var node = _rContext.Nodes.First();
-
-            node.Classes.Contains(styleName);
-        }
-
-        [TestMethod]
-        public void ProcessRun_StyleIdTest()
-        {
-            string styleName = "somestyle";
-            var rPr = new RunProperties(new StyleId() { Val = styleName });
-            _cssRegistrator.RegisterRunProperties(rPr).Returns(new string[] { });
-            _cssRegistrator.RegisterStyle(styleName).Returns(styleName);
+                .RegisterRun((_rContext.RootElement as Paragraph).ParagraphProperties, rPr, null)
+                .Returns(new CssClass2 { Name = styleName });
             _r.InsertAt(rPr, 0);
 
             _instance.ProcessRun(_rContext, _r);
