@@ -13,7 +13,7 @@ namespace Doc2web.Tests.Plugins.Style.Css
     [TestClass]
     public class ParagraphClassFactoryTests
     {
-        private IPropsCache _propsCache;
+        private IStylePropsCache _propsCache;
         private IDefaultsProvider _defaults;
         private StyleConfig _config;
         private ICssPropertiesFactory _propsFac;
@@ -24,7 +24,7 @@ namespace Doc2web.Tests.Plugins.Style.Css
         {
             _config = new StyleConfig();
             _propsFac = Substitute.For<ICssPropertiesFactory>();
-            _propsCache = Substitute.For<IPropsCache>();
+            _propsCache = Substitute.For<IStylePropsCache>();
             _defaults = Substitute.For<IDefaultsProvider>();
             _defaults.Paragraph.Returns(new CssPropertiesSet());
             _instance = new ParagraphClassFactory(

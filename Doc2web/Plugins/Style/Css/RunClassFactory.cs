@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using DocumentFormat.OpenXml.Wordprocessing;
 using System.Linq;
+using DocumentFormat.OpenXml;
 
 namespace Doc2web.Plugins.Style.Css
 {
@@ -10,15 +11,15 @@ namespace Doc2web.Plugins.Style.Css
     {
         private StyleConfig _config;
         private IDefaultsProvider _defaults;
-        private IPropsCache _pStylePropsCache;
-        private IPropsCache _rStylePropsCache;
+        private IStylePropsCache _pStylePropsCache;
+        private IStylePropsCache _rStylePropsCache;
         private ICssPropertiesFactory _propsFac;
 
         public RunClassFactory(
             StyleConfig config,
             IDefaultsProvider defaults,
-            IPropsCache pStylePropsCache,
-            IPropsCache rStylePropsCache,
+            IStylePropsCache pStylePropsCache,
+            IStylePropsCache rStylePropsCache,
             Func<CssPropertySource, ICssPropertiesFactory> factoryBuilder)
         {
             _config = config;
@@ -28,23 +29,21 @@ namespace Doc2web.Plugins.Style.Css
             _propsFac = factoryBuilder(CssPropertySource.Run);
         }
 
-        public CssClass2 Build(
-            string pStyleId,
-            RunProperties rProps)
+        public CssClass2 Build(RunClassParam param)
         {
             var cssClass = new CssClass2();
-            string styleId = rProps.RunStyle?.Val;
-            var inline = BuildInline(rProps);
+            string styleId = param.RunStyleId;
+            var inline = BuildInline(param.InlineProps);
 
             cssClass.Props.AddMany(inline);
 
             if (styleId != null)
                 cssClass.Props.AddMany(_rStylePropsCache.Get(styleId));
 
-            if (pStyleId != null)
-                cssClass.Props.AddMany(_pStylePropsCache.Get(pStyleId));
+            if (param.ParagraphStyleId != null)
+                cssClass.Props.AddMany(_pStylePropsCache.Get(param.ParagraphStyleId));
 
-            if (inline.Count == 0 && styleId != null && pStyleId == null)
+            if (inline.Count == 0 && styleId != null && param.ParagraphStyleId == null)
             {
                 cssClass.Name = styleId;
             } else
@@ -62,7 +61,7 @@ namespace Doc2web.Plugins.Style.Css
             _config.DynamicCssClassPrefix +
             Guid.NewGuid().ToString().Replace("-", "");
 
-        private CssPropertiesSet BuildInline(RunProperties rProps)
+        private CssPropertiesSet BuildInline(OpenXmlElement rProps)
         {
             var props = _propsFac.Build(rProps);
             var set = new CssPropertiesSet();

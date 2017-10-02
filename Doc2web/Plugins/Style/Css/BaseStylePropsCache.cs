@@ -6,12 +6,12 @@ using System.Linq;
 
 namespace Doc2web.Plugins.Style.Css
 {
-    public abstract class BasePropsCache : IPropsCache
+    public abstract class BaseStylePropsCache : IStylePropsCache
     {
         private Dictionary<string, CssPropertiesSet> _cache;
         private IEnumerable<DocumentFormat.OpenXml.Wordprocessing.Style> _styles;
 
-        public BasePropsCache(IEnumerable<DocumentFormat.OpenXml.Wordprocessing.Style> styles)
+        public BaseStylePropsCache(IEnumerable<DocumentFormat.OpenXml.Wordprocessing.Style> styles)
         {
             _cache = new Dictionary<string, CssPropertiesSet>();
             _styles = styles;

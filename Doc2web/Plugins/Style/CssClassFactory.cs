@@ -15,7 +15,7 @@ namespace Doc2web.Plugins.Style
         private DocDefaults _docDefaults;
         private Dictionary<string, ParagraphCssClass> _pClassesChache;
         private Dictionary<string, RunCssClass> _rClassesCache;
-        private INumberingCrawler _numberingCrawler;
+        private INumberingProvider _numberingCrawler;
         private ICssPropertiesFactory _paragraphPropsFac;
         private ICssPropertiesFactory _runPropsFac;
         private ICssPropertiesFactory _numberingPropsFac;
@@ -26,7 +26,7 @@ namespace Doc2web.Plugins.Style
             Styles styles,
             StyleConfig config,
             Func<CssPropertySource, ICssPropertiesFactory> buildPropsFactory,
-            INumberingCrawler numberingCrawler)
+            INumberingProvider numberingCrawler)
         {
             InitStyleDictionnary(styles);
             _config = config;

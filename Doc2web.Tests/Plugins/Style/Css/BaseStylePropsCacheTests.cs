@@ -12,16 +12,16 @@ using WStyle = DocumentFormat.OpenXml.Wordprocessing.Style;
 namespace Doc2web.Tests.Plugins.Style.Css
 {
     [TestClass]
-    public class BasePropsCacheTests
+    public class BaseStylePropsCacheTests
     {
         private ICssPropertiesFactory _propsFac;
         private WStyle[] _styles;
-        private BasePropsCache _instance;
+        private BaseStylePropsCache _instance;
         private ICssProperty[] _propsA2;
         private ICssProperty[] _propsA3;
         private ICssProperty[] _propsA1;
 
-        public class MockPropsCache : BasePropsCache
+        public class MockPropsCache : BaseStylePropsCache
         {
             private ICssPropertiesFactory _propsFac;
 

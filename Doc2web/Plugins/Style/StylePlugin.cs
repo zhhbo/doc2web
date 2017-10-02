@@ -51,11 +51,11 @@ namespace Doc2web.Plugins.Style
                 .RegisterType<CssPropertiesFactory>()
                 .As<ICssPropertiesFactory>()
                 .As<ICssPropertiesFactory>();
-            builder.Register(r => new NumberingCrawler(
+            builder.Register(r => new NumberingProvider(
                 r.Resolve<WordprocessingDocument>().MainDocumentPart?.NumberingDefinitionsPart?.Numbering,
                 r.Resolve<WordprocessingDocument>().MainDocumentPart?.StyleDefinitionsPart?.Styles
                 ))
-                .As<INumberingCrawler>()
+                .As<INumberingProvider>()
                 .SingleInstance();
             builder
                 .RegisterType<CssClassFactory>()

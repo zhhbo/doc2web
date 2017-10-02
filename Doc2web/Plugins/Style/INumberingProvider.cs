@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Doc2web.Plugins.Style
 {
-    public interface INumberingCrawler
+    public interface INumberingProvider
     {
         List<Level> Collect(int numberingId, int level);
     }

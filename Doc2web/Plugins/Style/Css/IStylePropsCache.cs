@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Doc2web.Plugins.Style.Css
 {
-    public interface IPropsCache
+    public interface IStylePropsCache
     {
         CssPropertiesSet Get(string styleId);
     }

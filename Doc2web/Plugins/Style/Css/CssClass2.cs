@@ -17,7 +17,7 @@ namespace Doc2web.Plugins.Style.Css
             Props = new CssPropertiesSet();
         }
 
-        public virtual void InsertCss(CssData data)
+        public void InsertCss(CssData data)
         {
             Props.Selector = Selector;
             Props.InsertCss(data);

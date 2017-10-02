@@ -9,13 +9,13 @@ namespace Doc2web.Plugins.Style.Css
     {
         private StyleConfig _config;
         private ICssPropertiesFactory _propsFac;
-        private IPropsCache _propsCache;
+        private IStylePropsCache _propsCache;
         private IDefaultsProvider _defaultsProvider;
 
         public ParagraphClassFactory(
             StyleConfig config,
             IDefaultsProvider defaultsProvider,
-            IPropsCache propsCache,
+            IStylePropsCache propsCache,
             Func<CssPropertySource, ICssPropertiesFactory> _facBuiler)
         {
             _config = config;

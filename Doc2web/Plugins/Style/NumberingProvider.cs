@@ -7,7 +7,7 @@ using DocumentFormat.OpenXml;
 
 namespace Doc2web.Plugins.Style
 {
-    public class NumberingCrawler : INumberingCrawler
+    public class NumberingProvider : INumberingProvider
     {
         private Styles _styles;
         private DocumentFormat.OpenXml.Wordprocessing.Numbering _numbering;
@@ -21,7 +21,7 @@ namespace Doc2web.Plugins.Style
             public HashSet<string> addedStyles = new HashSet<string>();
         }
 
-        public NumberingCrawler(
+        public NumberingProvider(
             DocumentFormat.OpenXml.Wordprocessing.Numbering numbering,
             Styles styles)
         {

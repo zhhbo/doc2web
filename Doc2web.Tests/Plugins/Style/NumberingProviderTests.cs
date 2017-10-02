@@ -11,12 +11,12 @@ using Doc2web.Tests.Samples;
 namespace Doc2web.Tests.Plugins.Style
 {
     [TestClass]
-    public class NumberingCrawlerTests
+    public class NumberingProviderTests
     {
         private WordprocessingDocument _wpDoc;
         private DocumentFormat.OpenXml.Wordprocessing.Numbering _numbering;
         private Styles _styles;
-        private NumberingCrawler _instance;
+        private NumberingProvider _instance;
 
         [TestInitialize]
         public void Initialize()
@@ -24,13 +24,13 @@ namespace Doc2web.Tests.Plugins.Style
             _wpDoc = NumberingSample3.BuildDoc();
             _numbering = _wpDoc.MainDocumentPart.NumberingDefinitionsPart.Numbering;
             _styles = _wpDoc.MainDocumentPart.StyleDefinitionsPart.Styles;
-            _instance = new NumberingCrawler(_numbering, _styles);
+            _instance = new NumberingProvider(_numbering, _styles);
         }
 
         [TestMethod]
         public void NumberingCrawler_NullNumberingTest()
         {
-            var instance = new NumberingCrawler(null, _styles);
+            var instance = new NumberingProvider(null, _styles);
 
             Assert.AreEqual(0, instance.Collect(10, 2).Count);
         }

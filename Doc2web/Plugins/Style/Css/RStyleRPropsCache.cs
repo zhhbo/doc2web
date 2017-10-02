@@ -6,7 +6,7 @@ using WStyle = DocumentFormat.OpenXml.Wordprocessing.Style;
 
 namespace Doc2web.Plugins.Style.Css
 {
-    public class RStyleRPropsCache : BasePropsCache
+    public class RStyleRPropsCache : BaseStylePropsCache
     {
         private ICssPropertiesFactory _propsFac;
 

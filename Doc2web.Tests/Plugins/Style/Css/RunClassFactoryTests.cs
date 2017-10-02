@@ -15,8 +15,8 @@ namespace Doc2web.Tests.Plugins.Style.Css
     {
         private StyleConfig _config;
         private IDefaultsProvider _defaults;
-        private IPropsCache _pStylePropsCache;
-        private IPropsCache _rStylePropsCache;
+        private IStylePropsCache _pStylePropsCache;
+        private IStylePropsCache _rStylePropsCache;
         private RunClassFactory _instance;
         private ICssPropertiesFactory _propsFac;
 
@@ -26,8 +26,8 @@ namespace Doc2web.Tests.Plugins.Style.Css
             _config = new StyleConfig();
             _defaults = Substitute.For<IDefaultsProvider>();
             _defaults.Run.Returns(new CssPropertiesSet());
-            _pStylePropsCache = Substitute.For<IPropsCache>();
-            _rStylePropsCache = Substitute.For<IPropsCache>();
+            _pStylePropsCache = Substitute.For<IStylePropsCache>();
+            _rStylePropsCache = Substitute.For<IStylePropsCache>();
             _propsFac = Substitute.For<ICssPropertiesFactory>();
 
             _instance = new RunClassFactory(
@@ -55,7 +55,10 @@ namespace Doc2web.Tests.Plugins.Style.Css
             };
             _propsFac.Build(Arg.Is(rPr)).Returns(props);
 
-            var result = _instance.Build(null, rPr);
+            var result = _instance.Build(new RunClassParam
+            {
+                InlineProps = rPr
+            });
 
             Utils.AssertDynamicClass(_config, result);
             Utils.AssertContainsProps(props, result);
@@ -77,11 +80,15 @@ namespace Doc2web.Tests.Plugins.Style.Css
             propsSet.AddMany(props);
             _rStylePropsCache.Get(styleId).Returns(propsSet);
 
-            var result = _instance.Build(null, rPr);
+            var result = _instance.Build(new RunClassParam {
+                RunStyleId = styleId,
+                InlineProps = rPr
+            });
 
             Assert.AreEqual(styleId, result.Name);
             Utils.AssertContainsProps(props, result);
         }
+
 
         [TestMethod]
         public void Build_ParagraphStyleTest()
@@ -96,7 +103,11 @@ namespace Doc2web.Tests.Plugins.Style.Css
             propsSet.AddMany(props);
             _pStylePropsCache.Get(styleId).Returns(propsSet);
 
-            var result = _instance.Build(styleId, rPr);
+            var result = _instance.Build(new RunClassParam
+            {
+                ParagraphStyleId = styleId,
+                InlineProps = rPr,
+            });
 
             Utils.AssertDynamicClass(_config, result);
             Utils.AssertContainsProps(props, result);
@@ -118,7 +129,10 @@ namespace Doc2web.Tests.Plugins.Style.Css
                 new MockProp4()
             });
 
-            var result = _instance.Build(null, rPr);
+            var result = _instance.Build(new RunClassParam
+            {
+                InlineProps = rPr
+            });
 
             Utils.AssertDynamicClass(_config, result);
             Utils.AssertContainsProps(

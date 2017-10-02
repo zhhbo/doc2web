@@ -18,7 +18,7 @@ namespace Doc2web.Tests.Plugins.Style
         private ICssPropertiesFactory _runPropFac;
         private ICssPropertiesFactory _numPropFac;
         private StyleConfig _config;
-        private INumberingCrawler _numCrawler;
+        private INumberingProvider _numCrawler;
         private CssClassFactory _instance;
         private ParagraphPropertiesDefault _pDocDefaults;
         private MockProp1 _pCssPropDefaults;
@@ -34,7 +34,7 @@ namespace Doc2web.Tests.Plugins.Style
             _numPropFac = Substitute.For<ICssPropertiesFactory>();
 
             _config = new StyleConfig();
-            _numCrawler = Substitute.For<INumberingCrawler>();
+            _numCrawler = Substitute.For<INumberingProvider>();
             MockDefaults();
             _instance = new CssClassFactory(_styles, _config, CssPropFac, _numCrawler);
             _instance.Initialize();
