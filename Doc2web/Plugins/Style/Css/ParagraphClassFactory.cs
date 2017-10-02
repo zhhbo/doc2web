@@ -33,35 +33,50 @@ namespace Doc2web.Plugins.Style.Css
             var cssClass = new CssClass2();
             var propsInline = BuildInline(param.InlineProperties);
 
-            if (propsInline.Count == 0 && 
-                param.StyleId == null &&
-                (!param.NumberingId.HasValue || !param.NumberingLevel.HasValue))
+            if (WillBeEmtpyClass(param, propsInline))
                 return null;
 
             cssClass.Props.AddMany(propsInline);
-            if (param.StyleId != null)
-            {
-                cssClass.Props.AddMany(_stylePropsCache.Get(param.StyleId));
-            }
-
-            if (param.NumberingId.HasValue && param.NumberingLevel.HasValue)
-                cssClass.Props.AddMany(
-                    _numPropsCache.Get(
-                        param.NumberingId.Value,
-                        param.NumberingLevel.Value));
-
-            if (propsInline.Count == 0 && param.StyleId != null)
-            {
-                cssClass.Name = param.StyleId;
-            } else
-            {
-                cssClass.Name = GenerateDynName();
-            }
-
-            cssClass.Props.AddMany(_defaultsProvider.Paragraph);
+            AddStyleProps(param.StyleId, cssClass);
+            AddNumberingStyleProps(param, cssClass);
+            SetClassName(param, cssClass, propsInline);
+            AddDefaultsProps(cssClass);
 
             return cssClass;
         }
+
+        private void SetClassName(ParagraphClassParams param, CssClass2 cssClass, CssPropertiesSet propsInline)
+        {
+            if (propsInline.Count == 0 && param.StyleId != null)
+                cssClass.Name = param.StyleId;
+            else
+                cssClass.Name = GenerateDynName();
+        }
+
+        private void AddDefaultsProps(CssClass2 cssClass)
+        {
+            cssClass.Props.AddMany(_defaultsProvider.Paragraph);
+        }
+
+        private void AddNumberingStyleProps(ParagraphClassParams param, CssClass2 cssClass)
+        {
+            if (!param.NumberingId.HasValue || !param.NumberingLevel.HasValue) return;
+            cssClass.Props.AddMany(
+                _numPropsCache.Get(
+                    param.NumberingId.Value,
+                    param.NumberingLevel.Value));
+        }
+
+        private void AddStyleProps(string styleId, CssClass2 cssClass)
+        {
+            if (styleId == null) return;
+            cssClass.Props.AddMany(_stylePropsCache.Get(styleId));
+        }
+
+        private static bool WillBeEmtpyClass(ParagraphClassParams param, CssPropertiesSet propsInline) => 
+            propsInline.Count == 0 &&
+            param.StyleId == null &&
+            (!param.NumberingId.HasValue || !param.NumberingLevel.HasValue);
 
         private CssPropertiesSet BuildInline(OpenXmlElement pPr)
         {

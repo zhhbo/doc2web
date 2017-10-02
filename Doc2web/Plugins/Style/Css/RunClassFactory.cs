@@ -35,39 +35,64 @@ namespace Doc2web.Plugins.Style.Css
         public CssClass2 Build(RunClassParam param)
         {
             var cssClass = new CssClass2();
-            string styleId = param.RunStyleId;
             var inline = BuildInline(param.InlineProperties);
 
-            if (inline.Count == 0 &&
-                param.RunStyleId == null &&
-                param.ParagraphStyleId == null &&
-                (!param.NumberingId.HasValue || !param.NumberingLevel.HasValue))
+            if (WillBeEmptyClass(param, inline))
                 return null;
 
             cssClass.Props.AddMany(inline);
 
-            if (styleId != null)
-                cssClass.Props.AddMany(_rStylePropsCache.Get(styleId));
+            AddRunStyle(cssClass, param.RunStyleId);
 
-            if (param.ParagraphStyleId != null)
-                cssClass.Props.AddMany(_pStylePropsCache.Get(param.ParagraphStyleId));
+            AddNumberingProps(cssClass, param);
 
-            if (param.NumberingId.HasValue && param.NumberingLevel.HasValue)
-                cssClass.Props.AddMany(_numPropsCache.Get(param.NumberingId.Value, param.NumberingLevel.Value));
+            AddParagraphStyle(cssClass, param.ParagraphStyleId);
 
-            if (inline.Count == 0 && styleId != null && param.ParagraphStyleId == null)
+
+            // some work left on the naming part...
+            if (inline.Count == 0 && param.RunStyleId != null && param.ParagraphStyleId == null)
             {
-                cssClass.Name = styleId;
-            } else
+                cssClass.Name = param.RunStyleId;
+            }
+            else
             {
                 cssClass.Name = GenerageDynamicName();
             }
 
-            if (cssClass.Props.Any())
-                cssClass.Props.AddMany(_defaults.Run);
+            AddDefaults(cssClass);
 
             return cssClass;
         }
+
+        private void AddDefaults(CssClass2 cssClass)
+        {
+            if (cssClass.Props.Any())
+                cssClass.Props.AddMany(_defaults.Run);
+        }
+
+        private void AddNumberingProps(CssClass2 cssClass, RunClassParam param)
+        {
+            if (!param.NumberingId.HasValue || !param.NumberingLevel.HasValue) return;
+            cssClass.Props.AddMany(_numPropsCache.Get(param.NumberingId.Value, param.NumberingLevel.Value));
+        }
+
+        private void AddParagraphStyle(CssClass2 cssClass, string styleId)
+        {
+            if (styleId == null) return;
+            cssClass.Props.AddMany(_pStylePropsCache.Get(styleId));
+        }
+
+        private void AddRunStyle(CssClass2 cssClass, string styleId)
+        {
+            if (styleId == null) return;
+            cssClass.Props.AddMany(_rStylePropsCache.Get(styleId));
+        }
+
+        private static bool WillBeEmptyClass(RunClassParam param, CssPropertiesSet inline) => 
+            inline.Count == 0 &&
+            param.RunStyleId == null &&
+            param.ParagraphStyleId == null &&
+            (!param.NumberingId.HasValue || !param.NumberingLevel.HasValue);
 
         private string GenerageDynamicName() =>
             _config.DynamicCssClassPrefix +
