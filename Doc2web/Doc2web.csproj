@@ -14,13 +14,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Autofac" Version="4.6.1" />
-    <PackageReference Include="DocumentFormat.OpenXml" Version="2.7.2" />
-    <PackageReference Include="System.ValueTuple" Version="4.4.0" />
+    <Compile Remove="Plugins\TrackChanges\**" />
+    <EmbeddedResource Remove="Plugins\TrackChanges\**" />
+    <None Remove="Plugins\TrackChanges\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Plugins\TrackChanges\" />
+    <PackageReference Include="Autofac" Version="4.6.1" />
+    <PackageReference Include="DocumentFormat.OpenXml" Version="2.7.2" />
+    <PackageReference Include="System.ValueTuple" Version="4.4.0" />
   </ItemGroup>
 
 </Project>

@@ -27,7 +27,7 @@ namespace Doc2web.Tests.Plugins.Style.Css
             {
                 _values = values;
             }
-            public override CssPropertiesSet BuildPSet(Level arg)
+            public override CssPropertiesSet BuildPropertiesSet(Level arg)
             {
                 if (_values.TryGetValue(arg, out CssPropertiesSet result))
                     return result;

@@ -28,7 +28,7 @@ namespace Doc2web.Plugins.Style.Css
             var newEntry = 
                 _numberingCrawer
                 .Collect(numberingId, levelIndex)
-                .Select(BuildPSet)
+                .Select(BuildPropertiesSet)
                 .Reverse()
                 .Aggregate(Reduce);
 
@@ -46,7 +46,7 @@ namespace Doc2web.Plugins.Style.Css
             return arg1;
         }
 
-        public abstract CssPropertiesSet BuildPSet(Level arg);
+        public abstract CssPropertiesSet BuildPropertiesSet(Level arg);
 
         public CssPropertiesSet GetNumber(int numberingId, int levelIndex)
         {
