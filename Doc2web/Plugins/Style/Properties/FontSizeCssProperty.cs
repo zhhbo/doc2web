@@ -20,7 +20,6 @@ namespace Doc2web.Plugins.Style.Properties
 
         public override short GetSpecificHashcode() => GetSize(Element);
 
-
         public override bool HaveSameOuput(FontSize element) =>
             GetSize(element) == GetSpecificHashcode();
 

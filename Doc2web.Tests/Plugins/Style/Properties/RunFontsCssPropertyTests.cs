@@ -141,6 +141,20 @@ namespace Doc2web.Tests.Plugins.Style.Properties
             Assert.IsFalse(_instance.HaveSameOuput(otherElement));
         }
 
+        [TestMethod]
+        public void Clone_Test()
+        {
+            Initialize();
+            SetFontsValues("A3", "B1", "A4", "B2");
+
+            var clone = _instance.Clone();
+
+            Assert.AreEqual(clone, _instance);
+            Assert.AreNotSame(clone, _instance);
+            Assert.AreEqual(clone.AsCss(), _instance.AsCss());
+
+        }
+
         static string ExpectedValues = 
             "Arial, ComplexScript, EastAsia, HighAnsi";
         static string ExpectedThemeValues = 

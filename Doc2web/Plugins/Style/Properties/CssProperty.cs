@@ -53,5 +53,13 @@ namespace Doc2web.Plugins.Style.Properties
                 Extends(casted);
             }
         }
+
+        public virtual ICssProperty Clone()
+        {
+            var clone = GetType().GetConstructors()[0].Invoke(new object[] { }) as ICssProperty;
+            clone.OpenXmlElement = OpenXmlElement;
+            clone.Selector = Selector;
+            return clone;
+        }
     }
 }

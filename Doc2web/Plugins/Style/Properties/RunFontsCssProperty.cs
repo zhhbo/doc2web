@@ -11,20 +11,23 @@ namespace Doc2web.Plugins.Style.Properties
     public class RunFontsCssProperty : CssProperty<RunFonts>
     {
         private IThemeFontsProvider _themeFontProvider;
-        private string[] _fontFamilies;
+        private string[] _fontFaces;
 
         public RunFontsCssProperty(IThemeFontsProvider themeFontProvider)
         {
             _themeFontProvider = themeFontProvider;
         }
 
+        private RunFontsCssProperty() { }
+
+
         public string[] FontFaces
         {
             get
             {
-                if (_fontFamilies == null)
-                    _fontFamilies = BuildFontFamilyList();
-                return _fontFamilies;
+                if (_fontFaces == null)
+                    _fontFaces = BuildFontFacesList();
+                return _fontFaces;
             }
         }
 
@@ -52,7 +55,7 @@ namespace Doc2web.Plugins.Style.Properties
             }
         }
 
-        private string[] BuildFontFamilyList()
+        private string[] BuildFontFacesList()
         {
             var results = new string[4];
             var fontValues = FontValues;
@@ -127,5 +130,16 @@ namespace Doc2web.Plugins.Style.Properties
             var other = new RunFontsCssProperty(_themeFontProvider) { Element = element };
             return other.FontFamilies == FontFamilies;
         }
+
+        public override ICssProperty Clone()
+        {
+            var clone = new RunFontsCssProperty();
+            clone.Selector = Selector;
+            clone._fontFaces = new string[4];
+            FontFaces.CopyTo(clone._fontFaces, 0);
+            clone._themeFontProvider = _themeFontProvider;
+            return clone;
+        }
+
     }
 }

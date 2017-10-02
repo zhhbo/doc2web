@@ -105,5 +105,12 @@ namespace Doc2web.Plugins.Style.Properties
             return other.LeftIndent == LeftIndent && other.RightIndent == RightIndent;
         }
 
+        public override ICssProperty Clone() =>
+            new IdentationCssProperty(_config)
+            {
+                Element = Element,
+                Selector = Selector
+            };
+
     }
 }

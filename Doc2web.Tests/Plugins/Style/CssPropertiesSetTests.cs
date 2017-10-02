@@ -4,6 +4,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Doc2web.Tests.Plugins.Style
@@ -140,6 +141,28 @@ namespace Doc2web.Tests.Plugins.Style
             b.Add(prop2);
 
             Assert.AreEqual(a.GetHashCode(), b.GetHashCode());
+        }
+
+        [TestMethod]
+        public void Clone_Test()
+        {
+            var a = new CssPropertiesSet()
+            {
+                new MockProp1(),
+                new MockProp2()
+            };
+
+            var b = a.Clone();
+
+            Assert.AreEqual(a.Count, b.Count);
+            var aProps = a.ToArray();
+            var bProps = b.ToArray();
+            for(int i=0; i<aProps.Length; i++)
+            {
+                Assert.AreEqual(aProps[i], bProps[i]);
+                Assert.AreNotSame(aProps[i], bProps[i]);
+            }
+
         }
     }
 }

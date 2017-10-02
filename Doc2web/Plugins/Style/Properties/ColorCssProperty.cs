@@ -69,5 +69,13 @@ namespace Doc2web.Plugins.Style.Properties
 
 
         public override short GetSpecificHashcode() => (short)Color.Substring(1).GetHashCode();
+
+        public override ICssProperty Clone() =>
+            new ColorCssProperty(_themeColorProvider)
+            {
+                Element = Element,
+                Selector = Selector
+            };
+
     }
 }

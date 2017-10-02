@@ -42,6 +42,10 @@ namespace Doc2web.Tests.Plugins.Style
 
 
         public void Extends(ICssProperty parent) { }
+
+        public ICssProperty Clone() =>
+            GetType().GetConstructors()[0].Invoke(new object[0]) as ICssProperty;
+
     }
 
     public class MockProp1 : BaseMockProp { }

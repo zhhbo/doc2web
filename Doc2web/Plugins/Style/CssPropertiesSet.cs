@@ -30,7 +30,6 @@ namespace Doc2web.Plugins.Style
 
         public void AddMany(IEnumerable<ICssProperty> items)
         {
-            //if (items == null) return;
             foreach (var item in items) Add(item);
         }
 
@@ -84,6 +83,14 @@ namespace Doc2web.Plugins.Style
         {
             return this.Select(x => x.GetHashCode())
                 .Sum();
+        }
+
+        public CssPropertiesSet Clone()
+        {
+            var clone = new CssPropertiesSet();
+            clone.AddMany(this.Select(x => x.Clone()));
+            clone.Selector = Selector;
+            return clone;
         }
     }
 }

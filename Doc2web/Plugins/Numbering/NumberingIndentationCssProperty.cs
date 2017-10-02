@@ -24,6 +24,8 @@ namespace Doc2web.Plugins.Numbering
             _numConfig = numConfig;
         }
 
+        private NumberingIndentationCssProperty() { }
+
         public override OpenXmlElement OpenXmlElement
         {
             get => base.OpenXmlElement;
@@ -67,6 +69,14 @@ namespace Doc2web.Plugins.Numbering
 
         public override bool HaveSameOuput(Indentation element) => _indentProp.HaveSameOuput(element);
 
+        public override ICssProperty Clone()
+        {
+            var clone = new NumberingIndentationCssProperty();
+            clone.Selector = Selector;
+            clone._numConfig = _numConfig;
+            clone._indentProp = _indentProp.Clone() as IdentationCssProperty;
+            return clone;
+        }
 
         private string ContainerMaxSelector => 
             Selector + "." + _numConfig.NumberingContainerMaxCls;

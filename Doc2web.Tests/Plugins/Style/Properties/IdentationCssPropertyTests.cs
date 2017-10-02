@@ -167,5 +167,17 @@ namespace Doc2web.Tests.Plugins.Style.Properties
 
             Assert.IsFalse(_instance.HaveSameOuput(other));
         }
+
+        [TestMethod]
+        public void Clone_Test()
+        {
+            _instance.Element.Left = "2160";
+            _instance.Element.Hanging = "567";
+            var clone = _instance.Clone();
+
+            Assert.AreNotSame(clone, _instance);
+            Assert.AreEqual(clone.GetHashCode(), _instance.GetHashCode());
+            Assert.AreEqual(clone.AsCss(), _instance.AsCss());
+        }
     }
 }

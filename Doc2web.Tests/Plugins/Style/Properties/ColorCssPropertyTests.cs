@@ -98,5 +98,18 @@ namespace Doc2web.Tests.Plugins.Style.Properties
 
             Assert.AreEqual((short)"123456".GetHashCode(), result);
         }
+
+        [TestMethod]
+        public void Clone_Test()
+        {
+            var elem = new Color { Val = new StringValue("123456") };
+            _instance.Element = elem.CloneNode(true) as Color;
+
+            var clone = _instance.Clone();
+
+            Assert.AreNotSame(clone, _instance);
+            Assert.AreEqual(clone, _instance);
+            Assert.AreEqual(clone.AsCss(), _instance.AsCss());
+        }
     }
 }
