@@ -23,12 +23,12 @@ namespace Doc2web.Plugins.Style.Css
         {
             if (_cache.TryGetValue(styleId, out CssPropertiesSet result))
             {
-                return result;
+                return result.Clone();
             } else
             {
                 lock (_cache)
                 {
-                    return AddStyle(styleId);
+                    return AddStyle(styleId).Clone();
                 }
             }
         }

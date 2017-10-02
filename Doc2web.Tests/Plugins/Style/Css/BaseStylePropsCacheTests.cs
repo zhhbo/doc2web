@@ -58,7 +58,7 @@ namespace Doc2web.Tests.Plugins.Style.Css
             };
 
         [TestMethod]
-        public void ParagraphPropsCache_Test()
+        public void BasePropsCache_Test()
         {
             Assert.AreEqual(0, _instance.Cache.Count);
         }
@@ -74,10 +74,10 @@ namespace Doc2web.Tests.Plugins.Style.Css
 
             var result = _instance.Get(styleId);
 
-            Assert.AreSame(result, _instance.Cache[styleId]);
+            Assert.AreNotSame(result, _instance.Cache[styleId]);
+            Assert.IsTrue(result.SetEquals(_instance.Cache[styleId]));
             AssertContainsProps(result, props);
             Assert.AreEqual(1, _instance.Cache.Count);
-            Assert.AreSame(result, _instance.Cache[styleId]);
         }
 
         [TestMethod]
@@ -88,10 +88,15 @@ namespace Doc2web.Tests.Plugins.Style.Css
                 new MockProp1()
                 );
 
-            _instance.Get("a1");
-            _instance.Get("a1");
+            var first = _instance.Get("a1");
+            var sec = _instance.Get("a1");
 
             _propsFac.Received(1).Build(_styles[0]);
+            Assert.AreNotSame(first, sec);
+            Assert.IsTrue(first.SetEquals(sec));
+            Assert.AreNotSame(first, _instance.Cache["a1"]);
+            Assert.AreNotSame(sec, _instance.Cache["a1"]);
+            Assert.IsTrue(first.SetEquals(_instance.Cache["a1"]));
         }
 
         [TestMethod]
@@ -104,7 +109,8 @@ namespace Doc2web.Tests.Plugins.Style.Css
 
             AssertContainsProps(result, props);
             Assert.AreEqual(2, _instance.Cache.Count);
-            Assert.AreSame(result, _instance.Cache["a2"]);
+            Assert.AreNotSame(result, _instance.Cache["a2"]);
+            Assert.IsTrue(result.SetEquals(_instance.Cache["a2"]));
             Assert.IsTrue(_instance.Cache.ContainsKey("a1"));
         }
 
@@ -119,7 +125,8 @@ namespace Doc2web.Tests.Plugins.Style.Css
 
             AssertContainsProps(result, props);
             Assert.AreEqual(3, _instance.Cache.Count);
-            Assert.AreSame(result, _instance.Cache["a3"]);
+            Assert.AreNotSame(result, _instance.Cache["a3"]);
+            Assert.IsTrue(result.SetEquals(_instance.Cache["a3"]));
             Assert.IsTrue(_instance.Cache.ContainsKey("a1"));
         }
 

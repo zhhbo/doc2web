@@ -22,7 +22,7 @@ namespace Doc2web.Plugins.Style.Css
         public CssPropertiesSet Get(int numberingId, int levelIndex) 
         {
             if (_cache.TryGetValue((numberingId, levelIndex), out CssPropertiesSet cached)) {
-                return cached;
+                return cached.Clone();
             }
 
             var newEntry = 
@@ -37,7 +37,7 @@ namespace Doc2web.Plugins.Style.Css
                 _cache.Add((numberingId, levelIndex), newEntry);
             }
 
-            return newEntry;
+            return newEntry.Clone();
         }
 
         private CssPropertiesSet Reduce(CssPropertiesSet arg1, CssPropertiesSet arg2)
