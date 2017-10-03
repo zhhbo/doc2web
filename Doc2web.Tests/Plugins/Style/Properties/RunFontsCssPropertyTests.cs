@@ -104,7 +104,7 @@ namespace Doc2web.Tests.Plugins.Style.Properties
             _instance.Element.AsciiTheme = null;
 
             var result = _instance.GetSpecificHashcode();
-            Assert.AreEqual(0, result);
+            Assert.AreEqual(-1, result);
         }
 
         [TestMethod]
@@ -150,6 +150,7 @@ namespace Doc2web.Tests.Plugins.Style.Properties
             var clone = _instance.Clone();
 
             Assert.AreEqual(clone, _instance);
+            Assert.AreSame(clone.OpenXmlElement, _instance.OpenXmlElement);
             Assert.AreNotSame(clone, _instance);
             Assert.AreEqual(clone.AsCss(), _instance.AsCss());
 

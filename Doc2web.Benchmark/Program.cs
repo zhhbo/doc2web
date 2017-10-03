@@ -20,6 +20,7 @@ namespace Doc2web.Benchmark
                 typeof(ConversionBenchmark),
                 typeof(RenderingBenchmark),
                 typeof(StyleBenchmark),
+                typeof(Style2Benchmark),
             });
             switcher.Run(args);
         }

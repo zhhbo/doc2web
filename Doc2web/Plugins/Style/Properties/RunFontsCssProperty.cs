@@ -112,17 +112,9 @@ namespace Doc2web.Plugins.Style.Properties
 
         public override short GetSpecificHashcode()
         {
-            var asciiFont = GetRightFontFamily(
-                Element.Ascii?.Value,
-                Element.AsciiTheme?.Value
-            );
-
-            if (asciiFont == "") return 0;
-
-            return (short)GetRightFontFamily(
-                Element.Ascii?.Value,
-                Element.AsciiTheme?.Value
-            ).GetHashCode();
+            for (int i = 0; i < 4; i++)
+                if (FontFaces[i] != null) return (short)FontFaces[i].GetHashCode();
+            return -1;
         }
 
         public override bool HaveSameOuput(RunFonts element)
@@ -136,6 +128,7 @@ namespace Doc2web.Plugins.Style.Properties
             var clone = new RunFontsCssProperty();
             clone.Selector = Selector;
             clone._fontFaces = new string[4];
+            clone.Element = Element;
             FontFaces.CopyTo(clone._fontFaces, 0);
             clone._themeFontProvider = _themeFontProvider;
             return clone;
