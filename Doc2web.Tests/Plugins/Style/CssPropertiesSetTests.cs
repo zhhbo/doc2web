@@ -30,6 +30,25 @@ namespace Doc2web.Tests.Plugins.Style
         }
 
         [TestMethod]
+        public void CssPropertiesSet_InitTest()
+        {
+            var props = new ICssProperty[] {
+                new MockProp1(),
+                new MockProp2(),
+                new MockProp3(),
+                new MockProp4(),
+            };
+            _instance = new CssPropertiesSet(props);
+
+            Assert.AreEqual(4, _instance.Count);
+            Assert.IsFalse(_instance.IsReadOnly);
+            Assert.IsNotNull(_instance.GetEnumerator());
+            Assert.IsNotNull((_instance as IEnumerable<ICssProperty>).GetEnumerator());
+            foreach (var prop in props)
+                Assert.IsTrue(_instance.Contains(prop));
+        }
+
+        [TestMethod]
         public void AddContainsCount_Test()
         {
             var prop = Substitute.For<ICssProperty>();

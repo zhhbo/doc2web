@@ -17,9 +17,9 @@ namespace Doc2web.Tests.Plugins.Style.Css
         private ICssPropertiesFactory _propsFac;
         private WStyle[] _styles;
         private BaseStylePropsCache _instance;
-        private ICssProperty[] _propsA2;
-        private ICssProperty[] _propsA3;
-        private ICssProperty[] _propsA1;
+        private CssPropertiesSet _propsA2;
+        private CssPropertiesSet _propsA3;
+        private CssPropertiesSet _propsA1;
 
         public class MockPropsCache : BaseStylePropsCache
         {
@@ -33,7 +33,7 @@ namespace Doc2web.Tests.Plugins.Style.Css
                 _propsFac = propsFac;
             }
 
-            public override ICssProperty[] BuildProps(WStyle style) =>
+            public override CssPropertiesSet BuildProps(WStyle style) =>
                 _propsFac.Build(style);
         }
 
@@ -76,7 +76,7 @@ namespace Doc2web.Tests.Plugins.Style.Css
 
             Assert.AreNotSame(result, _instance.Cache[styleId]);
             Assert.IsTrue(result.SetEquals(_instance.Cache[styleId]));
-            AssertContainsProps(result, props);
+            Assert.IsTrue(props.SetEquals(result));
             Assert.AreEqual(1, _instance.Cache.Count);
         }
 
@@ -103,11 +103,12 @@ namespace Doc2web.Tests.Plugins.Style.Css
         public void Get_BasedOnCreateTest()
         {
             MockPropsA3_A2_A1();
-            var props = _propsA1.Concat(_propsA2).ToArray();
+            var props = _propsA2.Clone();
+            props.AddMany(_propsA1);
 
             var result = _instance.Get("a2");
 
-            AssertContainsProps(result, props);
+            Assert.IsTrue(props.SetEquals(props));
             Assert.AreEqual(2, _instance.Cache.Count);
             Assert.AreNotSame(result, _instance.Cache["a2"]);
             Assert.IsTrue(result.SetEquals(_instance.Cache["a2"]));
@@ -118,12 +119,12 @@ namespace Doc2web.Tests.Plugins.Style.Css
         public void Get_BasedOnCachedTest()
         {
             MockPropsA3_A2_A1();
-            var props = _propsA1.Concat(_propsA3).ToArray();
+            var props = new CssPropertiesSet(_propsA1.Concat(_propsA3).ToArray());
 
             _instance.Get("a2");
             var result = _instance.Get("a3");
 
-            AssertContainsProps(result, props);
+            Assert.IsTrue(props.SetEquals(result));
             Assert.AreEqual(3, _instance.Cache.Count);
             Assert.AreNotSame(result, _instance.Cache["a3"]);
             Assert.IsTrue(result.SetEquals(_instance.Cache["a3"]));
@@ -136,7 +137,7 @@ namespace Doc2web.Tests.Plugins.Style.Css
                 "a2",
                 new MockProp1(),
                 new MockProp2());
-            _propsA3 = MockFactory("a3", _propsA2);
+            _propsA3 = MockFactory("a3", _propsA2.ToArray());
             _propsA1 = MockFactory(
                 "a1",
                 new MockProp3(),
@@ -152,15 +153,16 @@ namespace Doc2web.Tests.Plugins.Style.Css
             Assert.AreEqual(0, result.Count);
         }
 
-        private ICssProperty[] MockFactory(
+        private CssPropertiesSet MockFactory(
             string styleId, 
             params ICssProperty[] props)
         {
             var style = _styles.First(x => x.StyleId == styleId);
+            var set = new CssPropertiesSet(props);
             _propsFac
                 .Build(style)
-                .Returns(props);
-            return props;
+                .Returns(set);
+            return set;
         }
 
         private void AssertContainsProps(

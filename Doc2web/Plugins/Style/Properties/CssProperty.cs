@@ -12,7 +12,7 @@ namespace Doc2web.Plugins.Style.Properties
 
         public virtual OpenXmlElement OpenXmlElement { get; set; }
 
-        public T Element
+        public virtual T Element
         {
             get => (T)OpenXmlElement;
             set => OpenXmlElement = value;

@@ -31,6 +31,7 @@ namespace Doc2web.Tests.Plugins.Style.Css
             _numPropsCache = Substitute.For<INumberingPropsCache>();
             _rStylePropsCache = Substitute.For<IStylePropsCache>();
             _propsFac = Substitute.For<ICssPropertiesFactory>();
+            _propsFac.Build(null).ReturnsForAnyArgs(x => new CssPropertiesSet());
 
             _instance = new RunClassFactory(
                 _config,
@@ -62,7 +63,7 @@ namespace Doc2web.Tests.Plugins.Style.Css
         public void Build_DyncPropsTest()
         {
             var rPr = new RunProperties();
-            var props = new ICssProperty[]
+            var props = new CssPropertiesSet
             {
                 new MockProp1(),
                 new MockProp2()
@@ -75,7 +76,7 @@ namespace Doc2web.Tests.Plugins.Style.Css
             });
 
             Utils.AssertDynamicClass(_config, result);
-            Utils.AssertContainsProps(props, result);
+            Assert.IsTrue(props.SetEquals(result.Props));
         }
 
         [TestMethod]
@@ -86,13 +87,11 @@ namespace Doc2web.Tests.Plugins.Style.Css
             {
                 RunStyle = new RunStyle { Val = styleId }
             };
-            var props = new ICssProperty[] {
+            var props = new CssPropertiesSet {
                 new MockProp1(),
                 new MockProp2()
             };
-            var propsSet = new CssPropertiesSet();
-            propsSet.AddMany(props);
-            _rStylePropsCache.Get(styleId).Returns(propsSet);
+            _rStylePropsCache.Get(styleId).Returns(props);
 
             var result = _instance.Build(new RunClassParam {
                 RunStyleId = styleId,
@@ -100,18 +99,18 @@ namespace Doc2web.Tests.Plugins.Style.Css
             });
 
             Assert.AreEqual(styleId, result.Name);
-            Utils.AssertContainsProps(props, result);
+            Assert.IsTrue(props.SetEquals(result.Props));
         }
 
         [TestMethod]
         public void Build_NumberingStyleTest()
         {
-            var propsSet = new CssPropertiesSet
+            var props = new CssPropertiesSet
             {
                 new MockProp1(),
                 new MockProp2()
             };
-            _numPropsCache.Get(7, 2).Returns(propsSet);
+            _numPropsCache.Get(7, 2).Returns(props);
 
             var result = _instance.Build(new RunClassParam
             {
@@ -119,7 +118,7 @@ namespace Doc2web.Tests.Plugins.Style.Css
                 NumberingLevel = 2
             });
 
-            Assert.IsTrue(propsSet.SetEquals(result.Props));
+            Assert.IsTrue(props.SetEquals(result.Props));
             Utils.AssertDynamicClass(_config, result);
         }
 
@@ -129,13 +128,11 @@ namespace Doc2web.Tests.Plugins.Style.Css
         {
             string styleId = "p-style";
             var rPr = new RunProperties();
-            var props = new ICssProperty[] {
+            var props = new CssPropertiesSet {
                 new MockProp1(),
                 new MockProp2()
             };
-            var propsSet = new CssPropertiesSet();
-            propsSet.AddMany(props);
-            _pStylePropsCache.Get(styleId).Returns(propsSet);
+            _pStylePropsCache.Get(styleId).Returns(props);
 
             var result = _instance.Build(new RunClassParam
             {
@@ -144,14 +141,14 @@ namespace Doc2web.Tests.Plugins.Style.Css
             });
 
             Utils.AssertDynamicClass(_config, result);
-            Utils.AssertContainsProps(props, result);
+            Assert.IsTrue(props.SetEquals(props));
         }
 
         [TestMethod]
         public void Build_DefaultTest()
         {
             var rPr = new RunProperties();
-            var props = new ICssProperty[]
+            var props = new CssPropertiesSet
             {
                 new MockProp1(),
                 new MockProp2()
@@ -162,6 +159,8 @@ namespace Doc2web.Tests.Plugins.Style.Css
                 new MockProp3(),
                 new MockProp4()
             });
+            var expected = props.Clone();
+            expected.AddMany(_defaults.Run);
 
             var result = _instance.Build(new RunClassParam
             {
@@ -169,9 +168,7 @@ namespace Doc2web.Tests.Plugins.Style.Css
             });
 
             Utils.AssertDynamicClass(_config, result);
-            Utils.AssertContainsProps(
-                props.Concat(_defaults.Run).ToArray(),
-                result);
+            Assert.IsTrue(result.Props.SetEquals(expected));
         }
     }
 }

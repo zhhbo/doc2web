@@ -39,31 +39,32 @@ namespace Doc2web.Plugins.Style
             }
         }
 
-        public ICssProperty[] Build(OpenXmlElement elem)
+        public CssPropertiesSet Build(OpenXmlElement elem)
         {
-            if (_constructorsDic.TryGetValue(
-                elem.GetType(), 
-                out Func<ICssProperty> cons))
-            {
-                var prop = cons();
-                prop.OpenXmlElement = elem;
-                return new ICssProperty[1] { prop };
-            }
-            else
-            {
-                return BuildMultiple(elem.ChildElements);
-            }
+            return new CssPropertiesSet(BuildMultiple(elem.ChildElements));
+            //if (_constructorsDic.TryGetValue(
+            //    elem.GetType(), 
+            //    out Func<ICssProperty> cons))
+            //{
+            //    var prop = cons();
+            //    prop.OpenXmlElement = elem;
+            //    return new ICssProperty[1] { prop };
+            //}
+            //else
+            //{
+            //    return BuildMultiple(elem.ChildElements);
+            //}
         }
 
         private ICssProperty[] BuildMultiple(OpenXmlElementList childElements)
         {
-            var props = new List<ICssProperty>();
-            foreach(var child in childElements)
+            var result = new List<ICssProperty>(childElements.Count);
+            foreach (var child in childElements)
             {
                 var prop = BuildSingle(child);
-                if (prop != null) props.Add(prop);
+                if (prop != null) result.Add(prop);
             }
-            return props.ToArray();
+            return result.ToArray();
         }
 
         private ICssProperty BuildSingle(OpenXmlElement elem)

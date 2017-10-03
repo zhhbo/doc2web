@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace Doc2web.Benchmark
 {
-    [ClrJob, CoreJob]
+    [ClrJob]
     public class Style2Benchmark
     {
         private WordprocessingDocument _wpDoc;
@@ -93,14 +93,14 @@ namespace Doc2web.Benchmark
             _registrator = _container.Resolve<ICssRegistrator2>();
         }
 
-        [Benchmark]
+        //[Benchmark]
         public void RenderAllParagraphStyles()
         {
             for (int i = 0; i < _pPropsStyles.Length; i++)
                 _registrator.RegisterParagraph(_pPropsStyles[i], null);
         }
 
-        [Benchmark]
+        //[Benchmark]
         public void RenderAllRunStyles()
         {
             for (int i = 0; i < _pPropsStyles.Length; i++)
@@ -108,7 +108,7 @@ namespace Doc2web.Benchmark
                     _registrator.RegisterRun(_pPropsStyles[i], _rPropsStyles[j], null);
         }
 
-        [Benchmark]
+        //[Benchmark]
         public void Render100ParagraphInlines()
         {
             for (int i = 0; i < _pPropsInlines.Length; i++)

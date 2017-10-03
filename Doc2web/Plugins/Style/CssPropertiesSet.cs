@@ -15,6 +15,13 @@ namespace Doc2web.Plugins.Style
             _dict = new Dictionary<Type, ICssProperty>();
         }
 
+        public CssPropertiesSet(ICssProperty[] props)
+        {
+            _dict = new Dictionary<Type, ICssProperty>(props.Length);
+            for(int i = 0; i < props.Length; i++)
+                _dict.Add(props[i].GetType(), props[i]);
+        }
+
         public int Count => _dict.Count;
 
         public bool IsReadOnly => false;
@@ -71,10 +78,19 @@ namespace Doc2web.Plugins.Style
         public bool SetEquals(CssPropertiesSet other)
         {
             if (other.Count != Count) return false;
-            foreach (var (a, b) in other.Zip(this, (a, b) => (a, b)))
+            //foreach (var (a, b) in other.Zip(this, (a, b) => (a, b)))
+            //{
+            //    if (a.GetHashCode() != b.GetHashCode() || !a.Equals(b))
+            //        return false;
+            //}
+            foreach(var a in _dict.Values)
             {
-                if (a.GetHashCode() != b.GetHashCode() || !a.Equals(b))
-                    return false;
+                if (other._dict.TryGetValue(a.GetType(), out ICssProperty b))
+                {
+                    if (a.GetHashCode() != b.GetHashCode() || !a.Equals(b))
+                        return false;
+                }
+                else return false;
             }
             return true;
         }
@@ -83,6 +99,7 @@ namespace Doc2web.Plugins.Style
         {
             return this.Select(x => x.GetHashCode())
                 .Sum();
+            //return _dict.Keys.Count;
         }
 
         public CssPropertiesSet Clone()

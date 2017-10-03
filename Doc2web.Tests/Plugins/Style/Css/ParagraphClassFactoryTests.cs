@@ -25,6 +25,7 @@ namespace Doc2web.Tests.Plugins.Style.Css
         {
             _config = new StyleConfig();
             _propsFac = Substitute.For<ICssPropertiesFactory>();
+            _propsFac.Build(null).ReturnsForAnyArgs(x => new CssPropertiesSet());
             _stylePropsCache = Substitute.For<IStylePropsCache>();
             _numPropsCache = Substitute.For<INumberingPropsCache>();
             _defaults = Substitute.For<IDefaultsProvider>();
@@ -59,7 +60,7 @@ namespace Doc2web.Tests.Plugins.Style.Css
         public void Build_DynFromPropsTest()
         {
             var pPr = new ParagraphProperties();
-            var props = new ICssProperty[]
+            var props = new CssPropertiesSet
             {
                 new MockProp1(),
                 new MockProp2()
@@ -72,7 +73,7 @@ namespace Doc2web.Tests.Plugins.Style.Css
             });
 
             Utils.AssertDynamicClass(_config, result);
-            Utils.AssertContainsProps(props, result);
+            Assert.IsTrue(props.SetEquals(result.Props));
         }
 
         [TestMethod]
@@ -100,15 +101,13 @@ namespace Doc2web.Tests.Plugins.Style.Css
             {
                 ParagraphStyleId = new ParagraphStyleId { Val = styleId }
             };
-            var props = new ICssProperty[]
+            var props = new CssPropertiesSet
             {
                 new MockProp1(),
                 new MockProp2()
             };
-            var propsSet = new CssPropertiesSet();
-            propsSet.AddMany(props);
-            _propsFac.Build(Arg.Is(pPr)).Returns(new ICssProperty[0]);
-            _stylePropsCache.Get(styleId).Returns(propsSet);
+            _propsFac.Build(Arg.Is(pPr)).Returns(new CssPropertiesSet());
+            _stylePropsCache.Get(styleId).Returns(props);
 
             var result = _instance.Build(new ParagraphClassParam
             {
@@ -117,14 +116,14 @@ namespace Doc2web.Tests.Plugins.Style.Css
             });
 
             Assert.AreEqual(styleId, result.Name);
-            Utils.AssertContainsProps(props, result);
+            Assert.IsTrue(props.SetEquals(result.Props));
         }
 
         [TestMethod]
         public void Build_SetDefaults()
         {
             var pPr = new ParagraphProperties();
-            var props = new ICssProperty[]
+            var props = new CssPropertiesSet
             {
                 new MockProp1(),
                 new MockProp2()
@@ -135,6 +134,8 @@ namespace Doc2web.Tests.Plugins.Style.Css
                 new MockProp3(),
                 new MockProp4()
             });
+            var expected = new CssPropertiesSet(props.Clone().ToArray());
+            expected.AddMany(_defaults.Paragraph);
 
             var result = _instance.Build(new ParagraphClassParam
             {
@@ -142,9 +143,7 @@ namespace Doc2web.Tests.Plugins.Style.Css
             });
 
             Utils.AssertDynamicClass(_config, result);
-            Utils.AssertContainsProps(
-                props.Concat(_defaults.Paragraph).ToArray(),
-                result);
+            Assert.IsTrue(result.Props.SetEquals(expected));
         }
     }
 }

@@ -38,7 +38,7 @@ namespace Doc2web.Plugins.Style.Css
             try
             {
                 var style = _styles.First(x => x.StyleId?.Value == styleId);
-                ICssProperty[] props = BuildProps(style);
+                var props = BuildProps(style);
                 var set = new CssPropertiesSet();
                 set.AddMany(props);
 
@@ -66,6 +66,6 @@ namespace Doc2web.Plugins.Style.Css
             }
         }
 
-        public abstract ICssProperty[] BuildProps(DocumentFormat.OpenXml.Wordprocessing.Style style);
+        public abstract CssPropertiesSet BuildProps(DocumentFormat.OpenXml.Wordprocessing.Style style);
     }
 }

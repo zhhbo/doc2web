@@ -46,12 +46,12 @@ namespace Doc2web.Tests.Plugins.Style
             _pCssPropDefaults = new MockProp1();
             _paraPropFac
                 .Build(Arg.Is(_pDocDefaults.ParagraphPropertiesBaseStyle))
-                .Returns(new ICssProperty[] { _pCssPropDefaults });
+                .Returns(new CssPropertiesSet { _pCssPropDefaults });
             _rDocDefaults = _styles.DocDefaults.RunPropertiesDefault;
              _rCSsPropDefaults = new MockProp2();
             _runPropFac
                 .Build(Arg.Is(_rDocDefaults.RunPropertiesBaseStyle))
-                .Returns(new ICssProperty[] { _rCSsPropDefaults });
+                .Returns(new CssPropertiesSet { _rCSsPropDefaults });
         }
 
         private ICssPropertiesFactory CssPropFac(CssPropertySource source)
@@ -146,16 +146,16 @@ namespace Doc2web.Tests.Plugins.Style
                 .Returns(new List<Level>() { level1, level2 });
             _numPropFac
                 .Build(Arg.Is(level1.PreviousParagraphProperties))
-                .Returns(new ICssProperty[] { mockProp1 });
+                .Returns(new CssPropertiesSet { mockProp1 });
             _numPropFac
                 .Build(Arg.Is(level2.PreviousParagraphProperties))
-                .Returns(new ICssProperty[] { mockProp2 });
+                .Returns(new CssPropertiesSet { mockProp2 });
             _runPropFac
                 .Build(Arg.Is(level1.NumberingSymbolRunProperties))
-                .Returns(new ICssProperty[] { mockProp3 });
+                .Returns(new CssPropertiesSet { mockProp3 });
             _runPropFac
                 .Build(Arg.Is(level2.NumberingSymbolRunProperties))
-                .Returns(new ICssProperty[] { mockProp4 });
+                .Returns(new CssPropertiesSet { mockProp4 });
 
             var result = _instance.BuildFromNumbering(0, 1) as NumberingCssClass;
 
@@ -173,7 +173,7 @@ namespace Doc2web.Tests.Plugins.Style
         [TestMethod]
         public void Build_FromRunPropsTest()
         {
-            var mockProps = new ICssProperty[] { Substitute.For<ICssProperty>() };
+            var mockProps = new CssPropertiesSet { Substitute.For<ICssProperty>() };
             var runProps = new RunProperties();
             _runPropFac.Build(Arg.Is(runProps)).Returns(mockProps);
 
@@ -182,7 +182,7 @@ namespace Doc2web.Tests.Plugins.Style
 
             var runCssClass = cls as RunCssClass;
             Assert.IsNotNull(runCssClass);
-            Assert.AreEqual(mockProps[0], runCssClass.RunProps.Single());
+            Assert.AreEqual(mockProps.Single(), runCssClass.RunProps.Single());
 
             Assert.AreSame(_instance.RunDefaults, runCssClass.Defaults);
         }
@@ -190,7 +190,7 @@ namespace Doc2web.Tests.Plugins.Style
         [TestMethod]
         public void Build_FromParagraphPropsTest()
         {
-            var mockProps = new ICssProperty[] { new MockProp1() };
+            var mockProps = new CssPropertiesSet { new MockProp1() };
             var pPr = new ParagraphProperties();
             _paraPropFac.Build(Arg.Is(pPr)).Returns(mockProps);
 
@@ -199,7 +199,7 @@ namespace Doc2web.Tests.Plugins.Style
 
             var pCssClass = cls as ParagraphCssClass;
             Assert.IsNotNull(pCssClass);
-            Assert.AreEqual(mockProps[0], pCssClass.ParagraphProps.Single());
+            Assert.AreEqual(mockProps.Single(), pCssClass.ParagraphProps.Single());
             Assert.AreEqual(0, pCssClass.RunProps.Count());
 
             Assert.AreSame(_instance.ParagraphDefault, pCssClass.Defaults);
@@ -232,7 +232,7 @@ namespace Doc2web.Tests.Plugins.Style
             string styleName,
             Func<DocumentFormat.OpenXml.Wordprocessing.Style, OpenXmlElement> map)
         {
-            var basedOnProps = new ICssProperty[] { new MockProp1 () };
+            var basedOnProps = new CssPropertiesSet { new MockProp1 () };
             var runPropsBasedOn =
                 _styles
                 .Elements<DocumentFormat.OpenXml.Wordprocessing.Style>()
@@ -249,8 +249,8 @@ namespace Doc2web.Tests.Plugins.Style
                     .Build(Arg.Is(r))
                     .Returns(basedOnProps);
             }
-            
-            return basedOnProps[0];
+
+            return basedOnProps.Single();
         }
 
     }

@@ -7,6 +7,6 @@ namespace Doc2web.Plugins.Style
 {
     public interface ICssPropertiesFactory
     {
-        ICssProperty[] Build(OpenXmlElement element);
+        CssPropertiesSet Build(OpenXmlElement element);
     }
 }

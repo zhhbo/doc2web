@@ -31,34 +31,26 @@ namespace Doc2web.Plugins.Style.Css
         public CssClass2 Build(ParagraphClassParam param)
         {
             var cssClass = new CssClass2();
-            var propsInline = BuildInline(param.InlineProperties);
+            cssClass.Props = BuildInline(param.InlineProperties);
 
-            cssClass.Props.AddMany(propsInline);
             AddStyleProps(param.StyleId, cssClass);
             AddNumberingStyleProps(param, cssClass);
-            SetClassName(param, cssClass, propsInline);
             AddDefaultsProps(cssClass);
 
+            cssClass.Name = GenerateDynName();
             return cssClass;
-        }
-
-        private void SetClassName(ParagraphClassParam param, CssClass2 cssClass, CssPropertiesSet propsInline)
-        {
-            if (propsInline.Count == 0 && param.StyleId != null)
-                cssClass.Name = param.StyleId;
-            else
-                cssClass.Name = GenerateDynName();
         }
 
         private void AddDefaultsProps(CssClass2 cssClass)
         {
-            cssClass.Props.AddMany(_defaultsProvider.Paragraph);
+            AddOrSet(cssClass, _defaultsProvider.Paragraph);
         }
 
         private void AddNumberingStyleProps(ParagraphClassParam param, CssClass2 cssClass)
         {
             if (!param.NumberingId.HasValue || !param.NumberingLevel.HasValue) return;
-            cssClass.Props.AddMany(
+            AddOrSet(
+                cssClass,
                 _numPropsCache.Get(
                     param.NumberingId.Value,
                     param.NumberingLevel.Value));
@@ -67,7 +59,7 @@ namespace Doc2web.Plugins.Style.Css
         private void AddStyleProps(string styleId, CssClass2 cssClass)
         {
             if (styleId == null) return;
-            cssClass.Props.AddMany(_stylePropsCache.Get(styleId));
+            AddOrSet(cssClass, _stylePropsCache.Get(styleId));
         }
 
         private static bool WillBeEmtpyClass(ParagraphClassParam param, CssPropertiesSet propsInline) => 
@@ -77,16 +69,22 @@ namespace Doc2web.Plugins.Style.Css
 
         private CssPropertiesSet BuildInline(OpenXmlElement pPr)
         {
-            var propsInline = _propsFac.Build(pPr);
-            var set = new CssPropertiesSet();
-            set.AddMany(propsInline);
-            return set;
+            if (pPr == null) return new CssPropertiesSet();
+            return _propsFac.Build(pPr);
         }
 
         private string GenerateDynName()
         {
             var uid = Guid.NewGuid().ToString().Replace("-", "");
             return _config.DynamicCssClassPrefix + uid;
+        }
+
+        private void AddOrSet(CssClass2 cssClass, CssPropertiesSet props)
+        {
+            if (cssClass.Props.Count > 0)
+                cssClass.Props.AddMany(props);
+            else
+                cssClass.Props = props;
         }
     }
 }

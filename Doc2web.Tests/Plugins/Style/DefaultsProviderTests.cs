@@ -36,14 +36,14 @@ namespace Doc2web.Tests.Plugins.Style
         [TestMethod]
         public void Paragraph_SomeTest()
         {
-            var expected = new ICssProperty[] { new MockProp1() };
+            var expected = new CssPropertiesSet { new MockProp1() };
             _pPropsFac
                 .Build(Arg.Is(PDefaults))
                 .Returns(expected);
 
             var result = _instance.Paragraph;
 
-            Utils.AssertContainsProps(expected, result);
+            Assert.IsTrue(expected.SetEquals(result));
         }
 
         private ParagraphPropertiesBaseStyle PDefaults =>
@@ -62,14 +62,14 @@ namespace Doc2web.Tests.Plugins.Style
         [TestMethod]
         public void Run_SomeTest()
         {
-            var expected = new ICssProperty[] { new MockProp1() };
+            var expected = new CssPropertiesSet { new MockProp1() };
             _rPropsFac
                 .Build(Arg.Is(RDefaults()))
                 .Returns(expected);
 
             var result = _instance.Run;
 
-            Utils.AssertContainsProps(expected, result);
+            Assert.IsTrue(expected.SetEquals(result));
         }
 
         private RunPropertiesBaseStyle RDefaults() => 

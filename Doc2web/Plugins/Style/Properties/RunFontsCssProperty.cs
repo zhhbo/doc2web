@@ -120,7 +120,15 @@ namespace Doc2web.Plugins.Style.Properties
         public override bool HaveSameOuput(RunFonts element)
         {
             var other = new RunFontsCssProperty(_themeFontProvider) { Element = element };
-            return other.FontFamilies == FontFamilies;
+            var otherSet = other.FontFaces.Where(x => x != null).Distinct().ToArray();
+            var mySet = FontFaces.Where(x => x != null).Distinct().ToArray();
+
+            if (otherSet.Length != mySet.Length) return false;
+
+            for (int i = 0; i < mySet.Length; i++)
+                if (mySet[i] != otherSet[i]) return false;
+
+            return true;
         }
 
         public override ICssProperty Clone()

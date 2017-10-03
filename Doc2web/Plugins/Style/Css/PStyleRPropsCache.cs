@@ -17,11 +17,11 @@ namespace Doc2web.Plugins.Style.Css
             _propsFac = _facBuiler(CssPropertySource.Run);
         }
 
-        public override ICssProperty[] BuildProps(WStyle style)
+        public override CssPropertiesSet BuildProps(WStyle style)
         {
             if (style.StyleRunProperties != null)
                 return _propsFac.Build(style.StyleRunProperties);
-            return new ICssProperty[0];
+            return new CssPropertiesSet();
         }
 
     }

@@ -23,6 +23,11 @@ namespace Doc2web.Benchmark
                 typeof(Style2Benchmark),
             });
             switcher.Run(args);
+
+            //var b = new Style2Benchmark();
+            //b.Setup();
+            //b.ResetContainer();
+            //b.RenderAllRunStyles();
         }
     }
 }

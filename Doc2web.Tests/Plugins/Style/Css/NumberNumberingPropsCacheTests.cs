@@ -32,7 +32,7 @@ namespace Doc2web.Tests.Plugins.Style.Css
         [TestMethod]
         public void BuildPropsSet_Test()
         {
-            var props = new ICssProperty[] { new MockProp1() };
+            var props = new CssPropertiesSet { new MockProp1() };
             var level = new Level {
                 NumberingSymbolRunProperties = new NumberingSymbolRunProperties()
             };
@@ -42,7 +42,7 @@ namespace Doc2web.Tests.Plugins.Style.Css
 
             var result = _instance.BuildPropertiesSet(level);
 
-            Assert.AreSame(props[0], result.Single());
+            Assert.AreSame(props.Single(), result.Single());
         }
 
         [TestMethod]
