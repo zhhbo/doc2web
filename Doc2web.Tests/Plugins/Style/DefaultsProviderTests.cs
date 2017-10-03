@@ -38,13 +38,16 @@ namespace Doc2web.Tests.Plugins.Style
         {
             var expected = new ICssProperty[] { new MockProp1() };
             _pPropsFac
-                .Build(Arg.Is(_styles.DocDefaults.ParagraphPropertiesDefault))
+                .Build(Arg.Is(PDefaults))
                 .Returns(expected);
 
             var result = _instance.Paragraph;
 
             Utils.AssertContainsProps(expected, result);
         }
+
+        private ParagraphPropertiesBaseStyle PDefaults =>
+            _styles.DocDefaults.ParagraphPropertiesDefault.ParagraphPropertiesBaseStyle;
 
         [TestMethod]
         public void Paragraph_EmptyTest()
@@ -61,13 +64,16 @@ namespace Doc2web.Tests.Plugins.Style
         {
             var expected = new ICssProperty[] { new MockProp1() };
             _rPropsFac
-                .Build(Arg.Is(_styles.DocDefaults.RunPropertiesDefault))
+                .Build(Arg.Is(RDefaults()))
                 .Returns(expected);
 
             var result = _instance.Run;
 
             Utils.AssertContainsProps(expected, result);
         }
+
+        private RunPropertiesBaseStyle RDefaults() => 
+            _styles.DocDefaults.RunPropertiesDefault.RunPropertiesBaseStyle;
 
         [TestMethod]
         public void Run_EmptyTest()

@@ -81,5 +81,13 @@ namespace Doc2web.Plugins.Style.Properties
                 return "";
             }
         }
+
+        public override ICssProperty Clone() =>
+            new UnderlineCssProperty(_themeColorProvider)
+            {
+                Element = Element,
+                Selector = Selector
+            };
+
     }
 }

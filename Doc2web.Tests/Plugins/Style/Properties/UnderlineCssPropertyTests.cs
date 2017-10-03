@@ -129,5 +129,16 @@ namespace Doc2web.Tests.Plugins.Style.Properties
             Assert.IsFalse(_instance.HaveSameOuput(other));
         }
 
+        [TestMethod]
+        public void Clone_Test()
+        {
+            _instance.Element.Val = new EnumValue<UnderlineValues>(UnderlineValues.DotDash);
+            var clone = _instance.Clone();
+
+            Assert.AreNotSame(clone, _instance);
+            Assert.AreEqual(clone, _instance);
+            Assert.AreEqual(clone.AsCss(), _instance.AsCss());
+        }
+
     }
 }

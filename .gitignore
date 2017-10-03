@@ -299,4 +299,4 @@ __pycache__/
 *.xsd.cs
 
 # CLI Crash tests output
-Samples/out
+Samples/out/*.html

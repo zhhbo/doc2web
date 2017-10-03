@@ -36,28 +36,17 @@ namespace Doc2web.Plugins.Style.Css
         {
             var cssClass = new CssClass2();
             var inline = BuildInline(param.InlineProperties);
-
-            if (WillBeEmptyClass(param, inline))
-                return new CssClass2();
-
             cssClass.Props.AddMany(inline);
-
             AddRunStyle(cssClass, param.RunStyleId);
-
             AddNumberingProps(cssClass, param);
-
             AddParagraphStyle(cssClass, param.ParagraphStyleId);
 
 
             // some work left on the naming part...
             if (inline.Count == 0 && param.RunStyleId != null && param.ParagraphStyleId == null)
-            {
                 cssClass.Name = param.RunStyleId;
-            }
             else
-            {
                 cssClass.Name = GenerageDynamicName();
-            }
 
             AddDefaults(cssClass);
 
@@ -66,8 +55,7 @@ namespace Doc2web.Plugins.Style.Css
 
         private void AddDefaults(CssClass2 cssClass)
         {
-            if (cssClass.Props.Any())
-                cssClass.Props.AddMany(_defaults.Run);
+            cssClass.Props.AddMany(_defaults.Run);
         }
 
         private void AddNumberingProps(CssClass2 cssClass, RunClassParam param)

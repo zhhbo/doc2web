@@ -33,9 +33,6 @@ namespace Doc2web.Plugins.Style.Css
             var cssClass = new CssClass2();
             var propsInline = BuildInline(param.InlineProperties);
 
-            if (WillBeEmtpyClass(param, propsInline))
-                return new CssClass2();
-
             cssClass.Props.AddMany(propsInline);
             AddStyleProps(param.StyleId, cssClass);
             AddNumberingStyleProps(param, cssClass);

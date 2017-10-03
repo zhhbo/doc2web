@@ -34,7 +34,8 @@ namespace Doc2web.Plugins.Style
 
         private void InitPCache()
         {
-            var pDocDefaults = _styles.DocDefaults?.ParagraphPropertiesDefault;
+            var pDocDefaults = 
+                _styles.DocDefaults?.ParagraphPropertiesDefault?.ParagraphPropertiesBaseStyle;
             if (pDocDefaults != null)
             {
                 var props = _pPropsFac.Build(pDocDefaults);
@@ -60,7 +61,7 @@ namespace Doc2web.Plugins.Style
 
         private void InitRCache()
         {
-            var rDocDefaults = _styles.DocDefaults?.RunPropertiesDefault;
+            var rDocDefaults = _styles.DocDefaults?.RunPropertiesDefault?.RunPropertiesBaseStyle;
             if (rDocDefaults != null)
             {
                 var props = _rPropsFac.Build(rDocDefaults);
