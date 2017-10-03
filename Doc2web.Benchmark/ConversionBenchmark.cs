@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace Doc2web.Benchmark
 {
-    [CoreJob, ClrJob]
+    [ClrJob]
     public class ConversionBenchmark
     {
         public ConversionEngine BuildConversionEngine()
@@ -22,7 +22,7 @@ namespace Doc2web.Benchmark
             return new ConversionEngine(
                 new StylePlugin(_wpDoc),
                 new TextProcessorPlugin(),
-                new NumberingPlugin(_wpDoc),
+                //new NumberingPlugin(_wpDoc),
                 new CrossReferencesCleanupPlugin(),
                 new HyphenInsertionPlugin(),
                 new BreakInsertionPlugin(),
@@ -63,13 +63,13 @@ namespace Doc2web.Benchmark
             _wpDoc.Dispose();
         }
 
-        [Benchmark]
+        //[Benchmark]
         public ConversionEngine InitializeEngine() => BuildConversionEngine();
 
-        [Benchmark]
+        //[Benchmark]
         public string RenderShortest() => _conversionEngine.Render(_shortestParagraph);
 
-        [Benchmark]
+        //[Benchmark]
         public string RenderLongest() => _conversionEngine.Render(_longestParagraph);
 
         [Benchmark]

@@ -22,8 +22,10 @@ namespace Doc2web.Benchmark
         private IContainer _container;
         private ICssRegistrator2 _registrator;
         private Style[] _styles;
-        private ParagraphProperties[] _pProps;
-        private RunProperties[] _rProps;
+        private ParagraphProperties[] _pPropsStyles;
+        private ParagraphProperties[] _pPropsInlines;
+        private RunProperties[] _rPropsStyles;
+        private RunProperties[] _rPropsInlines;
 
         [GlobalSetup]
         public void Setup()
@@ -41,7 +43,7 @@ namespace Doc2web.Benchmark
                 .Distinct()
                 .ToArray();
 
-            _pProps =
+            _pPropsStyles =
                 _styles
                 .Where(x => x.Type?.Value == StyleValues.Paragraph)
                 .Select(x => new ParagraphProperties
@@ -53,7 +55,7 @@ namespace Doc2web.Benchmark
                 })
                 .ToArray();
 
-            _rProps =
+            _rPropsStyles =
                 _styles
                 .Where(x => x.Type?.Value == StyleValues.Character)
                 .Select(x => new RunProperties
@@ -65,7 +67,21 @@ namespace Doc2web.Benchmark
                 })
                 .ToArray();
 
-            Console.WriteLine($"Paragraph style count: {_pProps.Length}\tRun style count: {_rProps.Length}");
+            _pPropsInlines =
+                _wpDoc.MainDocumentPart.Document.Body
+                .Descendants<ParagraphProperties>()
+                .Where(x => x.ChildElements?.Count > 2)
+                .Take(100)
+                .ToArray();
+
+            _rPropsInlines =
+                _wpDoc.MainDocumentPart.Document.Body
+                .Descendants<RunProperties>()
+                .Where(x => x.ChildElements?.Count > 2)
+                .Take(100)
+                .ToArray();
+
+            Console.WriteLine($"Paragraph style count: {_pPropsStyles.Length}\tRun style count: {_rPropsStyles.Length}");
         }
 
         [IterationSetup]
@@ -80,16 +96,30 @@ namespace Doc2web.Benchmark
         [Benchmark]
         public void RenderAllParagraphStyles()
         {
-            for (int i = 0; i < _pProps.Length; i++)
-                _registrator.RegisterParagraph(_pProps[i], null);
+            for (int i = 0; i < _pPropsStyles.Length; i++)
+                _registrator.RegisterParagraph(_pPropsStyles[i], null);
         }
 
         [Benchmark]
         public void RenderAllRunStyles()
         {
-            for (int i = 0; i < _pProps.Length; i++)
-                for (int j = 0; j < _rProps.Length; j++)
-                    _registrator.RegisterRun(_pProps[i], _rProps[j], null);
+            for (int i = 0; i < _pPropsStyles.Length; i++)
+                for (int j = 0; j < _rPropsStyles.Length; j++)
+                    _registrator.RegisterRun(_pPropsStyles[i], _rPropsStyles[j], null);
+        }
+
+        [Benchmark]
+        public void Render100ParagraphInlines()
+        {
+            for (int i = 0; i < _pPropsInlines.Length; i++)
+                _registrator.RegisterParagraph(_pPropsInlines[i], null);
+        }
+
+        [Benchmark]
+        public void Render100RunInlines()
+        {
+            for (int i = 0; i < _rPropsInlines.Length; i++)
+                _registrator.RegisterRun(null, _rPropsInlines[i], null);
         }
     }
 }
