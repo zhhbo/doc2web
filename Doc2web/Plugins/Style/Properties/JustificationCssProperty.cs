@@ -25,9 +25,14 @@ namespace Doc2web.Plugins.Style.Properties
 
         public override short GetSpecificHashcode() => JustifyContent;
 
-        public override bool HaveSameOuput(Justification element) =>
-            JustifyContent == ConvertElementVal(element);
-        
+        public override bool HaveSameOutput(ICssProperty element)
+        {
+            if (element is JustificationCssProperty other)
+            {
+                return other.JustifyContent == JustifyContent;
+            }
+            return false;
+        }
 
         private bool HasValue => Element.Val?.Value == null;
 

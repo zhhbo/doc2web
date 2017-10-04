@@ -117,9 +117,11 @@ namespace Doc2web.Plugins.Style.Properties
             return -1;
         }
 
-        public override bool HaveSameOuput(RunFonts element)
+        public override bool HaveSameOutput(ICssProperty element)
         {
-            var other = new RunFontsCssProperty(_themeFontProvider) { Element = element };
+            var other = element as RunFontsCssProperty;
+            if (other == null) return false;
+
             var otherSet = other.FontFaces.Where(x => x != null).Distinct().ToArray();
             var mySet = FontFaces.Where(x => x != null).Distinct().ToArray();
 

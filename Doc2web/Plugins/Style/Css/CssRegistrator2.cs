@@ -66,10 +66,7 @@ namespace Doc2web.Plugins.Style.Css
 
         private CssClass2 AddOrSet(CssClass2 cssClass)
         {
-            if (_registrations.TryAdd(cssClass, cssClass))
-                return cssClass;
-            else
-                return _registrations[cssClass];
+            return _registrations.GetOrAdd(cssClass, cssClass);
         }
         public void InsertCss(CssData data)
         {

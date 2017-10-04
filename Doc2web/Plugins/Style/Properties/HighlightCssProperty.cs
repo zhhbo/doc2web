@@ -17,8 +17,12 @@ namespace Doc2web.Plugins.Style.Properties
 
         public override short GetSpecificHashcode() => GetColorCode(Element);
 
-        public override bool HaveSameOuput(Highlight element) =>
-            GetColorCode(element) == GetSpecificHashcode();
+        public override bool HaveSameOutput(ICssProperty element)
+        {
+            if (element is HighlightCssProperty other)
+                return GetColorCode(other.Element) == GetColorCode(Element);
+            return false;
+        }
 
         private static string[] ColorAssociation = new string[]
         {

@@ -78,16 +78,11 @@ namespace Doc2web.Plugins.Style
         public bool SetEquals(CssPropertiesSet other)
         {
             if (other.Count != Count) return false;
-            //foreach (var (a, b) in other.Zip(this, (a, b) => (a, b)))
-            //{
-            //    if (a.GetHashCode() != b.GetHashCode() || !a.Equals(b))
-            //        return false;
-            //}
             foreach(var a in _dict.Values)
             {
                 if (other._dict.TryGetValue(a.GetType(), out ICssProperty b))
                 {
-                    if (a.GetHashCode() != b.GetHashCode() || !a.Equals(b))
+                    if (a.GetHashCode() != b.GetHashCode() || !a.HaveSameOutput(b))
                         return false;
                 }
                 else return false;
@@ -97,9 +92,22 @@ namespace Doc2web.Plugins.Style
 
         public override int GetHashCode()
         {
-            return this.Select(x => x.GetHashCode())
-                .Sum();
-            //return _dict.Keys.Count;
+            int hash1 = (5381 << 16) + 5381;
+            int hash2 = hash1;
+
+            int i = 0;
+            foreach (var prop in _dict.Values)
+            {
+                var hashCode = prop.GetHashCode();
+                if (i % 2 == 0)
+                    hash1 = ((hash1 << 5) + hash1 + (hash1 >> 27)) ^ hashCode;
+                else
+                    hash2 = ((hash2 << 5) + hash2 + (hash2 >> 27)) ^ hashCode;
+
+                ++i;
+            }
+
+            return hash1 + (hash2 * 1566083941);
         }
 
         public CssPropertiesSet Clone()

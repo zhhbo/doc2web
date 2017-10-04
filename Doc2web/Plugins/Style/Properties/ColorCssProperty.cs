@@ -61,10 +61,11 @@ namespace Doc2web.Plugins.Style.Properties
             }
         }
 
-        public override bool HaveSameOuput(Color element)
+        public override bool HaveSameOutput(ICssProperty element)
         {
-            var other = new ColorCssProperty(_themeColorProvider) { Element = element };
-            return other.Color == Color;
+            if (element is ColorCssProperty other)
+                return other.Color == Color;
+            return false;
         }
 
 

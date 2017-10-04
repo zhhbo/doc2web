@@ -33,10 +33,13 @@ namespace Doc2web.Plugins.Style.Properties
         public override short GetSpecificHashcode() => 
             (short)(Element.Val?.Value, Color).GetHashCode();
 
-        public override bool HaveSameOuput(Underline element)
+        public override bool HaveSameOutput(ICssProperty element)
         {
-            var other = new UnderlineCssProperty(_themeColorProvider) { Element = element };
-            return other.Style == Style && other.Color == Color;
+            if (element is UnderlineCssProperty other)
+            {
+                return other.Style == Style && other.Color == Color;
+            }
+            return false;
         }
 
         private string Style

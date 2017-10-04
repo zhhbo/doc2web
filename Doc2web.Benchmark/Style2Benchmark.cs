@@ -93,22 +93,38 @@ namespace Doc2web.Benchmark
             _registrator = _container.Resolve<ICssRegistrator2>();
         }
 
-        //[Benchmark]
+        [Benchmark]
         public void RenderAllParagraphStyles()
         {
             for (int i = 0; i < _pPropsStyles.Length; i++)
                 _registrator.RegisterParagraph(_pPropsStyles[i], null);
         }
 
-        //[Benchmark]
+        [Benchmark]
+        public void RenderAllParagraphStylesParallel()
+        {
+            Parallel.ForEach(_pPropsStyles, pPr => _registrator.RegisterParagraph(pPr, null));
+        }
+
+        [Benchmark]
         public void RenderAllRunStyles()
         {
             for (int i = 0; i < _pPropsStyles.Length; i++)
                 for (int j = 0; j < _rPropsStyles.Length; j++)
                     _registrator.RegisterRun(_pPropsStyles[i], _rPropsStyles[j], null);
         }
+        
+        [Benchmark]
+        public void RenderallRunStyles_Parallel()
+        {
+            var comb =
+                _pPropsStyles
+                .SelectMany(pPr => _rPropsStyles.Select(rPr => (pPr, rPr)));
 
-        //[Benchmark]
+            Parallel.ForEach(comb, t => _registrator.RegisterRun(t.pPr, t.rPr, null));
+        }
+
+        [Benchmark]
         public void Render100ParagraphInlines()
         {
             for (int i = 0; i < _pPropsInlines.Length; i++)
@@ -116,10 +132,25 @@ namespace Doc2web.Benchmark
         }
 
         [Benchmark]
+        public void Render100ParagraphInlines_Parallel()
+        {
+            Parallel.ForEach(_pPropsInlines, pPr => _registrator.RegisterParagraph(pPr, null));
+        }
+
+
+        [Benchmark]
         public void Render100RunInlines()
         {
             for (int i = 0; i < _rPropsInlines.Length; i++)
                 _registrator.RegisterRun(null, _rPropsInlines[i], null);
         }
+
+        [Benchmark]
+        public void Render100RunInlines_Parallel()
+        {
+            Parallel.ForEach(_rPropsInlines, rPr => _registrator.RegisterRun(null, rPr, null));
+        }
+
+        public IEnumerable<CssClass2> Registrations => (_registrator as CssRegistrator2).Registrations;
     }
 }

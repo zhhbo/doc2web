@@ -23,7 +23,7 @@ namespace Doc2web.Plugins.Style.Properties
         public override bool Equals(object obj)
         {
             if (obj.GetType() == GetType())
-                return HaveSameOuput(((CssProperty<T>)obj).Element);
+                return HaveSameOutput(((CssProperty<T>)obj));
             return false;
         }
 
@@ -34,8 +34,6 @@ namespace Doc2web.Plugins.Style.Properties
         }
 
         public abstract short GetSpecificHashcode();
-
-        public abstract bool HaveSameOuput(T element);
 
         public virtual void Extends(CssProperty<T> parent) { }
 
@@ -61,5 +59,7 @@ namespace Doc2web.Plugins.Style.Properties
             clone.Selector = Selector;
             return clone;
         }
+
+        public abstract bool HaveSameOutput(ICssProperty prop);
     }
 }

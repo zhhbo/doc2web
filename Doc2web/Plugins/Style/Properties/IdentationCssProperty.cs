@@ -99,10 +99,13 @@ namespace Doc2web.Plugins.Style.Properties
             return 0;
         }
 
-        public override bool HaveSameOuput(Indentation element)
+        public override bool HaveSameOutput(ICssProperty element)
         {
-            var other = new IdentationCssProperty(_config) { Element = element };
-            return other.LeftIndent == LeftIndent && other.RightIndent == RightIndent;
+            if (element is IdentationCssProperty other)
+            {
+                return other.LeftIndent == LeftIndent && other.RightIndent == RightIndent;
+            }
+            return false;
         }
 
         public override ICssProperty Clone() =>

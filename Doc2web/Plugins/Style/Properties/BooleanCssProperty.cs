@@ -45,7 +45,14 @@ namespace Doc2web.Plugins.Style.Properties
             }
             return 0;
         }
-        public override bool HaveSameOuput(T element) => Convert(element) == ExplicitVal;
+        public override bool HaveSameOutput(ICssProperty element)
+        {
+            if (element is BooleanCssProperty<T> other)
+            {
+                return other.ExplicitVal == ExplicitVal;
+            }
+            return false;
+        }
 
     }
 }

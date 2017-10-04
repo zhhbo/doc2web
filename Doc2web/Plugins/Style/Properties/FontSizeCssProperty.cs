@@ -13,15 +13,19 @@ namespace Doc2web.Plugins.Style.Properties
             var size = GetSpecificHashcode();
             if (size != -1)
             {
-                string points = Math.Round((double)GetSpecificHashcode()/2, 2).ToString();
+                string points = Math.Round((double)GetSpecificHashcode() / 2, 2).ToString();
                 cssData.AddAttribute(Selector, "font-size", points + "pt");
             }
         }
 
         public override short GetSpecificHashcode() => GetSize(Element);
 
-        public override bool HaveSameOuput(FontSize element) =>
-            GetSize(element) == GetSpecificHashcode();
+        public override bool HaveSameOutput(ICssProperty element)
+        {
+            if (element is FontSizeCssProperty other)
+                return other.GetSpecificHashcode() == GetSpecificHashcode();
+            return false;
+        }
 
         private static short GetSize(FontSize e)
         {

@@ -67,7 +67,14 @@ namespace Doc2web.Plugins.Numbering
         public override short GetSpecificHashcode() => _indentProp.GetSpecificHashcode();
 
 
-        public override bool HaveSameOuput(Indentation element) => _indentProp.HaveSameOuput(element);
+        public override bool HaveSameOutput(ICssProperty prop)
+        {
+            if (prop is NumberingIndentationCssProperty other)
+            {
+                return _indentProp.HaveSameOutput(other._indentProp);
+            }
+            return false;
+        }
 
         public override ICssProperty Clone()
         {
