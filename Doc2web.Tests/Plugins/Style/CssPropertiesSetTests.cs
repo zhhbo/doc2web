@@ -129,6 +129,7 @@ namespace Doc2web.Tests.Plugins.Style
         public void SetEquals_TrueTest()
         {
             var prop = Substitute.For<ICssProperty>();
+            prop.HaveSameOutput(Arg.Is(prop)).Returns(true);
             var other = new CssPropertiesSet
             {
                 prop

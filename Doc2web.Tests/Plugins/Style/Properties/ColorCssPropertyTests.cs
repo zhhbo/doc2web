@@ -82,10 +82,10 @@ namespace Doc2web.Tests.Plugins.Style.Properties
         [TestMethod]
         public void HasSameOutput_TrueTest()
         {
-            var elem = new Color { Val = new StringValue("000000") };
-            _instance.Element = elem.CloneNode(true) as Color;
-
-            Assert.IsTrue(_instance.HaveSameOuput(elem));
+            Assert.IsTrue(_instance.HaveSameOutput(new ColorCssProperty(_themeColorProvider)
+            {
+                Element = _instance.Element.CloneNode(true) as Color
+            }));
         }
 
         [TestMethod]

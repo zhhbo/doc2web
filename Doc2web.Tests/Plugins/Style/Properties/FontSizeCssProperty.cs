@@ -56,16 +56,21 @@ namespace Doc2web.Tests.Plugins.Style.Properties
             var element = new FontSize { Val = new StringValue("40") };
             FontSize = "40";
 
-            Assert.IsTrue(_instance.HaveSameOuput(element));
+            Assert.IsTrue(_instance.HaveSameOutput(new FontSizeCssProperty
+            {
+                OpenXmlElement = _instance.Element.CloneNode(true)
+            }));
         }
 
         [TestMethod]
         public void HaveSameOutput_FalseTest()
         {
             var element = new FontSize { Val = new StringValue("40") };
-            FontSize = "30";
 
-            Assert.IsFalse(_instance.HaveSameOuput(element));
+            Assert.IsFalse(_instance.HaveSameOutput(new FontSizeCssProperty
+            {
+                Element = element
+            }));
         }
     }
 }

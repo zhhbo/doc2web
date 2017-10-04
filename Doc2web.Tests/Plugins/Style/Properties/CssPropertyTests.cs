@@ -21,7 +21,7 @@ namespace Doc2web.Tests.Plugins.Style.Properties
                 throw new NotImplementedException();
             }
 
-            public override bool HaveSameOuput(Paragraph element)
+            public override bool HaveSameOutput(ICssProperty prop)
             {
                 throw new NotImplementedException();
             }

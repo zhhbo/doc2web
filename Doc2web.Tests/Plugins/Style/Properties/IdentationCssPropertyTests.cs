@@ -138,7 +138,10 @@ namespace Doc2web.Tests.Plugins.Style.Properties
             _instance.Element.Right = new StringValue("360");
             var other = _instance.Element.CloneNode(true) as Indentation;
 
-            Assert.IsTrue(_instance.HaveSameOuput(other));
+            Assert.IsTrue(_instance.HaveSameOutput(new IdentationCssProperty(_config)
+            {
+                Element = other
+            }));
         }
 
         [TestMethod]
@@ -146,7 +149,10 @@ namespace Doc2web.Tests.Plugins.Style.Properties
         {
             var other = new Indentation();
 
-            Assert.IsTrue(_instance.HaveSameOuput(other));
+            Assert.IsTrue(_instance.HaveSameOutput(new IdentationCssProperty(_config)
+            {
+                Element = other
+            }));
         }
 
         [TestMethod]
@@ -156,7 +162,10 @@ namespace Doc2web.Tests.Plugins.Style.Properties
             var other = _instance.Element.CloneNode(true) as Indentation;
             other.Right = new StringValue("720");
 
-            Assert.IsFalse(_instance.HaveSameOuput(other));
+            Assert.IsFalse(_instance.HaveSameOutput(new IdentationCssProperty(_config)
+            {
+                Element = other
+            }));
         }
 
         [TestMethod]
@@ -165,7 +174,10 @@ namespace Doc2web.Tests.Plugins.Style.Properties
             _instance.Element.Left = new StringValue("720");
             var other = new Indentation();
 
-            Assert.IsFalse(_instance.HaveSameOuput(other));
+            Assert.IsFalse(_instance.HaveSameOutput(new IdentationCssProperty(_config)
+            {
+                Element = other
+            }));
         }
 
         [TestMethod]

@@ -118,7 +118,10 @@ namespace Doc2web.Tests.Plugins.Style.Properties
                 .GetFontFace(ThemeFontValues.MajorAscii)
                 .Returns(_instance.Element.ComplexScript.Value);
 
-            Assert.IsTrue(_instance.HaveSameOuput(otherElement));
+            Assert.IsTrue(_instance.HaveSameOutput(new RunFontsCssProperty(_themeFontProvider)
+            {
+                Element = otherElement
+            }));
         }
 
         [TestMethod]
@@ -128,7 +131,10 @@ namespace Doc2web.Tests.Plugins.Style.Properties
             var otherElement = _instance.Element.CloneNode(true) as RunFonts;
             otherElement.ComplexScript = new StringValue("Different");
 
-            Assert.IsFalse(_instance.HaveSameOuput(otherElement));
+            Assert.IsFalse(_instance.HaveSameOutput(new RunFontsCssProperty(_themeFontProvider)
+            {
+                Element = otherElement
+            }));
         }
 
         [TestMethod]
@@ -138,7 +144,10 @@ namespace Doc2web.Tests.Plugins.Style.Properties
             var otherElement = _instance.Element.CloneNode(true) as RunFonts;
             otherElement.HighAnsi = null;
 
-            Assert.IsFalse(_instance.HaveSameOuput(otherElement));
+            Assert.IsFalse(_instance.HaveSameOutput(new RunFontsCssProperty(_themeFontProvider)
+            {
+                Element = otherElement
+            }));
         }
 
         [TestMethod]

@@ -136,6 +136,7 @@ namespace Doc2web.Tests.Plugins.Style
         public void Equals_TrueTest()
         {
             var prop = Substitute.For<ICssProperty>();
+            prop.HaveSameOutput(Arg.Is(prop)).Returns(true);
             var cls1 = new ParagraphCssClass();
             var cls2 = new ParagraphCssClass();
             cls1.ParagraphProps.Add(prop);

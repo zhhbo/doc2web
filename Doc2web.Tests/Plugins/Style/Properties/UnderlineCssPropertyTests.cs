@@ -115,7 +115,10 @@ namespace Doc2web.Tests.Plugins.Style.Properties
             _instance.Element.ThemeColor = new EnumValue<ThemeColorValues>(ThemeColorValues.Dark1);
             var other = _instance.Element.CloneNode(true) as Underline;
 
-            Assert.IsTrue(_instance.HaveSameOuput(other));
+            Assert.IsTrue(_instance.HaveSameOutput(new UnderlineCssProperty(_themeColorProvider)
+            {
+                Element = other
+            }));
 
         }
 
@@ -126,7 +129,10 @@ namespace Doc2web.Tests.Plugins.Style.Properties
             var other = _instance.Element.CloneNode(true) as Underline;
             other.Color = new StringValue("#FFFFFF");
 
-            Assert.IsFalse(_instance.HaveSameOuput(other));
+            Assert.IsFalse(_instance.HaveSameOutput(new UnderlineCssProperty(_themeColorProvider)
+            {
+                Element = other
+            }));
         }
 
         [TestMethod]

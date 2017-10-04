@@ -62,25 +62,31 @@ namespace Doc2web.Tests.Plugins.Style.Properties
         [TestMethod]
         public void HasSameOuput_TrueTest()
         {
-            HighlightColor = HighlightColorValues.DarkGray;
+            var highlightColor = HighlightColorValues.DarkGray;
+            _instance.Element.Val = highlightColor;
             var elem = new Highlight
             {
-                Val = new EnumValue<HighlightColorValues>(HighlightColor)
+                Val = new EnumValue<HighlightColorValues>(highlightColor)
             };
 
-            Assert.IsTrue(_instance.HaveSameOuput(elem));
+            Assert.IsTrue(_instance.HaveSameOutput(new HighlightCssProperty
+            {
+                Element = elem
+            }));
         }
 
         [TestMethod]
         public void HasSameOuput_FalseTest()
         {
-            HighlightColor = HighlightColorValues.DarkGray;
             var elem = new Highlight
             {
                 Val = new EnumValue<HighlightColorValues>(HighlightColorValues.Yellow)
             };
 
-            Assert.IsFalse(_instance.HaveSameOuput(elem));
+            Assert.IsFalse(_instance.HaveSameOutput(new HighlightCssProperty
+            {
+                Element = elem
+            }));
         }
     }
 }

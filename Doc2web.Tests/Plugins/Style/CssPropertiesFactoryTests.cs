@@ -25,7 +25,7 @@ namespace Doc2web.Tests.Plugins.Style
                 throw new NotImplementedException();
             }
 
-            public override bool HaveSameOuput(Bold element)
+            public override bool HaveSameOutput(ICssProperty prop)
             {
                 throw new NotImplementedException();
             }
@@ -43,7 +43,7 @@ namespace Doc2web.Tests.Plugins.Style
                 throw new NotImplementedException();
             }
 
-            public override bool HaveSameOuput(Indentation element)
+            public override bool HaveSameOutput(ICssProperty prop)
             {
                 throw new NotImplementedException();
             }
