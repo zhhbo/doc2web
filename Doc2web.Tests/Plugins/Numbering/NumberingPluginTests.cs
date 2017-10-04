@@ -26,7 +26,7 @@ namespace Doc2web.Tests.Plugins.Numbering
         private Paragraph _p;
         private INumberingMapper _nMapper;
         private IParagraphData _pData;
-        private ICssRegistrator2 _cssRegistrator;
+        private ICssRegistrator _cssRegistrator;
         private IElementContext _elementContext;
         private Level _level;
         private List<HtmlNode> _nodes;
@@ -243,19 +243,19 @@ namespace Doc2web.Tests.Plugins.Numbering
             _nMapper = Substitute.For<INumberingMapper>();
             _nMapper.IsValid.Returns(true);
             _nMapper.GetNumbering(_p).Returns(_pData);
-            _cssRegistrator = Substitute.For<ICssRegistrator2>();
+            _cssRegistrator = Substitute.For<ICssRegistrator>();
             _cssRegistrator
                 //.RegisterNumbering(numberingId, levelId)
                 .RegisterParagraph(Arg.Any<ParagraphProperties>(), (numberingId, levelId))
-                .Returns(new CssClass2 { Name = $"numbering-container-{numberingId}-{levelId}" });
+                .Returns(new CssClass { Name = $"numbering-container-{numberingId}-{levelId}" });
             _cssRegistrator
                 //.RegisterNumbering(numberingId, levelId)
                 .RegisterRun(Arg.Any<ParagraphProperties>(), Arg.Any<RunProperties>(), (numberingId, levelId))
-                .Returns(new CssClass2 { Name = $"numbering-number-{numberingId}-{levelId}" });
+                .Returns(new CssClass { Name = $"numbering-number-{numberingId}-{levelId}" });
 
             _elementContext = Substitute.For<IElementContext>();
             _elementContext.Resolve<INumberingMapper>().Returns(_nMapper);
-            _elementContext.Resolve<ICssRegistrator2>().Returns(_cssRegistrator);
+            _elementContext.Resolve<ICssRegistrator>().Returns(_cssRegistrator);
             _elementContext.Element.Returns(_p);
             _elementContext.RootElement.Returns(_p);
             _elementContext

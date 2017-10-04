@@ -9,14 +9,14 @@ using System.Text;
 namespace Doc2web.Tests.Plugins.Style.Css
 {
     [TestClass]
-    public class CssClass2Tests
+    public class CssClassTests
     {
-        private CssClass2 _instance;
+        private CssClass _instance;
 
         [TestInitialize]
         public void Initialize()
         {
-            _instance = new CssClass2
+            _instance = new CssClass
             {
                 Name = "some-class"
             };

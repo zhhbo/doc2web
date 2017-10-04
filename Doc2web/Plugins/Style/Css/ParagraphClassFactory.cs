@@ -31,9 +31,9 @@ namespace Doc2web.Plugins.Style.Css
             _defaultsProvider = defaultsProvider;
         }
 
-        public CssClass2 Build(ParagraphClassParam param)
+        public CssClass Build(ParagraphClassParam param)
         {
-            var cssClass = new CssClass2();
+            var cssClass = new CssClass();
             cssClass.Props = BuildInline(param.InlineProperties);
 
             AddStyleProps(param.StyleId, cssClass);
@@ -44,12 +44,12 @@ namespace Doc2web.Plugins.Style.Css
             return cssClass;
         }
 
-        private void AddDefaultsProps(CssClass2 cssClass)
+        private void AddDefaultsProps(CssClass cssClass)
         {
             AddOrSet(cssClass, _defaultsProvider.Paragraph);
         }
 
-        private void AddNumberingStyleProps(ParagraphClassParam param, CssClass2 cssClass)
+        private void AddNumberingStyleProps(ParagraphClassParam param, CssClass cssClass)
         {
             if (!param.NumberingId.HasValue || !param.NumberingLevel.HasValue) return;
             AddOrSet(
@@ -59,7 +59,7 @@ namespace Doc2web.Plugins.Style.Css
                     param.NumberingLevel.Value));
         }
 
-        private void AddStyleProps(string styleId, CssClass2 cssClass)
+        private void AddStyleProps(string styleId, CssClass cssClass)
         {
             if (styleId == null) return;
             AddOrSet(cssClass, _stylePropsCache.Get(styleId));
@@ -83,7 +83,7 @@ namespace Doc2web.Plugins.Style.Css
             //return _config.DynamicCssClassPrefix + uid;
         }
 
-        private void AddOrSet(CssClass2 cssClass, CssPropertiesSet props)
+        private void AddOrSet(CssClass cssClass, CssPropertiesSet props)
         {
             if (cssClass.Props.Count > 0)
                 cssClass.Props.AddMany(props);

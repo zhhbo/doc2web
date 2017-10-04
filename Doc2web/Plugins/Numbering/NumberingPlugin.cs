@@ -53,7 +53,7 @@ namespace Doc2web.Plugins.Numbering
             var numbering = numberingMapper.GetNumbering(p);
             if (numbering != null)
             {
-                var cssRegistrator = context.Resolve<ICssRegistrator2>();
+                var cssRegistrator = context.Resolve<ICssRegistrator>();
                 var cssClass = cssRegistrator.RegisterParagraph(
                     p.ParagraphProperties,
                     (numbering.NumberingId, numbering.LevelIndex));
@@ -109,7 +109,7 @@ namespace Doc2web.Plugins.Numbering
             return node;
         }
 
-        private HtmlNode BuildNumberMin(Paragraph p, ICssRegistrator2 cssRegistrator, IParagraphData paragraphData)
+        private HtmlNode BuildNumberMin(Paragraph p, ICssRegistrator cssRegistrator, IParagraphData paragraphData)
         {
             var node = new HtmlNode
             {

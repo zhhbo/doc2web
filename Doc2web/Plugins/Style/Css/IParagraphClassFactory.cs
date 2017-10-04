@@ -6,6 +6,6 @@ namespace Doc2web.Plugins.Style.Css
 {
     public interface IParagraphClassFactory
     {
-        CssClass2 Build(ParagraphClassParam param);
+        CssClass Build(ParagraphClassParam param);
     }
 }

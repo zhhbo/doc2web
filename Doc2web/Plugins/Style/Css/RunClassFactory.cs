@@ -35,9 +35,9 @@ namespace Doc2web.Plugins.Style.Css
             _propsFac = factoryBuilder(CssPropertySource.Run);
         }
 
-        public CssClass2 Build(RunClassParam param)
+        public CssClass Build(RunClassParam param)
         {
-            var cssClass = new CssClass2();
+            var cssClass = new CssClass();
             var inline = BuildInline(param.InlineProperties);
 
             // I don't know which one is right...
@@ -64,24 +64,24 @@ namespace Doc2web.Plugins.Style.Css
             return cssClass;
         }
 
-        private void AddDefaults(CssClass2 cssClass)
+        private void AddDefaults(CssClass cssClass)
         {
             cssClass.Props.AddMany(_defaults.Run);
         }
 
-        private void AddNumberingProps(CssClass2 cssClass, RunClassParam param)
+        private void AddNumberingProps(CssClass cssClass, RunClassParam param)
         {
             if (!param.NumberingId.HasValue || !param.NumberingLevel.HasValue) return;
             cssClass.Props.AddMany(_numPropsCache.Get(param.NumberingId.Value, param.NumberingLevel.Value));
         }
 
-        private void AddParagraphStyle(CssClass2 cssClass, string styleId)
+        private void AddParagraphStyle(CssClass cssClass, string styleId)
         {
             if (styleId == null) return;
             cssClass.Props.AddMany(_pStylePropsCache.Get(styleId));
         }
 
-        private void AddRunStyle(CssClass2 cssClass, string styleId)
+        private void AddRunStyle(CssClass cssClass, string styleId)
         {
             if (styleId == null) return;
             cssClass.Props.AddMany(_rStylePropsCache.Get(styleId));

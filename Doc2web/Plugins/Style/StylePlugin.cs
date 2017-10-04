@@ -50,8 +50,8 @@ namespace Doc2web.Plugins.Style
         private static void RegisterApi(ContainerBuilder builder)
         {
             builder
-                .RegisterType<CssRegistrator2>()
-                .As<ICssRegistrator2>()
+                .RegisterType<CssRegistrator>()
+                .As<ICssRegistrator>()
                 .InstancePerLifetimeScope();
         }
 
@@ -158,7 +158,7 @@ namespace Doc2web.Plugins.Style
         [PostProcessing]
         public void InjectCss(IGlobalContext context)
         {
-            var cssRegistrator = context.Resolve<ICssRegistrator2>();
+            var cssRegistrator = context.Resolve<ICssRegistrator>();
             var data = new CssData();
             var sb = new StringBuilder();
 

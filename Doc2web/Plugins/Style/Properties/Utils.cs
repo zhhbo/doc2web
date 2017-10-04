@@ -30,13 +30,6 @@ namespace Doc2web.Plugins.Style.Properties
             return cssData;
         }
 
-        public static CssData AsCss(this ICssClass cls)
-        {
-            var cssData = new CssData();
-            cls.InsertCss(cssData);
-            return cssData;
-        }
-
         public static double TwipsToCm(int twips)
         {
             return twips / 567.0;

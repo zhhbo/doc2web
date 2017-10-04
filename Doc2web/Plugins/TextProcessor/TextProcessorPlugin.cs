@@ -53,14 +53,14 @@ namespace Doc2web.Plugins.TextProcessor
             var pPr = p.ParagraphProperties;
             if (pPr != null)
             {
-                var cssRegistrator = context.Resolve<ICssRegistrator2>();
+                var cssRegistrator = context.Resolve<ICssRegistrator>();
                 var cssClass = cssRegistrator.RegisterParagraph(pPr);
                 containerNode.AddClasses(cssClass.Name);
                 AddIndentationIfRequired(context, cssClass);
             }
         }
 
-        private void AddIndentationIfRequired(IElementContext context, CssClass2 cssClass)
+        private void AddIndentationIfRequired(IElementContext context, CssClass cssClass)
         {
             if (cssClass.Name.Length == 0) return;
 
@@ -115,7 +115,7 @@ namespace Doc2web.Plugins.TextProcessor
         [ElementProcessing]
         public void ProcessRun(IElementContext context, Run r)
         {
-            var cssRegistrator = context.Resolve<ICssRegistrator2>();
+            var cssRegistrator = context.Resolve<ICssRegistrator>();
             if (r.InnerText.Length > 0)
             {
                 var node = new HtmlNode

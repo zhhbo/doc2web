@@ -8,30 +8,30 @@ using System.Linq;
 
 namespace Doc2web.Plugins.Style.Css
 {
-    public class CssRegistrator2 : ICssRegistrator2, IEqualityComparer<CssClass2>
+    public class CssRegistrator : ICssRegistrator, IEqualityComparer<CssClass>
     {
         private IParagraphClassFactory _paragraphClassFactory;
         private IRunClassFactory _runClassFactory;
-        private ConcurrentDictionary<CssClass2, CssClass2> _registrations;
+        private ConcurrentDictionary<CssClass, CssClass> _registrations;
 
-        public CssRegistrator2(
+        public CssRegistrator(
             IParagraphClassFactory paragraphClassFactory,
             IRunClassFactory runClassFactory)
         {
             _paragraphClassFactory = paragraphClassFactory;
             _runClassFactory = runClassFactory;
-            _registrations = new ConcurrentDictionary<CssClass2, CssClass2>(this);
+            _registrations = new ConcurrentDictionary<CssClass, CssClass>(this);
         }
 
-        public IEnumerable<CssClass2> Registrations => _registrations.Keys;
+        public IEnumerable<CssClass> Registrations => _registrations.Keys;
 
-        public bool Equals(CssClass2 x, CssClass2 y) =>
+        public bool Equals(CssClass x, CssClass y) =>
             x.Props.SetEquals(y.Props);
 
-        public int GetHashCode(CssClass2 obj) =>
+        public int GetHashCode(CssClass obj) =>
             obj.Props.GetHashCode();
 
-        public CssClass2 RegisterParagraph(
+        public CssClass RegisterParagraph(
             ParagraphProperties inlineProps,
             (int, int)? numbering=null)
         {
@@ -46,7 +46,7 @@ namespace Doc2web.Plugins.Style.Css
             return AddOrSet(cssClass);
         }
 
-        public CssClass2 RegisterRun(
+        public CssClass RegisterRun(
             ParagraphProperties parentProps, 
             OpenXmlElement inlineProps,
             (int, int)? numbering=null)
@@ -64,7 +64,7 @@ namespace Doc2web.Plugins.Style.Css
         }
 
 
-        private CssClass2 AddOrSet(CssClass2 cssClass)
+        private CssClass AddOrSet(CssClass cssClass)
         {
             return _registrations.GetOrAdd(cssClass, cssClass);
         }

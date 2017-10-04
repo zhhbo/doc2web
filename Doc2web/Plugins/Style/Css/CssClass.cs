@@ -4,13 +4,13 @@ using System.Text;
 
 namespace Doc2web.Plugins.Style.Css
 {
-    public class CssClass2
+    public class CssClass
     {
         public CssPropertiesSet Props { get; set; }
 
         public string Name { get; set; }
 
-        public CssClass2()
+        public CssClass()
         {
             Props = new CssPropertiesSet();
         }

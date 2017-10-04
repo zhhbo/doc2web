@@ -11,18 +11,18 @@ using System.Text;
 namespace Doc2web.Tests.Plugins.Style.Css
 {
     [TestClass]
-    public class CssRegistrator2Tests
+    public class CssRegistratorTests
     {
         private IParagraphClassFactory _paragraphClassFactory;
         private IRunClassFactory _runClassFactory;
-        private CssRegistrator2 _instance;
+        private CssRegistrator _instance;
 
         [TestInitialize]
         public void Initialize()
         {
             _paragraphClassFactory = Substitute.For<IParagraphClassFactory>();
             _runClassFactory = Substitute.For<IRunClassFactory>();
-            _instance = new CssRegistrator2(_paragraphClassFactory, _runClassFactory);
+            _instance = new CssRegistrator(_paragraphClassFactory, _runClassFactory);
         }
 
         [TestMethod]
@@ -34,8 +34,8 @@ namespace Doc2web.Tests.Plugins.Style.Css
         [TestMethod]
         public void Equals_TrueTest()
         {
-            var cls1 = new CssClass2 { Props = new CssPropertiesSet { new MockProp1() } };
-            var cls2 = new CssClass2 { Props = new CssPropertiesSet { new MockProp1() } };
+            var cls1 = new CssClass { Props = new CssPropertiesSet { new MockProp1() } };
+            var cls2 = new CssClass { Props = new CssPropertiesSet { new MockProp1() } };
 
             Assert.IsTrue(_instance.Equals(cls1, cls2));
         }
@@ -43,8 +43,8 @@ namespace Doc2web.Tests.Plugins.Style.Css
         [TestMethod]
         public void Equals_FalseTest()
         {
-            var cls1 = new CssClass2 { Props = new CssPropertiesSet { new MockProp1() } };
-            var cls2 = new CssClass2 { Props = new CssPropertiesSet { new MockProp2() } };
+            var cls1 = new CssClass { Props = new CssPropertiesSet { new MockProp1() } };
+            var cls2 = new CssClass { Props = new CssPropertiesSet { new MockProp2() } };
 
             Assert.IsFalse(_instance.Equals(cls1, cls2));
         }
@@ -52,7 +52,7 @@ namespace Doc2web.Tests.Plugins.Style.Css
         [TestMethod]
         public void GetHashCode_Test()
         {
-            var cls = new CssClass2 { Props = new CssPropertiesSet { new MockProp1() } };
+            var cls = new CssClass { Props = new CssPropertiesSet { new MockProp1() } };
 
             Assert.AreEqual(cls.Props.GetHashCode(), _instance.GetHashCode(cls));
         }
@@ -60,7 +60,7 @@ namespace Doc2web.Tests.Plugins.Style.Css
         [TestMethod]
         public void Register_NewParagraphTest()
         {
-            var output = new CssClass2();
+            var output = new CssClass();
             _paragraphClassFactory
                 .Build(Arg.Any<ParagraphClassParam>())
                 .Returns(output);
@@ -87,7 +87,7 @@ namespace Doc2web.Tests.Plugins.Style.Css
             };
             _paragraphClassFactory
                 .Build(Arg.Any<ParagraphClassParam>())
-                .Returns(x => new CssClass2 { Props = props });
+                .Returns(x => new CssClass { Props = props });
 
             var result1 = _instance.RegisterParagraph(BuildPPr());
             var result2 = _instance.RegisterParagraph(BuildPPr());
@@ -99,7 +99,7 @@ namespace Doc2web.Tests.Plugins.Style.Css
         [TestMethod]
         public void RegisterRun_NewTest()
         {
-            var output = new CssClass2();
+            var output = new CssClass();
             _runClassFactory
                 .Build(Arg.Any<RunClassParam>())
                 .Returns(output);
@@ -123,10 +123,10 @@ namespace Doc2web.Tests.Plugins.Style.Css
         public void Register_ExistingRun()
         {
             var props = new CssPropertiesSet { new MockProp1(), new MockProp2() };
-            var output = new CssClass2();
+            var output = new CssClass();
             _runClassFactory
                 .Build(Arg.Any<RunClassParam>())
-                .Returns(x => new CssClass2 { Props = props });
+                .Returns(x => new CssClass { Props = props });
 
             var result1 = _instance.RegisterRun(BuildPPr(), BuildRPr());
             var result2 = _instance.RegisterRun(BuildPPr(), BuildRPr());
@@ -142,13 +142,13 @@ namespace Doc2web.Tests.Plugins.Style.Css
             expected.AddAttribute("span", "color", "red");
             expected.AddAttribute("p", "border", "1px solid black");
 
-            var cls1 = new CssClass2
+            var cls1 = new CssClass
             {
                 Props = new CssPropertiesSet {
                     new MockProp1 { Out = ("span", "color", "red")}
                 }
             };
-            var cls2 = new CssClass2
+            var cls2 = new CssClass
             {
                 Props = new CssPropertiesSet
                 {

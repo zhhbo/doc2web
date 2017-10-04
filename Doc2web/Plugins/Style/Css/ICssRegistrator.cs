@@ -6,13 +6,13 @@ using System.Text;
 
 namespace Doc2web.Plugins.Style.Css
 {
-    public interface ICssRegistrator2
+    public interface ICssRegistrator
     {
-        CssClass2 RegisterParagraph(
+        CssClass RegisterParagraph(
             ParagraphProperties inlineProps, 
             (int, int)? numbering=null);
 
-        CssClass2 RegisterRun(
+        CssClass RegisterRun(
             ParagraphProperties parentProps, 
             OpenXmlElement inlineProps,
             (int, int)? numbering);

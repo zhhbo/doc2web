@@ -9,7 +9,7 @@ namespace Doc2web.Tests.Plugins.Style.Css
 {
     public static class Utils
     {
-        public static void AssertDynamicClass(StyleConfig config, CssClass2 result)
+        public static void AssertDynamicClass(StyleConfig config, CssClass result)
         {
             Assert.IsTrue(result.Name.StartsWith(config.DynamicCssClassPrefix));
         }

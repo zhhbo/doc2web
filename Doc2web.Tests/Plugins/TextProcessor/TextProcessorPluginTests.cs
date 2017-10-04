@@ -26,7 +26,7 @@ namespace Doc2web.Tests.Plugins.TextProcessor
         private ChildElementContext _rContext;
         private Paragraph _p;
         private IContextNestingHandler _nestingHandler;
-        private ICssRegistrator2 _cssRegistrator;
+        private ICssRegistrator _cssRegistrator;
 
         [TestInitialize]
         public void Initialize()
@@ -36,11 +36,11 @@ namespace Doc2web.Tests.Plugins.TextProcessor
             _r = new Run(new Text("Some text."));
             _p = new Paragraph(_r);
             _nestingHandler = Substitute.For<IContextNestingHandler>();
-            _cssRegistrator = Substitute.For<ICssRegistrator2>();
+            _cssRegistrator = Substitute.For<ICssRegistrator>();
             _globalContext = Substitute.For<IGlobalContext>();
-            _globalContext.Resolve<ICssRegistrator2>().Returns(_cssRegistrator);
-            _cssRegistrator.RegisterParagraph(null, null).ReturnsForAnyArgs(x => new CssClass2());
-            _cssRegistrator.RegisterRun(null, null, null).ReturnsForAnyArgs(x => new CssClass2());
+            _globalContext.Resolve<ICssRegistrator>().Returns(_cssRegistrator);
+            _cssRegistrator.RegisterParagraph(null, null).ReturnsForAnyArgs(x => new CssClass());
+            _cssRegistrator.RegisterRun(null, null, null).ReturnsForAnyArgs(x => new CssClass());
 
             _pContext = new RootElementContext(_globalContext, _p)
             {
@@ -152,7 +152,7 @@ namespace Doc2web.Tests.Plugins.TextProcessor
             var pPr = new ParagraphProperties();
             _cssRegistrator
                 .RegisterParagraph(pPr)
-                .Returns(new CssClass2 { Name = styleName });
+                .Returns(new CssClass { Name = styleName });
             _p.InsertAt(pPr, 0);
 
             _instance.ProcessParagraph(_pContext, _p);
@@ -185,7 +185,7 @@ namespace Doc2web.Tests.Plugins.TextProcessor
             var rPr = new RunProperties();
             _cssRegistrator
                 .RegisterRun((_rContext.RootElement as Paragraph).ParagraphProperties, rPr, null)
-                .Returns(new CssClass2 { Name = styleName });
+                .Returns(new CssClass { Name = styleName });
             _r.InsertAt(rPr, 0);
 
             _instance.ProcessRun(_rContext, _r);
@@ -198,7 +198,7 @@ namespace Doc2web.Tests.Plugins.TextProcessor
             _p.ParagraphProperties = new ParagraphProperties();
             _cssRegistrator
                 .RegisterParagraph(Arg.Is(_p.ParagraphProperties), null)
-                .Returns(x => new CssClass2
+                .Returns(x => new CssClass
                 {
                     Name = clsName,
                     Props = new CssPropertiesSet {

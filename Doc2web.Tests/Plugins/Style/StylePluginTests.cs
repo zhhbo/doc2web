@@ -27,7 +27,7 @@ namespace Doc2web.Tests.Plugins.Style
 
             _instance.InitEngine(containerBuilder);
             var container = containerBuilder.Build();
-            var registrator = container.Resolve<ICssRegistrator2>();
+            var registrator = container.Resolve<ICssRegistrator>();
 
             Assert.IsNotNull(registrator);
         }
@@ -35,12 +35,12 @@ namespace Doc2web.Tests.Plugins.Style
         [TestMethod]
         public void InjectCss_Test()
         {
-            var cssRegistrator = Substitute.For<ICssRegistrator2>();
+            var cssRegistrator = Substitute.For<ICssRegistrator>();
             cssRegistrator
                 .When(x =>x.InsertCss(Arg.Any<CssData>()))
                 .Do(x => InsertCss(x.ArgAt<CssData>(0)));
             var context = Substitute.For<IGlobalContext>();
-            context.Resolve<ICssRegistrator2>().Returns(cssRegistrator);
+            context.Resolve<ICssRegistrator>().Returns(cssRegistrator);
 
             _instance.InjectCss(context);
 

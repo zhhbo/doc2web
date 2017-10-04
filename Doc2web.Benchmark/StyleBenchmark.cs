@@ -2,6 +2,7 @@
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Attributes.Jobs;
 using Doc2web.Plugins.Style;
+using Doc2web.Plugins.Style.Css;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
 using System;
@@ -19,73 +20,137 @@ namespace Doc2web.Benchmark
         private StylePlugin _plugin;
         private ContainerBuilder _containerBuilder;
         private IContainer _container;
-        private ILifetimeScope _lts;
-        private ParagraphProperties[] _paragraphProperties;
-        private RunProperties[] _runProperties;
-        private Task[] _tasks;
-
-        private Body Body => _wpDoc.MainDocumentPart.Document.Body;
-        private ICssRegistrator Registrator => _container.Resolve<ICssRegistrator>();
+        private ICssRegistrator _registrator;
+        private Style[] _styles;
+        private ParagraphProperties[] _pPropsStyles;
+        private ParagraphProperties[] _pPropsInlines;
+        private RunProperties[] _rPropsStyles;
+        private RunProperties[] _rPropsInlines;
 
         [GlobalSetup]
         public void Setup()
         {
-            _wpDoc = WordprocessingDocument.Open(Utils.GetAssetPath("transaction-formatted.docx"), false);
+            _wpDoc = WordprocessingDocument.Open(Utils.GetAssetPath("shareholders.docx"), false);
             _plugin = new StylePlugin(_wpDoc);
-            _containerBuilder = new ContainerBuilder();
-            _plugin.InitEngine(_containerBuilder);
-            _container = _containerBuilder.Build();
-        }
 
-        [IterationSetup(Target = nameof(RegisterDynamics))]
-        public void SetupDynamic()
-        {
-            _lts = _container.BeginLifetimeScope();
-            _paragraphProperties = Body.Descendants<ParagraphProperties>().ToArray();
-            _runProperties = Body.Descendants<RunProperties>().ToArray();
-        }
-
-        [Benchmark]
-        public void RegisterDynamics()
-        {
-            var t1 =
-                _paragraphProperties
-                .Select(x => Task.Factory.StartNew(() => Registrator.RegisterParagraphProperties(x)))
-                .ToArray();
-
-            var t2 =
-                _runProperties
-                .Select(x => Task.Factory.StartNew(() => Registrator.RegisterRunProperties(x)))
-                .ToArray();
-
-            Task.WaitAll(t1);
-            Task.WaitAll(t2);
-        }
-
-        [GlobalSetup(Target = nameof(RenderStyles))]
-        public void AddAllStyles ()
-        {
-            var styles =
+            _styles =
                 _wpDoc
                 .MainDocumentPart
                 .StyleDefinitionsPart
                 .Styles
-                .Elements<DocumentFormat.OpenXml.Wordprocessing.Style>()
+                .Elements<Style>()
                 .Where(x => x.StyleId?.Value != null)
-                .Select(x => x.StyleId.Value)
                 .Distinct()
                 .ToArray();
 
-            for (int i = 0; i < styles.Length; i++)
-                Registrator.RegisterStyle(styles[i]);
+            _pPropsStyles =
+                _styles
+                .Where(x => x.Type?.Value == StyleValues.Paragraph)
+                .Select(x => new ParagraphProperties
+                {
+                    ParagraphStyleId = new ParagraphStyleId()
+                    {
+                        Val = x.StyleId.Value
+                    }
+                })
+                .ToArray();
 
-            (Registrator as CssRegistrator).RenderInto(new StringBuilder()); // make sure everything is cached...
+            _rPropsStyles =
+                _styles
+                .Where(x => x.Type?.Value == StyleValues.Character)
+                .Select(x => new RunProperties
+                {
+                    RunStyle = new RunStyle()
+                    {
+                        Val = x.StyleId.Value
+                    }
+                })
+                .ToArray();
+
+            _pPropsInlines =
+                _wpDoc.MainDocumentPart.Document.Body
+                .Descendants<ParagraphProperties>()
+                .Where(x => x.ChildElements?.Count > 2)
+                .Take(100)
+                .ToArray();
+
+            _rPropsInlines =
+                _wpDoc.MainDocumentPart.Document.Body
+                .Descendants<RunProperties>()
+                .Where(x => x.ChildElements?.Count > 2)
+                .Take(100)
+                .ToArray();
+
+            Console.WriteLine($"Paragraph style count: {_pPropsStyles.Length}\tRun style count: {_rPropsStyles.Length}");
+        }
+
+        [IterationSetup]
+        public void ResetContainer()
+        {
+            _containerBuilder = new ContainerBuilder();
+            _plugin.InitEngine(_containerBuilder);
+            _container = _containerBuilder.Build();
+            _registrator = _container.Resolve<ICssRegistrator>();
         }
 
         [Benchmark]
-        public void RenderStyles()
+        public void RenderAllParagraphStyles()
         {
-            (Registrator as CssRegistrator).RenderInto(new StringBuilder());
+            for (int i = 0; i < _pPropsStyles.Length; i++)
+                _registrator.RegisterParagraph(_pPropsStyles[i], null);
         }
+
+        [Benchmark]
+        public void RenderAllParagraphStylesParallel()
+        {
+            Parallel.ForEach(_pPropsStyles, pPr => _registrator.RegisterParagraph(pPr, null));
+        }
+
+        [Benchmark]
+        public void RenderAllRunStyles()
+        {
+            for (int i = 0; i < _pPropsStyles.Length; i++)
+                for (int j = 0; j < _rPropsStyles.Length; j++)
+                    _registrator.RegisterRun(_pPropsStyles[i], _rPropsStyles[j], null);
+        }
+        
+        [Benchmark]
+        public void RenderallRunStyles_Parallel()
+        {
+            var comb =
+                _pPropsStyles
+                .SelectMany(pPr => _rPropsStyles.Select(rPr => (pPr, rPr)));
+
+            Parallel.ForEach(comb, t => _registrator.RegisterRun(t.pPr, t.rPr, null));
+        }
+
+        [Benchmark]
+        public void Render100ParagraphInlines()
+        {
+            for (int i = 0; i < _pPropsInlines.Length; i++)
+                _registrator.RegisterParagraph(_pPropsInlines[i], null);
+        }
+
+        [Benchmark]
+        public void Render100ParagraphInlines_Parallel()
+        {
+            Parallel.ForEach(_pPropsInlines, pPr => _registrator.RegisterParagraph(pPr, null));
+        }
+
+
+        [Benchmark]
+        public void Render100RunInlines()
+        {
+            for (int i = 0; i < _rPropsInlines.Length; i++)
+                _registrator.RegisterRun(null, _rPropsInlines[i], null);
+        }
+
+        [Benchmark]
+        public void Render100RunInlines_Parallel()
+        {
+            Parallel.ForEach(_rPropsInlines, rPr => _registrator.RegisterRun(null, rPr, null));
+        }
+
+        public IEnumerable<CssClass> Registrations => (_registrator as CssRegistrator).Registrations;
     }
 }
