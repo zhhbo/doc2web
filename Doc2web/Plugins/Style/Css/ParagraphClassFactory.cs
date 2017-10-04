@@ -9,6 +9,7 @@ namespace Doc2web.Plugins.Style.Css
     public class ParagraphClassFactory : IParagraphClassFactory
     {
         private StyleConfig _config;
+        private ClsNameGenerator _clsNameGenerator;
         private ICssPropertiesFactory _propsFac;
         private IStylePropsCache _stylePropsCache;
         private INumberingPropsCache _numPropsCache;
@@ -16,12 +17,14 @@ namespace Doc2web.Plugins.Style.Css
 
         public ParagraphClassFactory(
             StyleConfig config,
+            ClsNameGenerator clsNameGenerator,
             IDefaultsProvider defaultsProvider,
             IStylePropsCache stylePropsCache,
             INumberingPropsCache numPropsCache,
             Func<CssPropertySource, ICssPropertiesFactory> _facBuiler)
         {
             _config = config;
+            _clsNameGenerator = clsNameGenerator;
             _propsFac = _facBuiler(CssPropertySource.Paragraph);
             _stylePropsCache = stylePropsCache;
             _numPropsCache = numPropsCache;
@@ -75,8 +78,9 @@ namespace Doc2web.Plugins.Style.Css
 
         private string GenerateDynName()
         {
-            var uid = Guid.NewGuid().ToString().Replace("-", "");
-            return _config.DynamicCssClassPrefix + uid;
+            return _clsNameGenerator.GenId();
+            //var uid = Guid.NewGuid().ToString().Replace("-", "");
+            //return _config.DynamicCssClassPrefix + uid;
         }
 
         private void AddOrSet(CssClass2 cssClass, CssPropertiesSet props)

@@ -32,6 +32,7 @@ namespace Doc2web.Tests.Plugins.Style.Css
             _defaults.Paragraph.Returns(new CssPropertiesSet());
             _instance = new ParagraphClassFactory(
                 _config,
+                new ClsNameGenerator(_config),
                 _defaults,
                 _stylePropsCache,
                 _numPropsCache,
@@ -115,7 +116,6 @@ namespace Doc2web.Tests.Plugins.Style.Css
                 InlineProperties = pPr
             });
 
-            //Assert.AreEqual(styleId, result.Name);
             Assert.IsTrue(props.SetEquals(result.Props));
         }
 

@@ -35,6 +35,7 @@ namespace Doc2web.Tests.Plugins.Style.Css
 
             _instance = new RunClassFactory(
                 _config,
+                new ClsNameGenerator(_config),
                 _defaults,
                 _pStylePropsCache,
                 _numPropsCache,

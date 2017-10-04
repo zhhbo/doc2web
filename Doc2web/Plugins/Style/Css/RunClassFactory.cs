@@ -10,6 +10,7 @@ namespace Doc2web.Plugins.Style.Css
     public class RunClassFactory : IRunClassFactory
     {
         private StyleConfig _config;
+        private ClsNameGenerator _clsNameGenerator;
         private IDefaultsProvider _defaults;
         private IStylePropsCache _pStylePropsCache;
         private INumberingPropsCache _numPropsCache;
@@ -18,6 +19,7 @@ namespace Doc2web.Plugins.Style.Css
 
         public RunClassFactory(
             StyleConfig config,
+            ClsNameGenerator clsNameGenerator,
             IDefaultsProvider defaults,
             IStylePropsCache pStylePropsCache,
             INumberingPropsCache numPropsCache,
@@ -25,6 +27,7 @@ namespace Doc2web.Plugins.Style.Css
             Func<CssPropertySource, ICssPropertiesFactory> factoryBuilder)
         {
             _config = config;
+            _clsNameGenerator = clsNameGenerator;
             _defaults = defaults;
             _pStylePropsCache = pStylePropsCache;
             _numPropsCache = numPropsCache;
@@ -82,9 +85,7 @@ namespace Doc2web.Plugins.Style.Css
             param.ParagraphStyleId == null &&
             (!param.NumberingId.HasValue || !param.NumberingLevel.HasValue);
 
-        private string GenerageDynamicName() =>
-            _config.DynamicCssClassPrefix +
-            Guid.NewGuid().ToString().Replace("-", "");
+        private string GenerageDynamicName() => _clsNameGenerator.GenId();
 
         private CssPropertiesSet BuildInline(OpenXmlElement rProps)
         {

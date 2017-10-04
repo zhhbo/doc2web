@@ -57,9 +57,12 @@ namespace Doc2web.Plugins.Style
 
         private static void RegisterClassFactories(ContainerBuilder builder)
         {
+            builder.RegisterType<ClsNameGenerator>()
+                .SingleInstance();
             builder.Register(c =>
                 new ParagraphClassFactory(
                     c.Resolve<StyleConfig>(),
+                    c.Resolve<ClsNameGenerator>(),
                     c.Resolve<IDefaultsProvider>(),
                     c.Resolve<PStylePPropsCache>(),
                     c.Resolve<ContainerNumberingPropsCache>(),
@@ -69,6 +72,7 @@ namespace Doc2web.Plugins.Style
             builder.Register(c =>
                 new RunClassFactory(
                     c.Resolve<StyleConfig>(),
+                    c.Resolve<ClsNameGenerator>(),
                     c.Resolve<IDefaultsProvider>(),
                     c.Resolve<PStyleRPropsCache>(),
                     c.Resolve<NumberNumberingPropsCache>(),

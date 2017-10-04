@@ -18,7 +18,7 @@ namespace Doc2web.Plugins.Style
             RunCssClassPrefix = "span";
             LeftIdentationCssClassPrefix = ".leftspacer";
             RightIdentationCssClassPrefix = ".rightspacer";
-            DynamicCssClassPrefix = "dyn";
+            DynamicCssClassPrefix = "d";
         }
 
         public StyleConfig Clone() =>
