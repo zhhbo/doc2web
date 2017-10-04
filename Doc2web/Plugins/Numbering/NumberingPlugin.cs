@@ -125,12 +125,7 @@ namespace Doc2web.Plugins.Numbering
                 p.ParagraphProperties?.ParagraphMarkRunProperties,
                 (paragraphData.NumberingId, paragraphData.LevelIndex));
             node.AddClasses(cssClass.Name);
-            //var dynProp = p.ParagraphProperties?.ParagraphMarkRunProperties;
-            //if (dynProp != null)
-            //{
-            //    var cls = icssRegistrator.RegisterRunProperties(dynProp);
-            //    node.AddClasses(cls);
-            //}
+
             var level = paragraphData.LevelXmlElement;
             if (level.LevelSuffix?.Val?.Value == LevelSuffixValues.Space)
             {

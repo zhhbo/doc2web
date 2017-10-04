@@ -9,7 +9,17 @@ namespace Doc2web.Plugins.Style.Properties
     public abstract class BooleanCssProperty<T> : CssProperty<T>
         where T : OnOffType
     {
-        protected bool? ExplicitVal => Convert(Element);
+        public override OpenXmlElement OpenXmlElement
+        {
+            get => base.OpenXmlElement;
+            set
+            {
+                base.OpenXmlElement = value;
+                ExplicitVal = Convert(Element);
+            }
+        }
+
+        public bool? ExplicitVal { get; private set; }
 
         private static bool? Convert(OnOffType elem)
         {
@@ -52,6 +62,15 @@ namespace Doc2web.Plugins.Style.Properties
                 return other.ExplicitVal == ExplicitVal;
             }
             return false;
+        }
+
+        public override void Extends(CssProperty<T> parent)
+        {
+            var other = parent as BooleanCssProperty<T>;
+            if (other == null) return;
+
+            if (!ExplicitVal.HasValue && other.ExplicitVal.HasValue)
+                ExplicitVal = other.ExplicitVal;
         }
 
     }

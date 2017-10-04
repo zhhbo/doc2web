@@ -39,9 +39,17 @@ namespace Doc2web.Plugins.Style.Css
         {
             var cssClass = new CssClass2();
             var inline = BuildInline(param.InlineProperties);
+
+            // I don't know which one is right...
+
             cssClass.Props.AddMany(inline);
             AddRunStyle(cssClass, param.RunStyleId);
             AddNumberingProps(cssClass, param);
+
+            //AddNumberingProps(cssClass, param);
+            //cssClass.Props.AddMany(inline);
+            //AddRunStyle(cssClass, param.RunStyleId);
+
             AddParagraphStyle(cssClass, param.ParagraphStyleId);
 
 
