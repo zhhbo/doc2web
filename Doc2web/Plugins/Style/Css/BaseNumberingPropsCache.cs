@@ -34,7 +34,11 @@ namespace Doc2web.Plugins.Style.Css
 
             lock (_cache)
             {
-                _cache.Add((numberingId, levelIndex), newEntry);
+                try
+                {
+                    _cache.Add((numberingId, levelIndex), newEntry);
+                }
+                catch (ArgumentException) { }
             }
 
             return newEntry.Clone();

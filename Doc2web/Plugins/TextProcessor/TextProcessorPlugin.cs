@@ -1,6 +1,7 @@
 ﻿using Autofac;
 using Doc2web.Plugins.Style;
 using Doc2web.Plugins.Style.Css;
+using Doc2web.Plugins.Style.Properties;
 using DocumentFormat.OpenXml.Wordprocessing;
 using System;
 using System.Collections.Generic;
@@ -25,6 +26,17 @@ namespace Doc2web.Plugins.TextProcessor
         public void ProcessParagraph(IElementContext context, Paragraph p)
         {
             if (p != context.RootElement) return;
+            var containerNode = BuildContainer();
+            ProcessParagraphProperties(context, p, containerNode);
+
+            context.AddNode(containerNode);
+            context.AddNode(BuildPNode(context, p, containerNode));
+
+            context.ProcessChilden();
+        }
+
+        private HtmlNode BuildContainer()
+        {
             var containerNode = new HtmlNode
             {
                 Start = _config.ContainerStart,
@@ -33,15 +45,10 @@ namespace Doc2web.Plugins.TextProcessor
                 Z = _config.ContainerZ,
             };
             containerNode.AddClasses(_config.ContainerCls);
-            context.AddNode(containerNode);
-            context.AddNode(BuildLeftIdentation());
-            context.AddNode(BuildPNode(context, p, containerNode));
-            context.AddNode(BuildRightIdentation());
-
-            context.ProcessChilden();
+            return containerNode;
         }
 
-        private HtmlNode BuildPNode(IElementContext context, Paragraph p, HtmlNode containerNode)
+        private void ProcessParagraphProperties(IElementContext context, Paragraph p, HtmlNode containerNode)
         {
             var pPr = p.ParagraphProperties;
             if (pPr != null)
@@ -49,8 +56,25 @@ namespace Doc2web.Plugins.TextProcessor
                 var cssRegistrator = context.Resolve<ICssRegistrator2>();
                 var cssClass = cssRegistrator.RegisterParagraph(pPr);
                 containerNode.AddClasses(cssClass.Name);
+                AddIndentationIfRequired(context, cssClass);
             }
+        }
 
+        private void AddIndentationIfRequired(IElementContext context, CssClass2 cssClass)
+        {
+            if (cssClass.Name.Length == 0) return;
+
+            var identation = cssClass?.Props.Get<IdentationCssProperty>();
+            if (identation == null) return;
+
+            if (identation.LeftIndent.HasValue)
+                context.AddNode(BuildLeftIdentation());
+            if (identation.RightIndent.HasValue)
+                context.AddNode(BuildRightIdentation());
+        }
+
+        private HtmlNode BuildPNode(IElementContext context, Paragraph p, HtmlNode containerNode)
+        {
             var pNode = new HtmlNode
             {
                 Start = context.TextIndex - _config.Delta,

@@ -2,6 +2,7 @@
 using Doc2web.Core;
 using Doc2web.Plugins.Style;
 using Doc2web.Plugins.Style.Css;
+using Doc2web.Plugins.Style.Properties;
 using Doc2web.Plugins.TextProcessor;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Wordprocessing;
@@ -91,9 +92,12 @@ namespace Doc2web.Tests.Plugins.TextProcessor
         [TestMethod]
         public void ProcessParagraph_AddLeftIdentationsTest()
         {
+            var indentation = new Indentation { Left = "100" };
+            MockIndentation(indentation, "dyn-class");
+
             _instance.ProcessParagraph(_pContext, _p);
 
-            var firstNode = _pContext.Nodes.ElementAt(1);
+            var spacer = _pContext.Nodes.ElementAt(0);
             var expected = new HtmlNode
             {
                 Tag = _config.IdentationTag,
@@ -102,15 +106,17 @@ namespace Doc2web.Tests.Plugins.TextProcessor
                 Z = _config.ParagraphZ,
             };
             expected.AddClasses(_config.LeftIdentationCls);
-            Assert.AreEqual(expected, firstNode);
+            Assert.AreEqual(expected, spacer);
         }
+
 
         [TestMethod]
         public void ProcessParagraph_AddRightIdentationsTest()
         {
+            MockIndentation(new Indentation { Right = "100" }, "dyn-class");
             _instance.ProcessParagraph(_pContext, _p);
 
-            var firstNode = _pContext.Nodes.ElementAt(3);
+            var spacer = _pContext.Nodes.ElementAt(0);
             var expected = new HtmlNode
             {
                 Tag = _config.IdentationTag,
@@ -119,7 +125,7 @@ namespace Doc2web.Tests.Plugins.TextProcessor
                 Z = _config.ParagraphZ,
             };
             expected.AddClasses(_config.RightIndentationCls);
-            Assert.AreEqual(expected, firstNode);
+            Assert.AreEqual(expected, spacer);
         }
 
         [TestMethod]
@@ -127,7 +133,7 @@ namespace Doc2web.Tests.Plugins.TextProcessor
         {
             _instance.ProcessParagraph(_pContext, _p);
 
-            var firstNode = _pContext.Nodes.ElementAt(2);
+            var firstNode = _pContext.Nodes.ElementAt(1);
             var expected = new HtmlNode
             {
                 Tag = _config.ParagraphTag,
@@ -186,6 +192,22 @@ namespace Doc2web.Tests.Plugins.TextProcessor
             var node = _rContext.Nodes.First();
 
             node.Classes.Contains(styleName);
+        }
+        private void MockIndentation(Indentation indentation, string clsName)
+        {
+            _p.ParagraphProperties = new ParagraphProperties();
+            _cssRegistrator
+                .RegisterParagraph(Arg.Is(_p.ParagraphProperties), null)
+                .Returns(x => new CssClass2
+                {
+                    Name = clsName,
+                    Props = new CssPropertiesSet {
+                        new IdentationCssProperty(null)
+                        {
+                            Element = indentation
+                        }
+                    }
+                });
         }
     }
 }

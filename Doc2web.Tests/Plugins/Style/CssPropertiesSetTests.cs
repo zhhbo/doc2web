@@ -182,7 +182,16 @@ namespace Doc2web.Tests.Plugins.Style
                 Assert.AreEqual(aProps[i], bProps[i]);
                 Assert.AreNotSame(aProps[i], bProps[i]);
             }
+        }
 
+        [TestMethod]
+        public void Get_Test()
+        {
+            var prop1 = new MockProp1();
+            var a = new CssPropertiesSet() { prop1, new MockProp2() };
+
+            Assert.AreSame(prop1, a.Get<MockProp1>());
+            Assert.IsNull(a.Get<MockProp3>());
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Autofac;
 using Doc2web.Plugins.Numbering.Mapping;
 using Doc2web.Plugins.Style;
+using Doc2web.Plugins.Style.Css;
 using Doc2web.Plugins.Style.Properties;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
@@ -52,14 +53,16 @@ namespace Doc2web.Plugins.Numbering
             var numbering = numberingMapper.GetNumbering(p);
             if (numbering != null)
             {
-                var cssRegistrator = context.Resolve<ICssRegistrator>();
-                var cssClass = cssRegistrator.RegisterNumbering(numbering.NumberingId, numbering.LevelIndex);
+                var cssRegistrator = context.Resolve<ICssRegistrator2>();
+                var cssClass = cssRegistrator.RegisterParagraph(
+                    p.ParagraphProperties,
+                    (numbering.NumberingId, numbering.LevelIndex));
 
 
-                context.AddNode(BuildContainerMax(cssClass));
+                context.AddNode(BuildContainerMax(cssClass.Name));
                 context.AddNode(BuildContainerMin());
                 context.AddNode(BuildNumberMax());
-                context.AddNode(BuildNumberMin(p, cssRegistrator, numbering.LevelXmlElement));
+                context.AddNode(BuildNumberMin(p, cssRegistrator, numbering));
                 context.AddMutation(BuildiInsertion(numbering.Verbose));
             }
         }
@@ -106,7 +109,7 @@ namespace Doc2web.Plugins.Numbering
             return node;
         }
 
-        private HtmlNode BuildNumberMin(Paragraph p, ICssRegistrator icssRegistrator, Level level)
+        private HtmlNode BuildNumberMin(Paragraph p, ICssRegistrator2 cssRegistrator, IParagraphData paragraphData)
         {
             var node = new HtmlNode
             {
@@ -117,13 +120,18 @@ namespace Doc2web.Plugins.Numbering
             };
             node.AddClasses(_config.NumberingNumberMinCls);
 
-            var dynProp = p.ParagraphProperties?.ParagraphMarkRunProperties;
-            if (dynProp != null)
-            {
-                var cls = icssRegistrator.RegisterRunProperties(dynProp);
-                node.AddClasses(cls);
-            }
-
+            var cssClass = cssRegistrator.RegisterRun(
+                p.ParagraphProperties,
+                p.ParagraphProperties?.ParagraphMarkRunProperties,
+                (paragraphData.NumberingId, paragraphData.LevelIndex));
+            node.AddClasses(cssClass.Name);
+            //var dynProp = p.ParagraphProperties?.ParagraphMarkRunProperties;
+            //if (dynProp != null)
+            //{
+            //    var cls = icssRegistrator.RegisterRunProperties(dynProp);
+            //    node.AddClasses(cls);
+            //}
+            var level = paragraphData.LevelXmlElement;
             if (level.LevelSuffix?.Val?.Value == LevelSuffixValues.Space)
             {
                 node.SetStyle("padding-right", "0.5em");

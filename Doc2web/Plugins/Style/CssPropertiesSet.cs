@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DocumentFormat.OpenXml;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -117,5 +118,13 @@ namespace Doc2web.Plugins.Style
             clone.Selector = Selector;
             return clone;
         }
+
+        public T Get<T>() where T : ICssProperty
+        {
+            if (_dict.TryGetValue(typeof(T), out ICssProperty prop))
+                return (T)prop;
+            return default(T);
+        }
+
     }
 }

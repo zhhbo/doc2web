@@ -13,6 +13,7 @@ using System.IO;
 using System.Text;
 using System.Linq;
 using Doc2web.Plugins.Style.Properties;
+using Doc2web.Plugins.Style.Css;
 
 namespace Doc2web.Tests.Plugins.Numbering
 {
@@ -25,7 +26,7 @@ namespace Doc2web.Tests.Plugins.Numbering
         private Paragraph _p;
         private INumberingMapper _nMapper;
         private IParagraphData _pData;
-        private ICssRegistrator _cssRegistrator;
+        private ICssRegistrator2 _cssRegistrator;
         private IElementContext _elementContext;
         private Level _level;
         private List<HtmlNode> _nodes;
@@ -100,11 +101,9 @@ namespace Doc2web.Tests.Plugins.Numbering
             AssertCountNodesBefore(0, containerMax);
             AssertCountNodesAfter(0, containerMax);
             AssertHasZAndTag(containerMax);
-            AssertHasClasses(
-                containerMax,
-                "numbering-1-2",
-                _config.NumberingContainerMaxCls);
-            _cssRegistrator.Received(1).RegisterNumbering(1, 2);
+            AssertHasClasses(containerMax,
+                "numbering-container-max",
+                "numbering-container-1-2");
         }
 
 
@@ -148,7 +147,10 @@ namespace Doc2web.Tests.Plugins.Numbering
             AssertCountNodesAfter(3, numberMin);
             Assert.AreEqual(_config.NumberingNumberTag, numberMin.Tag);
             Assert.AreEqual(_config.NumberingNumberZ, numberMin.Z);
-            AssertHasClasses(numberMin, _config.NumberingNumberMinCls);
+            AssertHasClasses(
+                numberMin, 
+                _config.NumberingNumberMinCls, 
+                "numbering-number-1-2");
             Assert.AreEqual("1.5em", numberMin.Style["padding-right"]);
         }
 
@@ -156,7 +158,6 @@ namespace Doc2web.Tests.Plugins.Numbering
         public void InsertNumbering_NumberingMinDynTest()
         {
             MockElementContext(1, 2, "1.1.1");
-            string clsName = MockDynamic();
 
             _instance.InsertNumbering(_elementContext, _p);
 
@@ -164,8 +165,7 @@ namespace Doc2web.Tests.Plugins.Numbering
             AssertHasClasses(
                 numberMin,
                 _config.NumberingNumberMinCls,
-                "dyn",
-                clsName);
+                "numbering-number-1-2");
         }
 
         [TestMethod]
@@ -243,14 +243,19 @@ namespace Doc2web.Tests.Plugins.Numbering
             _nMapper = Substitute.For<INumberingMapper>();
             _nMapper.IsValid.Returns(true);
             _nMapper.GetNumbering(_p).Returns(_pData);
-            _cssRegistrator = Substitute.For<ICssRegistrator>();
+            _cssRegistrator = Substitute.For<ICssRegistrator2>();
             _cssRegistrator
-                .RegisterNumbering(numberingId, levelId)
-                .Returns($"numbering-{numberingId}-{levelId}");
+                //.RegisterNumbering(numberingId, levelId)
+                .RegisterParagraph(Arg.Any<ParagraphProperties>(), (numberingId, levelId))
+                .Returns(new CssClass2 { Name = $"numbering-container-{numberingId}-{levelId}" });
+            _cssRegistrator
+                //.RegisterNumbering(numberingId, levelId)
+                .RegisterRun(Arg.Any<ParagraphProperties>(), Arg.Any<RunProperties>(), (numberingId, levelId))
+                .Returns(new CssClass2 { Name = $"numbering-number-{numberingId}-{levelId}" });
 
             _elementContext = Substitute.For<IElementContext>();
             _elementContext.Resolve<INumberingMapper>().Returns(_nMapper);
-            _elementContext.Resolve<ICssRegistrator>().Returns(_cssRegistrator);
+            _elementContext.Resolve<ICssRegistrator2>().Returns(_cssRegistrator);
             _elementContext.Element.Returns(_p);
             _elementContext.RootElement.Returns(_p);
             _elementContext
@@ -259,17 +264,6 @@ namespace Doc2web.Tests.Plugins.Numbering
             _elementContext
                 .When(x => x.AddMutation(Arg.Any<Mutation>()))
                 .Do(x => _mutations.Add(x.ArgAt<Mutation>(0)));
-        }
-
-        private string MockDynamic()
-        {
-            string clsName = $"dyn-{Guid.NewGuid().ToString().Replace("-", "")}";
-            var pMarkRunProps = new ParagraphMarkRunProperties();
-            _p.ParagraphProperties = new ParagraphProperties(pMarkRunProps);
-            _cssRegistrator
-                .RegisterRunProperties(Arg.Is(pMarkRunProps))
-                .Returns(new string[] { "dyn", clsName });
-            return clsName;
         }
 
         [TestMethod]
