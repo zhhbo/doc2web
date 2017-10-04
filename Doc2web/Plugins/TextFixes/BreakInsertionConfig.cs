@@ -19,7 +19,7 @@ namespace Doc2web.Plugins.TextFixes
             ContainerCls = "container";
             ContainerZ = 1_000_000;
             LeftSpacerCls = "leftspacer";
-            NumberingContainerCls = "numbering-container-max";
+            NumberingContainerCls = "numbering-container-min";
             BreakAtStartCls = "break-at-start";
         }
     }
