@@ -6,16 +6,18 @@ namespace Doc2web.Plugins.Style
 {
     public class StyleConfig
     {
-        public string ParagraphCssClassPrefix { get; set; }
+        public string ContainerCssClassPrefix { get; set; }
         public string RunCssClassPrefix { get; set; }
+        public string ParagraphCssClassPrefix { get; }
         public string LeftIdentationCssClassPrefix { get; set; }
         public string RightIdentationCssClassPrefix { get; set; }
         public string DynamicCssClassPrefix { get; set; }
 
         public StyleConfig()
         {
-            ParagraphCssClassPrefix = "div.container";
+            ContainerCssClassPrefix = "div.container";
             RunCssClassPrefix = "span";
+            ParagraphCssClassPrefix = "p";
             LeftIdentationCssClassPrefix = ".leftspacer";
             RightIdentationCssClassPrefix = ".rightspacer";
             DynamicCssClassPrefix = "d";
@@ -24,7 +26,7 @@ namespace Doc2web.Plugins.Style
         public StyleConfig Clone() =>
             new StyleConfig
             {
-                ParagraphCssClassPrefix = ParagraphCssClassPrefix,
+                ContainerCssClassPrefix = ContainerCssClassPrefix,
                 RunCssClassPrefix = RunCssClassPrefix,
                 LeftIdentationCssClassPrefix = LeftIdentationCssClassPrefix,
                 RightIdentationCssClassPrefix = RightIdentationCssClassPrefix

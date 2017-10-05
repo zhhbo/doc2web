@@ -13,19 +13,19 @@ namespace Doc2web.Tests.Plugins.Style.Properties
     public class IdentationCssPropertyTests
     {
         private StyleConfig _config;
-        private IdentationCssProperty _instance;
+        private IndentationCssProperty _instance;
 
         [TestInitialize]
         public void Initialize()
         {
             _config = new StyleConfig()
             {
-                ParagraphCssClassPrefix = "div.container",
+                ContainerCssClassPrefix = "div.container",
                 RunCssClassPrefix = "span",
                 LeftIdentationCssClassPrefix = "> .leftspacer",
                 RightIdentationCssClassPrefix = "> .rightspacer"
             };
-            _instance = new IdentationCssProperty(_config);
+            _instance = new IndentationCssProperty(_config);
             _instance.Selector = "div.container.test-class";
             _instance.Element = new Indentation();
         }
@@ -82,12 +82,12 @@ namespace Doc2web.Tests.Plugins.Style.Properties
             var expected = new CssData();
             expected.AddAttribute(
                 "(max-width: 21.59cm)",
-                "div.container.test-class",
+                "div.container.test-class p",
                 "text-indent",
                 "-2.941vw");
             expected.AddAttribute(
                 "(min-width: 21.59cm)",
-                "div.container.test-class",
+                "div.container.test-class p",
                 "text-indent",
                 "-0.635cm");
             _instance.Element.Hanging = new StringValue("360");
@@ -103,12 +103,12 @@ namespace Doc2web.Tests.Plugins.Style.Properties
             var expected = new CssData();
             expected.AddAttribute(
                 "(max-width: 21.59cm)",
-                "div.container.test-class",
+                "div.container.test-class p",
                 "text-indent",
                 "2.941vw");
             expected.AddAttribute(
                 "(min-width: 21.59cm)",
-                "div.container.test-class",
+                "div.container.test-class p",
                 "text-indent",
                 "0.635cm");
             _instance.Element.FirstLine = new StringValue("360");
@@ -138,7 +138,7 @@ namespace Doc2web.Tests.Plugins.Style.Properties
             _instance.Element.Right = new StringValue("360");
             var other = _instance.Element.CloneNode(true) as Indentation;
 
-            Assert.IsTrue(_instance.HaveSameOutput(new IdentationCssProperty(_config)
+            Assert.IsTrue(_instance.HaveSameOutput(new IndentationCssProperty(_config)
             {
                 Element = other
             }));
@@ -149,7 +149,7 @@ namespace Doc2web.Tests.Plugins.Style.Properties
         {
             var other = new Indentation();
 
-            Assert.IsTrue(_instance.HaveSameOutput(new IdentationCssProperty(_config)
+            Assert.IsTrue(_instance.HaveSameOutput(new IndentationCssProperty(_config)
             {
                 Element = other
             }));
@@ -162,7 +162,7 @@ namespace Doc2web.Tests.Plugins.Style.Properties
             var other = _instance.Element.CloneNode(true) as Indentation;
             other.Right = new StringValue("720");
 
-            Assert.IsFalse(_instance.HaveSameOutput(new IdentationCssProperty(_config)
+            Assert.IsFalse(_instance.HaveSameOutput(new IndentationCssProperty(_config)
             {
                 Element = other
             }));
@@ -174,7 +174,7 @@ namespace Doc2web.Tests.Plugins.Style.Properties
             _instance.Element.Left = new StringValue("720");
             var other = new Indentation();
 
-            Assert.IsFalse(_instance.HaveSameOutput(new IdentationCssProperty(_config)
+            Assert.IsFalse(_instance.HaveSameOutput(new IndentationCssProperty(_config)
             {
                 Element = other
             }));

@@ -14,7 +14,7 @@ namespace Doc2web.Tests.Plugins.Style
         {
             var a = new StyleConfig();
 
-            Assert.AreEqual("div.container", a.ParagraphCssClassPrefix);
+            Assert.AreEqual("div.container", a.ContainerCssClassPrefix);
             Assert.AreEqual("span", a.RunCssClassPrefix);
             Assert.AreEqual(".leftspacer", a.LeftIdentationCssClassPrefix);
             Assert.AreEqual(".rightspacer", a.RightIdentationCssClassPrefix);
@@ -25,7 +25,7 @@ namespace Doc2web.Tests.Plugins.Style
         {
             var a = new StyleConfig
             {
-                ParagraphCssClassPrefix = "a",
+                ContainerCssClassPrefix = "a",
                 RunCssClassPrefix = "b",
                 LeftIdentationCssClassPrefix = "c",
                 RightIdentationCssClassPrefix = "d"
@@ -33,7 +33,7 @@ namespace Doc2web.Tests.Plugins.Style
 
             var b = a.Clone();
 
-            Assert.AreEqual(a.ParagraphCssClassPrefix, b.ParagraphCssClassPrefix);
+            Assert.AreEqual(a.ContainerCssClassPrefix, b.ContainerCssClassPrefix);
             Assert.AreEqual(a.RunCssClassPrefix, b.RunCssClassPrefix);
             Assert.AreEqual(a.LeftIdentationCssClassPrefix, b.LeftIdentationCssClassPrefix);
             Assert.AreEqual(a.RightIdentationCssClassPrefix, b.RightIdentationCssClassPrefix);

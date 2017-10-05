@@ -7,11 +7,11 @@ using DocumentFormat.OpenXml;
 namespace Doc2web.Plugins.Style.Properties
 {
     [ParagraphCssProperty(typeof(Indentation))]
-    public class IdentationCssProperty : CssProperty<Indentation>
+    public class IndentationCssProperty : CssProperty<Indentation>
     {
         protected StyleConfig _config;
 
-        public IdentationCssProperty(StyleConfig config) : base()
+        public IndentationCssProperty(StyleConfig config) : base()
         {
             _config = config;
         }
@@ -29,13 +29,13 @@ namespace Doc2web.Plugins.Style.Properties
             if (!indentation.HasValue) return;
             cssData.AddAttribute(
                 @"(max-width: 21.59cm)",
-                Selector,
+                Selector + " " + _config.ParagraphCssClassPrefix,
                 "text-indent",
                 Math.Round(Utils.TwipsToPageRatio(indentation.Value) * 100, 3) + "vw"
             );
             cssData.AddAttribute(
                 @"(min-width: 21.59cm)",
-                Selector,
+                Selector + " " + _config.ParagraphCssClassPrefix,
                 "text-indent",
                 Math.Round(Utils.TwipsToCm(indentation.Value), 3) + "cm"
             );
@@ -101,7 +101,7 @@ namespace Doc2web.Plugins.Style.Properties
 
         public override bool HaveSameOutput(ICssProperty element)
         {
-            if (element is IdentationCssProperty other)
+            if (element is IndentationCssProperty other)
             {
                 return other.LeftIndent == LeftIndent && other.RightIndent == RightIndent;
             }
@@ -109,7 +109,7 @@ namespace Doc2web.Plugins.Style.Properties
         }
 
         public override ICssProperty Clone() =>
-            new IdentationCssProperty(_config)
+            new IndentationCssProperty(_config)
             {
                 Element = Element,
                 Selector = Selector

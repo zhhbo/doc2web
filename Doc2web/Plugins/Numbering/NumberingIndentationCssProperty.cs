@@ -13,14 +13,14 @@ namespace Doc2web.Plugins.Numbering
     public class NumberingIndentationCssProperty : CssProperty<Indentation>
     {
         private static string PageMaxMediaQuery = @"(min-width: 21.59cm)";
-        private IdentationCssProperty _indentProp;
+        private IndentationCssProperty _indentProp;
         private NumberingConfig _numConfig;
 
         public NumberingIndentationCssProperty(
             StyleConfig config, 
             NumberingConfig numConfig) : base()
         {
-            _indentProp = new IdentationCssProperty(config);
+            _indentProp = new IndentationCssProperty(config);
             _numConfig = numConfig;
         }
 
@@ -81,7 +81,7 @@ namespace Doc2web.Plugins.Numbering
             var clone = new NumberingIndentationCssProperty();
             clone.Selector = Selector;
             clone._numConfig = _numConfig;
-            clone._indentProp = _indentProp.Clone() as IdentationCssProperty;
+            clone._indentProp = _indentProp.Clone() as IndentationCssProperty;
             return clone;
         }
 

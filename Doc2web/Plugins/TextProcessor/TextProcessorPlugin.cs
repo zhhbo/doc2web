@@ -64,7 +64,7 @@ namespace Doc2web.Plugins.TextProcessor
         {
             if (cssClass.Name.Length == 0) return;
 
-            var identation = cssClass?.Props.Get<IdentationCssProperty>();
+            var identation = cssClass?.Props.Get<IndentationCssProperty>();
             if (identation == null) return;
 
             if (identation.LeftIndent.HasValue)

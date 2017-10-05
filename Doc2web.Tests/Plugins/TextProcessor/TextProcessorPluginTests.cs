@@ -202,7 +202,7 @@ namespace Doc2web.Tests.Plugins.TextProcessor
                 {
                     Name = clsName,
                     Props = new CssPropertiesSet {
-                        new IdentationCssProperty(null)
+                        new IndentationCssProperty(null)
                         {
                             Element = indentation
                         }
