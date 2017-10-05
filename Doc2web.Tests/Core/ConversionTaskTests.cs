@@ -17,7 +17,7 @@ namespace Doc2web.Tests.Core
         private ConversionTask _instance;
         private IGlobalContext _globalContext;
         private IContainer _engineContainer;
-        private OpenXmlElement[] _rootElements;
+        private RootElementContext[] _rootElementContext;
         private IProcessor _processor;
         private IContextRenderer _contextRenderer;
 
@@ -26,9 +26,15 @@ namespace Doc2web.Tests.Core
         {
             _globalContext = Substitute.For<IGlobalContext>();
             _engineContainer = Substitute.For<IContainer>();
-            _rootElements = new OpenXmlElement[] { };
-            _processor = Substitute.For<IProcessor>();
+            _rootElementContext = new RootElementContext[] { 
+                new RootElementContext(_globalContext, new Paragraph()),
+                new RootElementContext(_globalContext, new Paragraph()),
+            };
+            _globalContext.RootElements.Returns(_rootElementContext);
             _contextRenderer = Substitute.For<IContextRenderer>();
+            _contextRenderer.Render(_rootElementContext[0]).Returns(@"<p>1</p>");
+            _contextRenderer.Render(_rootElementContext[1]).Returns(@"<p>2</p>");
+            _processor = Substitute.For<IProcessor>();
 
             BuildInstance();
         }
@@ -41,7 +47,7 @@ namespace Doc2web.Tests.Core
                 Processor = _processor,
                 ContextRenderer = _contextRenderer,
                 Container = _engineContainer,
-                RootElements = _rootElements
+                RootElements = _rootElementContext.Select(x => x.RootElement)
             };
         }
 
@@ -66,13 +72,7 @@ namespace Doc2web.Tests.Core
         [TestMethod]
         public void ConvertElements_Test()
         {
-            var elements = new OpenXmlElement[] { 
-                new Paragraph(),
-                new Paragraph()
-            };
-            _globalContext.RootElements.Returns(elements);
-
-            _instance.ConvertElements();
+            _instance.ProcessElements();
 
             AssertHasProcessedAllRootElements();
         }
@@ -95,6 +95,7 @@ namespace Doc2web.Tests.Core
                 @"<!DOCTYPE html><html><head><style>" +
                 _globalContext.Css +
                 @"</style></head><body>" +
+                "<p>1</p><p>2</p>" +
                 _globalContext.Html +
                 @"<script>" +
                 _globalContext.Js +
@@ -115,8 +116,8 @@ namespace Doc2web.Tests.Core
         {
             foreach (var elem in _globalContext.RootElements)
             {
-                IElementContext processorContextArg = BuildProcessArgValidator(elem);
-                _processor.Received(1).ProcessElement(processorContextArg, Arg.Is(elem));
+                IElementContext processorContextArg = BuildProcessArgValidator(elem.RootElement);
+                _processor.Received(1).ProcessElement(processorContextArg, Arg.Is(elem.RootElement));
             }
         }
 

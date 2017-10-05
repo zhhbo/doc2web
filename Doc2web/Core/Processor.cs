@@ -55,7 +55,7 @@ namespace Doc2web.Core
         public void ProcessElement(Doc2web.IElementContext context, OpenXmlElement element)
         {
             if (ElementRenderingActions.TryGetValue(element.GetType(), 
-                out List<Action<Doc2web.IElementContext, OpenXmlElement>> processorActions))
+                out List<Action<IElementContext, OpenXmlElement>> processorActions))
             {
                 foreach (var action in processorActions)
                     action(context, element);

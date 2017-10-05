@@ -12,6 +12,6 @@ namespace Doc2web.Core
         void InitProcess(ContainerBuilder containerBuilder);
         void PreProcess(IGlobalContext context);
         void ProcessElement(IElementContext context, OpenXmlElement element);
-        void PostProcess(IGlobalContext context);
+        void PostProcess(IGlobalContext globalContext);
     }
 }

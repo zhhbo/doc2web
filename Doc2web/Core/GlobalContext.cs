@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Text;
 using DocumentFormat.OpenXml;
 using Autofac;
+using System.Linq;
 
 namespace Doc2web.Core
 {
     public class GlobalContext : IGlobalContext
     {
         private ILifetimeScope _container;
-        private IEnumerable<OpenXmlElement> _rootElements;
+        private RootElementContext[] _rootElements;
         private StringBuilder _html;
         private StringBuilder _css;
         private StringBuilder _js;
@@ -17,14 +18,14 @@ namespace Doc2web.Core
         public GlobalContext(ILifetimeScope container, IEnumerable<OpenXmlElement> rootElements)
         {
             _container = container;
-            _rootElements = rootElements;
+            _rootElements = rootElements.Select(x => new RootElementContext(this, x)).ToArray();
             _html = new StringBuilder();
             _css = new StringBuilder();
             _js = new StringBuilder();
         }
 
 
-        public IEnumerable<OpenXmlElement> RootElements => _rootElements;
+        public IEnumerable<RootElementContext> RootElements => _rootElements;
 
         public string Html => _html.ToString();
 

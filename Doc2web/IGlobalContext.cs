@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using Doc2web.Core;
 using DocumentFormat.OpenXml;
 using System;
 using System.Collections.Generic;
@@ -8,7 +9,7 @@ namespace Doc2web
 {
     public interface IGlobalContext
     {
-        IEnumerable<OpenXmlElement> RootElements { get; }
+        IEnumerable<RootElementContext> RootElements { get; }
 
         string Html { get; }
 

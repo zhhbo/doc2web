@@ -44,7 +44,7 @@ namespace Doc2web
 
             conversionTask.Initialize();
             conversionTask.PreProcess();
-            conversionTask.ConvertElements();
+            conversionTask.ProcessElements();
             conversionTask.PostProcess();
             conversionTask.AssembleDocument();
 

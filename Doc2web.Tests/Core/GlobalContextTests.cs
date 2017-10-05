@@ -28,7 +28,13 @@ namespace Doc2web.Tests.Core
         [TestMethod]
         public void GlobalContext_Test()
         {
-            Assert.AreSame(_rootElements, _instance.RootElements);
+            //Assert.AreSame(_rootElements, _instance.RootElements.Select(x => x.Element));
+            var rootElements = _instance.RootElements.Select(x => x.Element).ToArray();
+            for(int i = 0; i < rootElements.Length; i++)
+            {
+                Assert.AreSame(rootElements[i], rootElements[i]);
+
+            }
             Assert.AreEqual("", _instance.Html.ToString());
             Assert.AreEqual("", _instance.Css.ToString());
             Assert.AreEqual("", _instance.Js.ToString());

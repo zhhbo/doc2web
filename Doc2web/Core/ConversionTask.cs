@@ -10,14 +10,9 @@ namespace Doc2web.Core
 {
     public class ConversionTask : IConversionTask
     {
-        private StringBuilder _elementBuffer;
+        public ConversionTask() { }
 
-        public ConversionTask()
-        {
-            _elementBuffer = new StringBuilder();
-        }
-
-        public string Result => new string(_buffer);
+        public string Result => _result.ToString();
 
         public IEnumerable<OpenXmlElement> RootElements { get; set; }
 
@@ -41,20 +36,16 @@ namespace Doc2web.Core
             Processor.PreProcess(GlobalContext);
         }
 
-        public void ConvertElements() {
+        public void ProcessElements()
+        {
             var tasks =
                 GlobalContext
                 .RootElements
-                .Select(elem => Task.Factory.StartNew(() => ConvertRootElement(elem)))
+                .Select(ProcessRootElement)
                 .ToArray();
 
-            for(int i = 0; i < tasks.Length; i++)
-            {
-                tasks[i].Wait();
-                _elementBuffer.AppendLine(tasks[i].Result);
-            }
+            Task.WaitAll(tasks);
         }
-
 
         public void PostProcess()
         {
@@ -63,64 +54,53 @@ namespace Doc2web.Core
 
         public void AssembleDocument()
         {
-            _buffer = new char[RequiredSpace];
-            int i = 0;
+            var renderingTasks =
+                GlobalContext
+                .RootElements
+                .Select(RenderElementContext)
+                .ToArray();
 
-            i = CopyToBuffer(i, Part1);
-            i = CopyToBuffer(i, GlobalContext.Css);
-            i = CopyToBuffer(i, Part2);
+            _result = new StringBuilder();
+            _result.Append(Part1);
+            _result.Append(GlobalContext.Css);
+            _result.Append(Part2);
 
-            _elementBuffer.CopyTo(0, _buffer, i, _elementBuffer.Length);
-            i += _elementBuffer.Length;
+            for(int i = 0; i < renderingTasks.Length; i++)
+            {
+                var task = renderingTasks[i];
+                task.Wait();
+                _result.Append(task.Result);
+            }
 
-            i = CopyToBuffer(i, GlobalContext.Html);
-            i = CopyToBuffer(i, Part3);
-            i = CopyToBuffer(i, GlobalContext.Js);
-            i = CopyToBuffer(i, Part4);
+            _result.Append(GlobalContext.Html);
+            _result.Append(Part3);
+            _result.Append(GlobalContext.Js);
+            _result.Append(Part4);
         }
 
-        private int RequiredSpace => 
-                GlobalContext.Css.Length +
-                GlobalContext.Js.Length +
-                GlobalContext.Html.Length +
-                Part1.Length +
-                Part2.Length +
-                Part3.Length + 
-                Part4.Length +
-                _elementBuffer.Length;
+        private Task<string> RenderElementContext(IElementContext context)
+        {
+            return Task.Factory.StartNew(state => {
+                string x = ContextRenderer.Render((IElementContext)state);
+                return x;
+            }, context);
+        }
 
         private static string Part1 = @"<!DOCTYPE html><html><head><style>";
         private static string Part2 = @"</style></head><body>";
         private static string Part3 = @"<script>";
         private static string Part4 = @"</script></body></html>";
-        private char[] _buffer;
+        private StringBuilder _result;
 
-        private int CopyToBuffer(int i, string value)
+        private Task<RootElementContext> ProcessRootElement(RootElementContext rootElementContext)
         {
-            value.CopyTo(0, _buffer, i, value.Length);
-            return i + value.Length;
-        }
-
-        private string ConvertRootElement(OpenXmlElement rootElement)
-        {
-            var context = new RootElementContext(GlobalContext, rootElement);
-            var task = new ElementProcessingTask(context, Processor);
-            task.Execute();
-            return ContextRenderer.Render(context);
-
-        }
-
-        private void AddCss()
-        {
-            _elementBuffer.AppendLine(@"<style>");
-            _elementBuffer.AppendLine(GlobalContext.Css);
-            _elementBuffer.AppendLine(@"</style>");
-        }
-        private void AddJs()
-        {
-            _elementBuffer.AppendLine(@"<script>");
-            _elementBuffer.AppendLine(GlobalContext.Js);
-            _elementBuffer.AppendLine(@"</script>");
+            return Task.Factory.StartNew((state) =>
+            {
+                var context = (RootElementContext)state;
+                var task = new ElementProcessingTask(context, Processor);
+                task.Execute();
+                return context;
+            }, rootElementContext);
         }
     }
 }
