@@ -34,9 +34,9 @@ namespace Doc2web.Tests.Plugins.Style.Properties
         {
             SetValues("100", "200", "300");
 
-            Assert.AreEqual(0.17638888884479165, _instance.Before);
-            Assert.AreEqual(0.35277777768958329, _instance.After);
-            Assert.AreEqual(0.52916666653437494, _instance.Line);
+            Assert.AreEqual(5, _instance.Before);
+            Assert.AreEqual(10, _instance.After);
+            Assert.AreEqual(15, _instance.Line);
         }
 
         [TestMethod]
@@ -100,7 +100,7 @@ namespace Doc2web.Tests.Plugins.Style.Properties
 
             var cssData = _instance.AsCss();
 
-            Assert.AreEqual("0.1764cm", cssData[""][".test"]["line-height"]);
+            Assert.AreEqual("5pt", cssData[""][".test"]["line-height"]);
 
         }
 
@@ -113,9 +113,9 @@ namespace Doc2web.Tests.Plugins.Style.Properties
 
             _instance.Extends(other);
 
-            Assert.AreEqual(0.17638888884479165, _instance.Before);
-            Assert.AreEqual(0.35277777768958329, _instance.After);
-            Assert.AreEqual(0.52916666653437494, _instance.Line);
+            Assert.AreEqual(5, _instance.Before);
+            Assert.AreEqual(10, _instance.After);
+            Assert.AreEqual(15, _instance.Line);
         }
 
         [TestMethod]
@@ -127,9 +127,9 @@ namespace Doc2web.Tests.Plugins.Style.Properties
 
             _instance.Extends(other);
 
-            Assert.AreEqual(0.17638888884479165, _instance.Before);
-            Assert.AreEqual(0.35277777768958329, _instance.After);
-            Assert.AreEqual(0.52916666653437494, _instance.Line);
+            Assert.AreEqual(5, _instance.Before);
+            Assert.AreEqual(10, _instance.After);
+            Assert.AreEqual(15, _instance.Line);
         }
 
         private SpacingCssProperty CloneCssProperty()

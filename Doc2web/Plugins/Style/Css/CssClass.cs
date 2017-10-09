@@ -12,6 +12,7 @@ namespace Doc2web.Plugins.Style.Css
 
         public CssClass()
         {
+            Name = "";
             Props = new CssPropertiesSet();
         }
 

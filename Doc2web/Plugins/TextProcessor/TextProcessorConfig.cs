@@ -6,6 +6,8 @@ namespace Doc2web.Plugins.TextProcessor
 {
     public class TextProcessorConfig
     {
+        public string PPropsCssClassKey { get; set; }
+
         public double ContainerStart { get; set; }
 
         public double ContainerEnd { get; set; }
@@ -38,6 +40,8 @@ namespace Doc2web.Plugins.TextProcessor
 
         public TextProcessorConfig()
         {
+            PPropsCssClassKey = "pPr";
+
             ContainerStart = -1_000_000;
             ContainerEnd = 1_000_000;
             ContainerTag = "div";

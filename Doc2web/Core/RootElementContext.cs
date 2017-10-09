@@ -14,6 +14,7 @@ namespace Doc2web.Core
         public RootElementContext(IGlobalContext context, OpenXmlElement rootElement)
         {
             _globalContext = context;
+            ViewBag = new Dictionary<string, object>();
             RootElement = rootElement;
             _nodes = new List<HtmlNode>();
             _transformations = new List<Mutation>();
@@ -21,6 +22,8 @@ namespace Doc2web.Core
 
 
         public OpenXmlElement RootElement { get; private set; }
+
+        public IDictionary<string, object> ViewBag { get; }
 
         public IEnumerable<HtmlNode> Nodes => _nodes;
 

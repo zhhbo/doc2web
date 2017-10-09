@@ -5,6 +5,7 @@ using Doc2web.Plugins.Style.Properties;
 using DocumentFormat.OpenXml.Wordprocessing;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Doc2web.Plugins.TextProcessor
@@ -56,6 +57,7 @@ namespace Doc2web.Plugins.TextProcessor
                 var cssRegistrator = context.Resolve<ICssRegistrator>();
                 var cssClass = cssRegistrator.RegisterParagraph(pPr);
                 containerNode.AddClasses(cssClass.Name);
+                context.ViewBag[_config.PPropsCssClassKey] = cssClass;
                 AddIndentationIfRequired(context, cssClass);
             }
         }
@@ -138,12 +140,14 @@ namespace Doc2web.Plugins.TextProcessor
             context.ProcessChilden();
         }
 
+        [PostProcessing]
         public void PostProcess(IGlobalContext context)
         {
             context.AddCss(RequiredCss);
+            var marginApplier = new MarginApplier(_config, context.RootElements.ToArray());
+            marginApplier.Apply();
         }
 
-        private string RequiredCss =>
-            $"{_config.ContainerTag}.{_config.ContainerCls} {{display: flex; flex-direction: column}}";
+        private string RequiredCss => "p { margin: 0; }";
     }
 }

@@ -9,6 +9,7 @@ namespace Doc2web.Plugins.Style.Properties
     [ParagraphCssProperty(typeof(SpacingBetweenLines))]
     public class SpacingCssProperty : CssProperty<SpacingBetweenLines>
     {
+
         private double? _after;
         private double? _before;
         private double? _line;
@@ -52,7 +53,7 @@ namespace Doc2web.Plugins.Style.Properties
         {
             if (value == null) return null;
             if (int.TryParse(value, out int result))
-                return result / 20 / 28.3464567;
+                return result / 20;
             return null;
         }
 
@@ -74,7 +75,7 @@ namespace Doc2web.Plugins.Style.Properties
         {
             if (Line.HasValue)
             {
-                cssData.AddAttribute(Selector, "line-height", Math.Round(Line.Value, 4) + "cm");
+                cssData.AddAttribute(Selector, "line-height", Math.Round(Line.Value, 4) + "pt");
             }
         }
 

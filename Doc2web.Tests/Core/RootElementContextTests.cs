@@ -31,6 +31,7 @@ namespace Doc2web.Tests.Core
             Assert.AreSame(_rootElement, _instance.RootElement);
             Assert.AreSame(_rootElement, _instance.Element);
             Assert.IsNull(_instance.NestingHandler);
+            Assert.IsNotNull(_instance.ViewBag);
             Assert.AreEqual(0, _instance.Nodes.Count());
             Assert.AreEqual(0, _instance.Mutations.Count());
         }

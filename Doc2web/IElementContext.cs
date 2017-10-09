@@ -19,6 +19,8 @@ namespace Doc2web
 
         IEnumerable<Mutation> Mutations { get; }
 
+        IDictionary<string, object> ViewBag { get; }
+
         void ProcessChilden();
 
         void AddNode(HtmlNode node);

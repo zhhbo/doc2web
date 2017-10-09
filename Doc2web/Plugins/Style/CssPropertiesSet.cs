@@ -16,7 +16,7 @@ namespace Doc2web.Plugins.Style
             _dict = new Dictionary<Type, ICssProperty>();
         }
 
-        public CssPropertiesSet(ICssProperty[] props)
+        public CssPropertiesSet(params ICssProperty[] props)
         {
             _dict = new Dictionary<Type, ICssProperty>(props.Length);
             for(int i = 0; i < props.Length; i++)

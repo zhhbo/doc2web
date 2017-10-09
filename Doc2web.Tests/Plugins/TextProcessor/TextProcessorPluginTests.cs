@@ -34,7 +34,7 @@ namespace Doc2web.Tests.Plugins.TextProcessor
             _config = new TextProcessorConfig();
             _instance = new TextProcessorPlugin(_config);
             _r = new Run(new Text("Some text."));
-            _p = new Paragraph(_r);
+            _p = new Paragraph(new ParagraphProperties(), _r);
             _nestingHandler = Substitute.For<IContextNestingHandler>();
             _cssRegistrator = Substitute.For<ICssRegistrator>();
             _globalContext = Substitute.For<IGlobalContext>();
@@ -87,6 +87,7 @@ namespace Doc2web.Tests.Plugins.TextProcessor
             };
             expected.AddClasses(_config.ContainerCls);
             Assert.AreEqual(expected, firstNode);
+            Assert.IsNotNull(_pContext.ViewBag[_config.PPropsCssClassKey]);
         }
 
         [TestMethod]

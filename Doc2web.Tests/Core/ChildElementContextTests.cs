@@ -15,12 +15,15 @@ namespace Doc2web.Tests.Core
         private ChildElementContext _instance;
         private IContextNestingHandler _nestingHandler;
         private INestableElementContext _parent;
+        private Dictionary<string, object> _viewBag;
 
         [TestInitialize]
         public void Initialize()
         {
             _nestingHandler = Substitute.For<IContextNestingHandler>();
+            _viewBag = new Dictionary<string, object>();
             _parent = Substitute.For<INestableElementContext>();
+            _parent.ViewBag.Returns(_viewBag);
             _parent.RootElement.Returns(BuildParagraph());
             _parent.Element.Returns(_parent.RootElement);
             _parent.Nodes.Returns(Enumerable.Empty<HtmlNode>());
@@ -36,6 +39,7 @@ namespace Doc2web.Tests.Core
         {
             Assert.AreEqual(0, _instance.TextIndex);
             Assert.AreSame(_parent.RootElement, _instance.RootElement);
+            Assert.AreSame(_parent.ViewBag, _instance.ViewBag);
             Assert.AreSame(_parent.Nodes, _instance.Nodes);
             Assert.AreSame(_parent.Mutations, _instance.Mutations);
             Assert.AreSame(_parent.NestingHandler, _instance.NestingHandler);

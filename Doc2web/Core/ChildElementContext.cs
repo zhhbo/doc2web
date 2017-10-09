@@ -16,6 +16,8 @@ namespace Doc2web.Core
 
         public OpenXmlElement Element { get; set; }
 
+        public IDictionary<string, object> ViewBag => _parent.ViewBag;
+
         public int TextIndex { get; set; }
 
         public IEnumerable<HtmlNode> Nodes => _parent.Nodes;

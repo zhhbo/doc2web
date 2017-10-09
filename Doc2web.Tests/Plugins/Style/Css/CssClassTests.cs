@@ -16,15 +16,13 @@ namespace Doc2web.Tests.Plugins.Style.Css
         [TestInitialize]
         public void Initialize()
         {
-            _instance = new CssClass
-            {
-                Name = "some-class"
-            };
+            _instance = new CssClass();
         }
 
         [TestMethod]
         public void CssClass2_Test()
         {
+            Assert.IsNotNull(_instance.Name);
             Assert.IsNotNull(_instance.Props);
         }
 
@@ -44,6 +42,7 @@ namespace Doc2web.Tests.Plugins.Style.Css
         private void MockCssProps()
         {
             var cssProp1 = Substitute.For<ICssProperty>();
+            _instance.Name = "some-class";
             cssProp1
                 .When(x => x.InsertCss(Arg.Any<CssData>()))
                 .Do(x =>
