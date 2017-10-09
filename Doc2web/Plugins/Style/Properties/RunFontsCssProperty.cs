@@ -11,7 +11,8 @@ namespace Doc2web.Plugins.Style.Properties
     public class RunFontsCssProperty : CssProperty<RunFonts>
     {
         private IThemeFontsProvider _themeFontProvider;
-        private string[] _fontFaces;
+        private string[] _inlineFonts = new string[4];
+        private string[] _themeFonts = new string[4];
 
         public RunFontsCssProperty(IThemeFontsProvider themeFontProvider)
         {
@@ -20,81 +21,32 @@ namespace Doc2web.Plugins.Style.Properties
 
         private RunFontsCssProperty() { }
 
-
-        public string[] FontFaces
+        public override OpenXmlElement OpenXmlElement
         {
-            get
+            get => base.OpenXmlElement;
+            set
             {
-                if (_fontFaces == null)
-                    _fontFaces = BuildFontFacesList();
-                return _fontFaces;
+                base.OpenXmlElement = value;
+                ExtractFonts();
             }
         }
 
-        public string FontFamilies => String.Join(", ", FontFaces.Where(x => x != null).Distinct());
-
-        public override void InsertCss(CssData cssData)
+        private void SneakySetElement(OpenXmlElement elem)
         {
-            string cleanFontFamilies = FontFamilies;
-            if (cleanFontFamilies.Length == 0) return;
-            cssData.AddAttribute(Selector, "font-family", String.Join(", ", cleanFontFamilies));
+            base.OpenXmlElement = elem;
         }
 
-
-        public override void Extends(CssProperty<RunFonts> parent)
+        private void ExtractFonts()
         {
-            if (parent is RunFontsCssProperty other)
-            {
-                var parentsFontFaces = other.FontFaces;
-                var current = FontFaces;
-                for(int i = 0; i < 4; i++)
-                {
-                    if (current[i] == null && parentsFontFaces[i] != null)
-                        current[i] = parentsFontFaces[i];
-                }
-            }
-        }
+            _inlineFonts[0] = Element.Ascii?.Value;
+            _inlineFonts[1] = Element.HighAnsi?.Value;
+            _inlineFonts[2] = Element.EastAsia?.Value;
+            _inlineFonts[3] = Element.ComplexScript?.Value;
 
-        private string[] BuildFontFacesList()
-        {
-            var results = new string[4];
-            var fontValues = FontValues;
-            var themeFontValues = ThemeFontValues;
-
-            for(int i = 0; i< 4; i++)
-            {
-                var fontName = GetRightFontFamily(fontValues[i], themeFontValues[i]);
-                if (fontName != null && fontName != "")
-                    results[i] = fontName;
-            }
-
-            return results;
-        }
-
-        private string[] FontValues =>
-            new string[4]
-            {
-                Element.Ascii?.Value,
-                Element.ComplexScript?.Value,
-                Element.EastAsia?.Value,
-                Element.HighAnsi?.Value,
-            };
-
-        private ThemeFontValues?[] ThemeFontValues =>
-            new ThemeFontValues?[4] 
-            {
-                Element.AsciiTheme?.Value,
-                Element.ComplexScriptTheme?.Value,
-                Element.EastAsiaTheme?.Value,
-                Element.HighAnsiTheme?.Value,
-            };
-
-        private string GetRightFontFamily(string fontValue, ThemeFontValues? themeFontValue)
-        {
-            if (fontValue != null) return fontValue;
-            var themeFont =  TryGetFontFromTheme(themeFontValue);
-            if (themeFont != null) return themeFont;
-            return "";
+            _themeFonts[0] = TryGetFontFromTheme(Element.AsciiTheme?.Value);
+            _themeFonts[1] = TryGetFontFromTheme(Element.HighAnsiTheme?.Value);
+            _themeFonts[2] = TryGetFontFromTheme(Element.EastAsiaTheme?.Value);
+            _themeFonts[3] = TryGetFontFromTheme(Element.ComplexScriptTheme?.Value);
         }
 
         private string TryGetFontFromTheme(ThemeFontValues? value)
@@ -110,10 +62,56 @@ namespace Doc2web.Plugins.Style.Properties
             }
         }
 
+        public override void InsertCss(CssData cssData)
+        {
+            string fontFamily = CreateFontFamilyValue();
+            if (fontFamily.Length == 0) return;
+            cssData.AddAttribute(Selector, "font-family", fontFamily);
+        }
+
+        public string CreateFontFamilyValue()
+        {
+            List<string> result = new List<string>(4);
+            for(int i = 0; i < 4; i++)
+            {
+                string fontFace = GetFontAt(i);
+                if (fontFace != null &&
+                    !result.Contains(fontFace))
+                {
+                    result.Add(fontFace);
+                }
+            }
+            return String.Join(", ", result);
+        }
+
+        private string GetFontAt(int i)
+        {
+            if (_inlineFonts[i] != null)
+                return _inlineFonts[i];
+            return _themeFonts[i];
+        }
+
+        public override void Extends(CssProperty<RunFonts> other)
+        {
+            var parent = other as RunFontsCssProperty;
+            if (parent == null) return;
+
+            for (int i = 0; i < 4; i++)
+            {
+                var fontAt = GetFontAt(i);
+                if (fontAt != null) continue;
+                if (_inlineFonts[i] == null) _inlineFonts[i] = parent._inlineFonts[i];
+                if (_themeFonts[i] == null) _themeFonts[i] = parent._themeFonts[i];
+            }
+        }
+
         public override short GetSpecificHashcode()
         {
             for (int i = 0; i < 4; i++)
-                if (FontFaces[i] != null) return (short)FontFaces[i].GetHashCode();
+            {
+                string fontFace = GetFontAt(i);
+                if (fontFace != null) return (short)fontFace.GetHashCode();
+            }
             return -1;
         }
 
@@ -122,13 +120,10 @@ namespace Doc2web.Plugins.Style.Properties
             var other = element as RunFontsCssProperty;
             if (other == null) return false;
 
-            var otherSet = other.FontFaces.Where(x => x != null).Distinct().ToArray();
-            var mySet = FontFaces.Where(x => x != null).Distinct().ToArray();
-
-            if (otherSet.Length != mySet.Length) return false;
-
-            for (int i = 0; i < mySet.Length; i++)
-                if (mySet[i] != otherSet[i]) return false;
+            for(int i = 0; i < 4; i ++)
+            {
+                if (GetFontAt(i) != other.GetFontAt(i)) return false;
+            }
 
             return true;
         }
@@ -137,9 +132,9 @@ namespace Doc2web.Plugins.Style.Properties
         {
             var clone = new RunFontsCssProperty();
             clone.Selector = Selector;
-            clone._fontFaces = new string[4];
-            clone.Element = Element;
-            FontFaces.CopyTo(clone._fontFaces, 0);
+            clone.SneakySetElement(Element); 
+            _inlineFonts.CopyTo(clone._inlineFonts, 0);
+            _themeFonts.CopyTo(clone._themeFonts, 0);
             clone._themeFontProvider = _themeFontProvider;
             return clone;
         }

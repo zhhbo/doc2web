@@ -1,12 +1,10 @@
-﻿using Doc2web.Plugins.Style;
+﻿using System;
+using Doc2web.Plugins.Style;
 using Doc2web.Plugins.Style.Properties;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Wordprocessing;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Doc2web.Tests.Plugins.Style.Properties
 {
@@ -22,9 +20,14 @@ namespace Doc2web.Tests.Plugins.Style.Properties
             _themeFontProvider = Substitute.For<IThemeFontsProvider>();
             _instance = new RunFontsCssProperty(_themeFontProvider)
             {
-                Element = new RunFonts(),
                 Selector = "span.test"
             };
+            _themeFontProvider
+                .GetFontFace(Arg.Any<ThemeFontValues>())
+                .Returns(x =>
+                   Enum.GetName(
+                       typeof(ThemeFontValues), 
+                       x.Arg<ThemeFontValues>()));
         }
 
 
@@ -35,7 +38,10 @@ namespace Doc2web.Tests.Plugins.Style.Properties
 
             var result = _instance.AsCss();
 
-            Assert.AreEqual(ExpectedValues, result[""]["span.test"]["font-family"]);
+            Assert.AreEqual(
+                "Arial, HighAnsi, EastAsia, ComplexScript", 
+                result[""]["span.test"]["font-family"]
+            );
         }
 
         [TestMethod]
@@ -45,7 +51,9 @@ namespace Doc2web.Tests.Plugins.Style.Properties
 
             var result = _instance.AsCss();
 
-            Assert.AreEqual(ExpectedThemeValues, result[""]["span.test"]["font-family"]);
+            Assert.AreEqual(
+                "MajorAscii, MajorHighAnsi, MajorEastAsia, MajorBidi", 
+                result[""]["span.test"]["font-family"]);
         }
 
         [TestMethod]
@@ -59,6 +67,23 @@ namespace Doc2web.Tests.Plugins.Style.Properties
         }
 
         [TestMethod]
+        public void AsCss_InlineOverThemeTest()
+        {
+            SetThemeFontValues();
+            _instance.Element.Ascii = "Arial";
+            _instance.Element.ComplexScript = "Winding";
+            _instance.Element = _instance.Element;
+
+            var result = _instance.AsCss();
+
+            Assert.AreEqual(
+                "Arial, MajorHighAnsi, MajorEastAsia, Winding",
+                result[""]["span.test"]["font-family"]
+            );
+
+        }
+
+        [TestMethod]
         public void AsCss_NoFontTests()
         {
             SetFontsValues(null, null, null, null);
@@ -69,136 +94,119 @@ namespace Doc2web.Tests.Plugins.Style.Properties
             Assert.IsFalse(result[""]["span.test"].ContainsKey("font-family"));
         }
 
+
         [TestMethod]
-        public void Extends_Test()
+        public void Extends_InlineTest()
         {
             SetFontsValues("A1", null, "A2", null);
-            var instanceA = _instance;
-            Initialize();
-            SetFontsValues("A3", "B1", "A4", "B2");
-            var instanceB = _instance;
-
-            instanceA.Extends(instanceB);
-
-            Assert.AreEqual("A1, B1, A2, B2", instanceA.FontFamilies);
-        }
-
-        [TestMethod]
-        public void SpecificHashcode_Test()
-        {
-            _instance.Element.Ascii = new StringValue("A");
-            var instance2 = new RunFontsCssProperty(_themeFontProvider)
-            {
-                Element = new RunFonts(),
-            };
-            instance2.Element.AsciiTheme = new EnumValue<ThemeFontValues>(ThemeFontValues.MajorAscii);
-            _themeFontProvider.GetFontFace(instance2.Element.AsciiTheme.Value).Returns("A");
-
-            Assert.AreEqual(instance2.GetSpecificHashcode(), _instance.GetSpecificHashcode());
-        }
-
-        [TestMethod]
-        public void SpecificHashcode_NullTest()
-        {
-            _instance.Element.Ascii = null;
-            _instance.Element.AsciiTheme = null;
-
-            var result = _instance.GetSpecificHashcode();
-            Assert.AreEqual(-1, result);
-        }
-
-        [TestMethod]
-        public void HaveSameOuput_TrueTest()
-        {
-            SetFontsValues();
-            var otherElement = _instance.Element.CloneNode(true) as RunFonts;
-            otherElement.ComplexScript = null;
-            otherElement.ComplexScriptTheme = new EnumValue<ThemeFontValues>(ThemeFontValues.MajorAscii);
-            _themeFontProvider
-                .GetFontFace(ThemeFontValues.MajorAscii)
-                .Returns(_instance.Element.ComplexScript.Value);
-
-            Assert.IsTrue(_instance.HaveSameOutput(new RunFontsCssProperty(_themeFontProvider)
-            {
-                Element = otherElement
-            }));
-        }
-
-        [TestMethod]
-        public void HaveSameOuput_False1Test()
-        {
-            SetFontsValues();
-            var otherElement = _instance.Element.CloneNode(true) as RunFonts;
-            otherElement.ComplexScript = new StringValue("Different");
-
-            Assert.IsFalse(_instance.HaveSameOutput(new RunFontsCssProperty(_themeFontProvider)
-            {
-                Element = otherElement
-            }));
-        }
-
-        [TestMethod]
-        public void HaveSameOuput_False2Test()
-        {
-            SetFontsValues();
-            var otherElement = _instance.Element.CloneNode(true) as RunFonts;
-            otherElement.HighAnsi = null;
-
-            Assert.IsFalse(_instance.HaveSameOutput(new RunFontsCssProperty(_themeFontProvider)
-            {
-                Element = otherElement
-            }));
-        }
-
-        [TestMethod]
-        public void Clone_Test()
-        {
-            Initialize();
+            var instanceA = _instance.Clone() as RunFontsCssProperty;
             SetFontsValues("A3", "B1", "A4", "B2");
 
-            var clone = _instance.Clone();
+            instanceA.Extends(_instance);
 
-            Assert.AreEqual(clone, _instance);
-            Assert.AreSame(clone.OpenXmlElement, _instance.OpenXmlElement);
-            Assert.AreNotSame(clone, _instance);
-            Assert.AreEqual(clone.AsCss(), _instance.AsCss());
-
+            Assert.AreEqual("A1, B1, A2, B2", instanceA.CreateFontFamilyValue());
         }
 
-        static string ExpectedValues = 
-            "Arial, ComplexScript, EastAsia, HighAnsi";
-        static string ExpectedThemeValues = 
-            "Arial Theme, ComplexScript Theme, EastAsia Theme, HighAnsi Theme";
+        [TestMethod]
+        public void Extends_ConflictingTest()
+        {
+            SetFontsValues();
+            var instanceA = _instance.Clone();
+            SetThemeFontValues();
+
+            _instance.Extends(instanceA);
+
+            Assert.AreEqual(
+                "MajorAscii, MajorHighAnsi, MajorEastAsia, MajorBidi", 
+                _instance.CreateFontFamilyValue()
+            );
+        }
+
+        [TestMethod]
+        public void Extends_ThemeTest()
+        {
+            SetThemeFontValues(
+                ThemeFontValues.MajorAscii, 
+                null, 
+                ThemeFontValues.MajorEastAsia, 
+                null);
+            var instanceA = _instance.Clone() as RunFontsCssProperty;
+            Initialize();
+            SetThemeFontValues(
+                ThemeFontValues.MinorAscii, 
+                ThemeFontValues.MinorHighAnsi, 
+                ThemeFontValues.MinorEastAsia,
+                ThemeFontValues.MinorBidi);
+
+            instanceA.Extends(_instance);
+
+            Assert.AreEqual(
+                "MajorAscii, MinorHighAnsi, MajorEastAsia, MinorBidi",
+                instanceA.CreateFontFamilyValue());
+        }
+
+        [TestMethod]
+        public void SpecificHashCode()
+        {
+            string fontName = "Consolas";
+            SetFontsValues(fontName);
+            var instance1 = _instance.Clone() as RunFontsCssProperty;
+            _themeFontProvider.GetFontFace(ThemeFontValues.MajorAscii).Returns(fontName);
+            SetThemeFontValues(ThemeFontValues.MajorAscii);
+
+            Assert.AreEqual(
+                instance1.GetSpecificHashcode(), 
+                _instance.GetSpecificHashcode());
+        }
+
+        [TestMethod]
+        public void HaveSameOutput_TrueTest()
+        {
+            SetThemeFontValues();
+            var instance1 = _instance.Clone();
+            SetFontsValues("MajorAscii", "MajorHighAnsi", "MajorEastAsia", "MajorBidi");
+
+            Assert.IsTrue(instance1.HaveSameOutput(_instance));
+        }
+
+        [TestMethod]
+        public void HaveSameOutput_FalseTest()
+        {
+            SetFontsValues();
+            var other = _instance.Clone();
+            SetFontsValues("Arial", "MajorHighAnsi", "EastAsia", "ComplexScript");
+
+            Assert.IsFalse(_instance.HaveSameOutput(other));
+        }
 
         private void SetFontsValues(
-            string ascii="Arial",
-            string complex="ComplexScript",
-            string eastAsia="EastAsia",
-            string highAnsi="HighAnsi")
+            string ascii = "Arial",
+            string highAnsi = "HighAnsi",
+            string eastAsia = "EastAsia",
+            string complex = "ComplexScript")
         {
-            _instance.Element.Ascii = new StringValue(ascii);
-            _instance.Element.ComplexScript = new StringValue(complex);
-            _instance.Element.EastAsia = new StringValue(eastAsia);
-            _instance.Element.HighAnsi = new StringValue(highAnsi);
+            _instance.Element = new RunFonts
+            {
+                Ascii = ascii,
+                HighAnsi = highAnsi,
+                EastAsia = eastAsia,
+                ComplexScript = complex
+            };
         }
 
 
-        private void SetThemeFontValues()
+        private void SetThemeFontValues(
+            ThemeFontValues? ascii = ThemeFontValues.MajorAscii,
+            ThemeFontValues? ha = ThemeFontValues.MajorHighAnsi,
+            ThemeFontValues? ea = ThemeFontValues.MajorEastAsia,
+            ThemeFontValues? cs = ThemeFontValues.MajorBidi)
         {
-            var ascii = new EnumValue<ThemeFontValues>(ThemeFontValues.MajorAscii);
-            var cs = new EnumValue<ThemeFontValues>(ThemeFontValues.MajorBidi);
-            var ea = new EnumValue<ThemeFontValues>(ThemeFontValues.MinorEastAsia);
-            var ha = new EnumValue<ThemeFontValues>(ThemeFontValues.MinorHighAnsi);
-
-            _themeFontProvider.GetFontFace(ascii).Returns("Arial Theme");
-            _themeFontProvider.GetFontFace(cs).Returns("ComplexScript Theme");
-            _themeFontProvider.GetFontFace(ea).Returns("EastAsia Theme");
-            _themeFontProvider.GetFontFace(ha).Returns("HighAnsi Theme");
-
-            _instance.Element.AsciiTheme = ascii;
-            _instance.Element.ComplexScriptTheme = cs;
-            _instance.Element.EastAsiaTheme = ea;
-            _instance.Element.HighAnsiTheme = ha;
+            var element = new RunFonts();
+            if (ascii.HasValue) element.AsciiTheme = ascii.Value;
+            if (ha.HasValue) element.HighAnsiTheme = ha.Value;
+            if (ea.HasValue) element.EastAsiaTheme = ea.Value;
+            if (cs.HasValue) element.ComplexScriptTheme = cs.Value;
+            _instance.Element = element;
         }
     }
 }

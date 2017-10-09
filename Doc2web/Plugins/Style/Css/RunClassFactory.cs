@@ -37,30 +37,21 @@ namespace Doc2web.Plugins.Style.Css
 
         public CssClass Build(RunClassParam param)
         {
-            var cssClass = new CssClass();
+            var cssClass = new CssClass { Name = GenerageDynamicName() };
             var inline = BuildInline(param.InlineProperties);
 
-            // I don't know which one is right...
+            // This is according to the doc
+            // cssClass.Props.AddMany(inline);
+            // AddRunStyle(cssClass, param.RunStyleId);
+            // AddNumberingProps(cssClass, param);
 
+            // This is according to me
+            AddNumberingProps(cssClass, param);
             cssClass.Props.AddMany(inline);
             AddRunStyle(cssClass, param.RunStyleId);
-            AddNumberingProps(cssClass, param);
-
-            //AddNumberingProps(cssClass, param);
-            //cssClass.Props.AddMany(inline);
-            //AddRunStyle(cssClass, param.RunStyleId);
-
             AddParagraphStyle(cssClass, param.ParagraphStyleId);
 
-
-            // some work left on the naming part...
-            if (inline.Count == 0 && param.RunStyleId != null && param.ParagraphStyleId == null)
-                cssClass.Name = param.RunStyleId;
-            else
-                cssClass.Name = GenerageDynamicName();
-
             AddDefaults(cssClass);
-
             return cssClass;
         }
 

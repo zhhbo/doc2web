@@ -70,14 +70,14 @@ namespace Doc2web.Plugins.TextProcessor
         private void SetMarginTopBottom(double? value)
         {
             if (!value.HasValue) return;
-            GetContainerNode()
+            GetContainerNode()?
                 .SetStyle("margin-bottom", value + "pt");
         }
 
         private void SetMarginTop(double? before)
         {
             if (!before.HasValue) return;
-            GetContainerNode()
+            GetContainerNode()?
                 .SetStyle("margin-top", before + "pt");
         }
 
