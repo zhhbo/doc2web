@@ -76,6 +76,7 @@ namespace Doc2web.Plugins.Style.Properties
             {
                 string fontFace = GetFontAt(i);
                 if (fontFace != null &&
+                    fontFace.Length > 0 &&
                     !result.Contains(fontFace))
                 {
                     result.Add(fontFace);
