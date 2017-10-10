@@ -15,9 +15,9 @@ namespace Doc2web.Plugins.Style.Properties
                 cssData.AddAttribute(Selector, "background-color", ColorAssociation[i]);
         }
 
-        public override short GetSpecificHashcode() => GetColorCode(Element);
+        public override int GetHashCode() => GetColorCode(Element);
 
-        public override bool HaveSameOutput(ICssProperty element)
+        public override bool Equals(ICssProperty element)
         {
             if (element is HighlightCssProperty other)
                 return GetColorCode(other.Element) == GetColorCode(Element);
@@ -45,10 +45,10 @@ namespace Doc2web.Plugins.Style.Properties
             ""
         };
 
-        private static short GetColorCode(Highlight elem)
+        private static int GetColorCode(Highlight elem)
         {
             if (elem?.Val?.Value == null) return -1;
-            return (short)elem.Val.Value;
+            return (int)elem.Val.Value;
         }
     }
 }

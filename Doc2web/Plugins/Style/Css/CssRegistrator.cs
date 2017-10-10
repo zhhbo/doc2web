@@ -8,11 +8,11 @@ using System.Linq;
 
 namespace Doc2web.Plugins.Style.Css
 {
-    public class CssRegistrator : ICssRegistrator, IEqualityComparer<CssClass>
+    public class CssRegistrator : ICssRegistrator
     {
         private IParagraphClassFactory _paragraphClassFactory;
         private IRunClassFactory _runClassFactory;
-        private ConcurrentDictionary<CssClass, CssClass> _registrations;
+        private ConcurrentDictionary<CssPropertiesSet, CssClass> _registrations;
 
         public CssRegistrator(
             IParagraphClassFactory paragraphClassFactory,
@@ -20,16 +20,10 @@ namespace Doc2web.Plugins.Style.Css
         {
             _paragraphClassFactory = paragraphClassFactory;
             _runClassFactory = runClassFactory;
-            _registrations = new ConcurrentDictionary<CssClass, CssClass>(this);
+            _registrations = new ConcurrentDictionary<CssPropertiesSet, CssClass>();
         }
 
-        public IEnumerable<CssClass> Registrations => _registrations.Keys;
-
-        public bool Equals(CssClass x, CssClass y) =>
-            x.Props.SetEquals(y.Props);
-
-        public int GetHashCode(CssClass obj) =>
-            obj.Props.GetHashCode();
+        public IEnumerable<CssClass> Registrations => _registrations.Values;
 
         public CssClass RegisterParagraph(
             ParagraphProperties inlineProps,
@@ -63,11 +57,11 @@ namespace Doc2web.Plugins.Style.Css
             return AddOrSet(cssClass);
         }
 
-
         private CssClass AddOrSet(CssClass cssClass)
         {
-            return _registrations.GetOrAdd(cssClass, cssClass);
+            return _registrations.GetOrAdd(cssClass.Props, cssClass);
         }
+
         public void InsertCss(CssData data)
         {
             foreach (var cls in Registrations)

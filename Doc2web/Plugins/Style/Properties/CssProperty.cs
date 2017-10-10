@@ -20,20 +20,15 @@ namespace Doc2web.Plugins.Style.Properties
 
         public abstract void InsertCss(CssData cssData);
 
+        public abstract override int GetHashCode();
+
+        public abstract bool Equals(ICssProperty obj);
+
         public override bool Equals(object obj)
         {
-            if (obj.GetType() == GetType())
-                return HaveSameOutput(((CssProperty<T>)obj));
-            return false;
+            if (obj is ICssProperty other) return Equals(other);
+            return base.Equals(obj);
         }
-
-        public override int GetHashCode()
-        {
-            var t = GetType().GetHashCode() + short.MaxValue;
-            return 0 | t | (int)GetSpecificHashcode();
-        }
-
-        public abstract short GetSpecificHashcode();
 
         public virtual void Extends(CssProperty<T> parent) { }
 
@@ -59,7 +54,5 @@ namespace Doc2web.Plugins.Style.Properties
             clone.Selector = Selector;
             return clone;
         }
-
-        public abstract bool HaveSameOutput(ICssProperty prop);
     }
 }

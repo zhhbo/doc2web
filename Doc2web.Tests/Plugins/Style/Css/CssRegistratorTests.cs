@@ -32,32 +32,6 @@ namespace Doc2web.Tests.Plugins.Style.Css
         }
 
         [TestMethod]
-        public void Equals_TrueTest()
-        {
-            var cls1 = new CssClass { Props = new CssPropertiesSet { new MockProp1() } };
-            var cls2 = new CssClass { Props = new CssPropertiesSet { new MockProp1() } };
-
-            Assert.IsTrue(_instance.Equals(cls1, cls2));
-        }
-
-        [TestMethod]
-        public void Equals_FalseTest()
-        {
-            var cls1 = new CssClass { Props = new CssPropertiesSet { new MockProp1() } };
-            var cls2 = new CssClass { Props = new CssPropertiesSet { new MockProp2() } };
-
-            Assert.IsFalse(_instance.Equals(cls1, cls2));
-        }
-
-        [TestMethod]
-        public void GetHashCode_Test()
-        {
-            var cls = new CssClass { Props = new CssPropertiesSet { new MockProp1() } };
-
-            Assert.AreEqual(cls.Props.GetHashCode(), _instance.GetHashCode(cls));
-        }
-
-        [TestMethod]
         public void Register_NewParagraphTest()
         {
             var output = new CssClass();

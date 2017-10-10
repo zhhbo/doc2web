@@ -155,28 +155,28 @@ namespace Doc2web.Tests.Plugins.Style.Properties
             SetThemeFontValues(ThemeFontValues.MajorAscii);
 
             Assert.AreEqual(
-                instance1.GetSpecificHashcode(), 
-                _instance.GetSpecificHashcode());
+                instance1.GetHashCode(), 
+                _instance.GetHashCode());
         }
 
         [TestMethod]
-        public void HaveSameOutput_TrueTest()
+        public void Equals_TrueTest()
         {
             SetThemeFontValues();
             var instance1 = _instance.Clone();
             SetFontsValues("MajorAscii", "MajorHighAnsi", "MajorEastAsia", "MajorBidi");
 
-            Assert.IsTrue(instance1.HaveSameOutput(_instance));
+            Assert.IsTrue(instance1.Equals(_instance));
         }
 
         [TestMethod]
-        public void HaveSameOutput_FalseTest()
+        public void Equals_FalseTest()
         {
             SetFontsValues();
             var other = _instance.Clone();
             SetFontsValues("Arial", "MajorHighAnsi", "EastAsia", "ComplexScript");
 
-            Assert.IsFalse(_instance.HaveSameOutput(other));
+            Assert.IsFalse(_instance.Equals(other));
         }
 
         private void SetFontsValues(

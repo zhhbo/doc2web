@@ -10,7 +10,7 @@ using System.Text;
 namespace Doc2web.Tests.Plugins.Style.Properties
 {
     [TestClass]
-    public class IdentationCssPropertyTests
+    public class IndentationCssPropertyTests
     {
         private StyleConfig _config;
         private IndentationCssProperty _instance;
@@ -119,62 +119,62 @@ namespace Doc2web.Tests.Plugins.Style.Properties
         }
 
         [TestMethod]
-        public void GetSpeficicHashcode_Test()
+        public void GetSpecificHashcode_Test()
         {
             _instance.Element.Left = new StringValue("720");
-            Assert.AreEqual(720, _instance.GetSpecificHashcode());
+            Assert.AreEqual(720, _instance.GetHashCode());
         }
 
         [TestMethod]
-        public void GetSpeficicHashcode_NoValTest()
+        public void GetSpecificHashcode_NoValTest()
         {
-            Assert.AreEqual(0, _instance.GetSpecificHashcode());
+            Assert.AreEqual(int.MaxValue, _instance.GetHashCode());
         }
 
         [TestMethod]
-        public void HaveSameOutput_WithValTrueTest()
+        public void Equals_WithValTrueTest()
         {
             _instance.Element.Left = new StringValue("720");
             _instance.Element.Right = new StringValue("360");
             var other = _instance.Element.CloneNode(true) as Indentation;
 
-            Assert.IsTrue(_instance.HaveSameOutput(new IndentationCssProperty(_config)
+            Assert.IsTrue(_instance.Equals(new IndentationCssProperty(_config)
             {
                 Element = other
             }));
         }
 
         [TestMethod]
-        public void HaveSameOutput_NoValTrueTest()
+        public void Equals_NoValTrueTest()
         {
             var other = new Indentation();
 
-            Assert.IsTrue(_instance.HaveSameOutput(new IndentationCssProperty(_config)
+            Assert.IsTrue(_instance.Equals(new IndentationCssProperty(_config)
             {
                 Element = other
             }));
         }
 
         [TestMethod]
-        public void HaveSameOutput_WithValFalseTest()
+        public void Equals_WithValFalseTest()
         {
             _instance.Element.Left = new StringValue("720");
             var other = _instance.Element.CloneNode(true) as Indentation;
             other.Right = new StringValue("720");
 
-            Assert.IsFalse(_instance.HaveSameOutput(new IndentationCssProperty(_config)
+            Assert.IsFalse(_instance.Equals(new IndentationCssProperty(_config)
             {
                 Element = other
             }));
         }
 
         [TestMethod]
-        public void HaveSameOutput_NoValFalseTest()
+        public void Equals_NoValFalseTest()
         {
             _instance.Element.Left = new StringValue("720");
             var other = new Indentation();
 
-            Assert.IsFalse(_instance.HaveSameOutput(new IndentationCssProperty(_config)
+            Assert.IsFalse(_instance.Equals(new IndentationCssProperty(_config)
             {
                 Element = other
             }));

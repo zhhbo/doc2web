@@ -20,12 +20,12 @@ namespace Doc2web.Tests.Plugins.Style
 
         public class MockBaseBoldCssProp : CssProperty<Bold>
         {
-            public override short GetSpecificHashcode()
+            public override int GetHashCode()
             {
                 throw new NotImplementedException();
             }
 
-            public override bool HaveSameOutput(ICssProperty prop)
+            public override bool Equals(ICssProperty prop)
             {
                 throw new NotImplementedException();
             }
@@ -38,12 +38,12 @@ namespace Doc2web.Tests.Plugins.Style
 
         public class MockBaseIdentationCssProp : CssProperty<Indentation>
         {
-            public override short GetSpecificHashcode()
+            public override int GetHashCode()
             {
                 throw new NotImplementedException();
             }
 
-            public override bool HaveSameOutput(ICssProperty prop)
+            public override bool Equals(ICssProperty prop)
             {
                 throw new NotImplementedException();
             }

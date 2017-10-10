@@ -126,26 +126,25 @@ namespace Doc2web.Tests.Plugins.Style
         }
 
         [TestMethod]
-        public void SetEquals_TrueTest()
+        public void Equals_TrueTest()
         {
-            var prop = Substitute.For<ICssProperty>();
-            prop.HaveSameOutput(Arg.Is(prop)).Returns(true);
+            var prop = new MockProp1();
             var other = new CssPropertiesSet
             {
                 prop
             };
             _instance.Add(prop);
 
-            Assert.IsTrue(_instance.SetEquals(other));
+            Assert.IsTrue(_instance.Equals(other));
         }
 
         [TestMethod]
-        public void SetEquals_FalseTest()
+        public void Equals_FalseTest()
         {
             var prop = Substitute.For<ICssProperty>();
             var other = new CssPropertiesSet { prop };
 
-            Assert.IsFalse(_instance.SetEquals(other));
+            Assert.IsFalse(_instance.Equals(other));
         }
 
         [TestMethod]

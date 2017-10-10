@@ -8,6 +8,8 @@ namespace Doc2web.Plugins.Style.Properties
     [ParagraphCssProperty(typeof(Justification))]
     public class JustificationCssProperty : CssProperty<Justification>
     {
+        const byte EMPTY = byte.MaxValue;
+
         private static string[] MapJusitfyValues = new string[]
         {
             "left",
@@ -19,13 +21,13 @@ namespace Doc2web.Plugins.Style.Properties
         public override void InsertCss(CssData cssData)
         {
             short i = JustifyContent;
-            if (i != -1)
+            if (i != EMPTY)
                 cssData.AddAttribute(Selector, "text-align", MapJusitfyValues[i]);
         }
 
-        public override short GetSpecificHashcode() => JustifyContent;
+        public override int GetHashCode() => JustifyContent;
 
-        public override bool HaveSameOutput(ICssProperty element)
+        public override bool Equals(ICssProperty element)
         {
             if (element is JustificationCssProperty other)
             {
@@ -36,11 +38,11 @@ namespace Doc2web.Plugins.Style.Properties
 
         private bool HasValue => Element.Val?.Value == null;
 
-        private short JustifyContent => ConvertElementVal(Element);
+        private byte JustifyContent => ConvertElementVal(Element);
 
-        private static short ConvertElementVal(Justification elem)
+        private static byte ConvertElementVal(Justification elem)
         {
-            if (elem.Val?.Value == null) return -1;
+            if (elem.Val?.Value == null) return EMPTY;
             switch (elem.Val.Value)
             {
                 case JustificationValues.Start:
@@ -51,7 +53,7 @@ namespace Doc2web.Plugins.Style.Properties
                 case JustificationValues.Both:
                 case JustificationValues.Distribute: return 3;
             }
-            return -1;
+            return EMPTY;
         }
 
     }

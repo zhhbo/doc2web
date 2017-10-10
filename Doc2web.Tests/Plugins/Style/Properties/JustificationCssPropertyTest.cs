@@ -85,7 +85,7 @@ namespace Doc2web.Tests.Plugins.Style.Properties
         }
 
         [TestMethod]
-        public void GetSpecificHashcode_Test()
+        public void GetHashCode_Test()
         {
             var expected = new(JustificationValues, short)[]
             {
@@ -105,7 +105,7 @@ namespace Doc2web.Tests.Plugins.Style.Properties
         private void AssertIsRightSpecificHashcode(JustificationValues v, short expected)
         {
             JustificationValue = v;
-            Assert.AreEqual(expected, _instance.GetSpecificHashcode());
+            Assert.AreEqual(expected, _instance.GetHashCode());
         }
 
         private void AssertIsLeftAlign()

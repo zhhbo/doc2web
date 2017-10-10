@@ -93,13 +93,13 @@ namespace Doc2web.Plugins.Style.Properties
             return null;
         }
 
-        public override short GetSpecificHashcode()
+        public override int GetHashCode()
         {
-            if (LeftIndent.HasValue) return (short)LeftIndent.Value;
-            return 0;
+            if (LeftIndent.HasValue) return LeftIndent.Value;
+            return int.MaxValue;
         }
 
-        public override bool HaveSameOutput(ICssProperty element)
+        public override bool Equals(ICssProperty element)
         {
             if (element is IndentationCssProperty other)
             {

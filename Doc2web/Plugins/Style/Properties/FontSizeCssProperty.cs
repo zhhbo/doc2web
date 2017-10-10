@@ -10,20 +10,20 @@ namespace Doc2web.Plugins.Style.Properties
     {
         public override void InsertCss(CssData cssData)
         {
-            var size = GetSpecificHashcode();
+            var size = GetHashCode();
             if (size != -1)
             {
-                string points = Math.Round((double)GetSpecificHashcode() / 2, 2).ToString();
+                string points = Math.Round((double)size / 2, 2).ToString();
                 cssData.AddAttribute(Selector, "font-size", points + "pt");
             }
         }
 
-        public override short GetSpecificHashcode() => GetSize(Element);
+        public override int GetHashCode() => GetSize(Element);
 
-        public override bool HaveSameOutput(ICssProperty element)
+        public override bool Equals(ICssProperty element)
         {
             if (element is FontSizeCssProperty other)
-                return other.GetSpecificHashcode() == GetSpecificHashcode();
+                return other.GetHashCode() == GetHashCode();
             return false;
         }
 

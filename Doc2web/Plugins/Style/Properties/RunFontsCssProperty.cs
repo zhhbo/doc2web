@@ -106,17 +106,17 @@ namespace Doc2web.Plugins.Style.Properties
             }
         }
 
-        public override short GetSpecificHashcode()
+        public override int GetHashCode()
         {
             for (int i = 0; i < 4; i++)
             {
                 string fontFace = GetFontAt(i);
-                if (fontFace != null) return (short)fontFace.GetHashCode();
+                if (fontFace != null) return fontFace.GetHashCode();
             }
             return -1;
         }
 
-        public override bool HaveSameOutput(ICssProperty element)
+        public override bool Equals(ICssProperty element)
         {
             var other = element as RunFontsCssProperty;
             if (other == null) return false;

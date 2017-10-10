@@ -30,10 +30,9 @@ namespace Doc2web.Plugins.Style.Properties
             }
         }
 
-        public override short GetSpecificHashcode() => 
-            (short)(Element.Val?.Value, Color).GetHashCode();
+        public override int GetHashCode() => (Element.Val?.Value, Color).GetHashCode();
 
-        public override bool HaveSameOutput(ICssProperty element)
+        public override bool Equals(ICssProperty element)
         {
             if (element is UnderlineCssProperty other)
             {

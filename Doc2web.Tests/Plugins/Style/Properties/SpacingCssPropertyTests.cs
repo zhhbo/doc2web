@@ -65,31 +65,31 @@ namespace Doc2web.Tests.Plugins.Style.Properties
         }
 
         [TestMethod]
-        public void GetSpecificHashCode_Test()
+        public void GetHashCode_Test()
         {
             SetValues(null, "100", "10");
             SpacingCssProperty other = CloneCssProperty();
 
-            Assert.AreEqual(other.GetSpecificHashcode(), _instance.GetSpecificHashcode());
+            Assert.AreEqual(other.GetHashCode(), _instance.GetHashCode());
         }
 
         [TestMethod]
-        public void HaveSameOutput_TrueTest()
+        public void Equals_TrueTest()
         {
             SetValues(null, "100", "10");
             SpacingCssProperty other = CloneCssProperty();
 
-            Assert.IsTrue(other.HaveSameOutput(_instance));
+            Assert.IsTrue(other.Equals(_instance));
         }
 
         [TestMethod]
-        public void HaveSameOutput_FalseTest()
+        public void Equals_FalseTest()
         {
             SetValues(null, "100", "10");
             SpacingCssProperty other = CloneCssProperty();
             SetValues("100", null, "10");
 
-            Assert.IsFalse(other.HaveSameOutput(_instance));
+            Assert.IsFalse(other.Equals(_instance));
         }
 
         [TestMethod]

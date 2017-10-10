@@ -59,7 +59,7 @@ namespace Doc2web.Tests.Plugins.Style.Css
             Assert.IsTrue(result.Contains(prop2));
             Assert.AreEqual(1, _instance.Cache.Count);
             Assert.AreNotSame(result, _instance.Cache[(7, 1)]);
-            Assert.IsTrue(result.SetEquals(_instance.Cache[(7, 1)]));
+            Assert.IsTrue(result.Equals(_instance.Cache[(7, 1)]));
         }
 
         [TestMethod]
@@ -74,11 +74,11 @@ namespace Doc2web.Tests.Plugins.Style.Css
             var result2 = _instance.Get(2, 2);
 
             Assert.AreNotSame(result, result2);
-            Assert.IsTrue(result.SetEquals(result2));
+            Assert.IsTrue(result.Equals(result2));
             _nProvider.DidNotReceive().Collect(2, 2);
             Assert.AreEqual(1, _instance.Cache.Count);
             Assert.AreNotSame(result, _instance.Cache[(2, 2)]);
-            Assert.IsTrue(result.SetEquals(_instance.Cache[(2, 2)]));
+            Assert.IsTrue(result.Equals(_instance.Cache[(2, 2)]));
         }
 
         private ICssProperty MockLevel(int index, ICssProperty prop)

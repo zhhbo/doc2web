@@ -43,31 +43,31 @@ namespace Doc2web.Tests.Plugins.Style.Properties
         }
 
         [TestMethod]
-        public void GetSpecificHashcode_Test()
+        public void GetHashCode_Test()
         {
             FontSize = "35";
 
-            Assert.AreEqual(35, _instance.GetSpecificHashcode());
+            Assert.AreEqual(35, _instance.GetHashCode());
         }
 
         [TestMethod]
-        public void HaveSameOutput_TrueTest()
+        public void Equals_TrueTest()
         {
             var element = new FontSize { Val = new StringValue("40") };
             FontSize = "40";
 
-            Assert.IsTrue(_instance.HaveSameOutput(new FontSizeCssProperty
+            Assert.IsTrue(_instance.Equals(new FontSizeCssProperty
             {
                 OpenXmlElement = _instance.Element.CloneNode(true)
             }));
         }
 
         [TestMethod]
-        public void HaveSameOutput_FalseTest()
+        public void Equals_FalseTest()
         {
             var element = new FontSize { Val = new StringValue("40") };
 
-            Assert.IsFalse(_instance.HaveSameOutput(new FontSizeCssProperty
+            Assert.IsFalse(_instance.Equals(new FontSizeCssProperty
             {
                 Element = element
             }));

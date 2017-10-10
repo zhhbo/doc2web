@@ -75,8 +75,8 @@ namespace Doc2web.Tests.Plugins.Style.Css
             var result = _instance.Get(styleId);
 
             Assert.AreNotSame(result, _instance.Cache[styleId]);
-            Assert.IsTrue(result.SetEquals(_instance.Cache[styleId]));
-            Assert.IsTrue(props.SetEquals(result));
+            Assert.IsTrue(result.Equals(_instance.Cache[styleId]));
+            Assert.IsTrue(props.Equals(result));
             Assert.AreEqual(1, _instance.Cache.Count);
         }
 
@@ -93,10 +93,10 @@ namespace Doc2web.Tests.Plugins.Style.Css
 
             _propsFac.Received(1).Build(_styles[0]);
             Assert.AreNotSame(first, sec);
-            Assert.IsTrue(first.SetEquals(sec));
+            Assert.IsTrue(first.Equals(sec));
             Assert.AreNotSame(first, _instance.Cache["a1"]);
             Assert.AreNotSame(sec, _instance.Cache["a1"]);
-            Assert.IsTrue(first.SetEquals(_instance.Cache["a1"]));
+            Assert.IsTrue(first.Equals(_instance.Cache["a1"]));
         }
 
         [TestMethod]
@@ -108,10 +108,10 @@ namespace Doc2web.Tests.Plugins.Style.Css
 
             var result = _instance.Get("a2");
 
-            Assert.IsTrue(props.SetEquals(props));
+            Assert.IsTrue(props.Equals(props));
             Assert.AreEqual(2, _instance.Cache.Count);
             Assert.AreNotSame(result, _instance.Cache["a2"]);
-            Assert.IsTrue(result.SetEquals(_instance.Cache["a2"]));
+            Assert.IsTrue(result.Equals(_instance.Cache["a2"]));
             Assert.IsTrue(_instance.Cache.ContainsKey("a1"));
         }
 
@@ -124,10 +124,10 @@ namespace Doc2web.Tests.Plugins.Style.Css
             _instance.Get("a2");
             var result = _instance.Get("a3");
 
-            Assert.IsTrue(props.SetEquals(result));
+            Assert.IsTrue(props.Equals(result));
             Assert.AreEqual(3, _instance.Cache.Count);
             Assert.AreNotSame(result, _instance.Cache["a3"]);
-            Assert.IsTrue(result.SetEquals(_instance.Cache["a3"]));
+            Assert.IsTrue(result.Equals(_instance.Cache["a3"]));
             Assert.IsTrue(_instance.Cache.ContainsKey("a1"));
         }
 

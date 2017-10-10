@@ -76,19 +76,25 @@ namespace Doc2web.Plugins.Style
             }
         }
 
-        public bool SetEquals(CssPropertiesSet other)
+        public bool Equals(CssPropertiesSet other)
         {
             if (other.Count != Count) return false;
             foreach(var a in _dict.Values)
             {
                 if (other._dict.TryGetValue(a.GetType(), out ICssProperty b))
                 {
-                    if (a.GetHashCode() != b.GetHashCode() || !a.HaveSameOutput(b))
-                        return false;
+                    if (a.GetHashCode() != b.GetHashCode()) return false;
+                    if (!a.Equals(b)) return false;
                 }
                 else return false;
             }
             return true;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is CssPropertiesSet other) return (Equals(other));
+            return base.Equals(obj);
         }
 
         public override int GetHashCode()
@@ -123,7 +129,14 @@ namespace Doc2web.Plugins.Style
         {
             if (_dict.TryGetValue(typeof(T), out ICssProperty prop))
                 return (T)prop;
-            return default(T);
+            return default;
+        }
+
+        public override string ToString()
+        {
+            var cssData = new CssData();
+            InsertCss(cssData);
+            return cssData.ToString();
         }
 
     }

@@ -57,12 +57,12 @@ namespace Doc2web.Plugins.Style.Properties
             return null;
         }
 
-        public override short GetSpecificHashcode()
+        public override int GetHashCode()
         {
-            return (short)(_after, _before, _line).GetHashCode();
+            return (_after, _before, _line).GetHashCode();
         }
 
-        public override bool HaveSameOutput(ICssProperty prop)
+        public override bool Equals(ICssProperty prop)
         {
             if (prop is SpacingCssProperty other)
             {

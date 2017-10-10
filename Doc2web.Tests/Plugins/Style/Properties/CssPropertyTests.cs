@@ -16,12 +16,12 @@ namespace Doc2web.Tests.Plugins.Style.Properties
 
         public class MockCssProperty : CssProperty<Paragraph>
         {
-            public override short GetSpecificHashcode()
+            public override int GetHashCode()
             {
                 throw new NotImplementedException();
             }
 
-            public override bool HaveSameOutput(ICssProperty prop)
+            public override bool Equals(ICssProperty prop)
             {
                 throw new NotImplementedException();
             }

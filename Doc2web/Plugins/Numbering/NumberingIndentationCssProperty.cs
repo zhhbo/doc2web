@@ -64,14 +64,13 @@ namespace Doc2web.Plugins.Numbering
             cssData.AddAttribute(PageMaxMediaQuery, NumberMaxSelector, "min-width", NumberMaxWidthCM);
         }
 
-        public override short GetSpecificHashcode() => _indentProp.GetSpecificHashcode();
+        public override int GetHashCode() => _indentProp.GetHashCode();
 
-
-        public override bool HaveSameOutput(ICssProperty prop)
+        public override bool Equals(ICssProperty prop)
         {
             if (prop is NumberingIndentationCssProperty other)
             {
-                return _indentProp.HaveSameOutput(other._indentProp);
+                return _indentProp.Equals(other._indentProp);
             }
             return false;
         }
