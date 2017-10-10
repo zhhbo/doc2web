@@ -44,7 +44,7 @@ namespace Doc2web.Tests.Plugins.Style
 
             _instance.InjectCss(context);
 
-            context.Received(1).AddCss(StylePlugin.BaseCss);
+            context.Received(1).AddCss(_instance.BaseCss);
             context.Received(1).AddCss("span {color: red;}");
         }
 

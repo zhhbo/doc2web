@@ -30,6 +30,7 @@ namespace Doc2web.Tests.Plugins.Style.Css
             _pStylePropsCache = Substitute.For<IStylePropsCache>();
             _numPropsCache = Substitute.For<INumberingPropsCache>();
             _rStylePropsCache = Substitute.For<IStylePropsCache>();
+            _rStylePropsCache.Get(Arg.Any<string>()).Returns(new CssPropertiesSet());
             _propsFac = Substitute.For<ICssPropertiesFactory>();
             _propsFac.Build(null).ReturnsForAnyArgs(x => new CssPropertiesSet());
 
@@ -84,23 +85,48 @@ namespace Doc2web.Tests.Plugins.Style.Css
         public void Build_RunStyleTest()
         {
             string styleId = "run-style";
-            var rPr = new RunProperties
-            {
-                RunStyle = new RunStyle { Val = styleId }
-            };
-            var props = new CssPropertiesSet {
-                new MockProp1(),
-                new MockProp2()
-            };
-            _rStylePropsCache.Get(styleId).Returns(props);
+            RunProperties rPr;
+            CssPropertiesSet props;
+            MockStyleProps(styleId, out rPr, out props);
 
-            var result = _instance.Build(new RunClassParam {
+            var result = _instance.Build(new RunClassParam
+            {
                 RunStyleId = styleId,
                 InlineProperties = rPr
             });
 
-            Assert.AreEqual(styleId, result.Name);
             Assert.IsTrue(props.SetEquals(result.Props));
+        }
+
+        [TestMethod]
+        public void Build_RunDefaultStyleTest()
+        {
+            string styleId = "Defaults";
+            _defaults.DefaultRunStyle.Returns(styleId);
+            RunProperties rPr;
+            CssPropertiesSet props;
+            MockStyleProps(styleId, out rPr, out props);
+
+            var result = _instance.Build(new RunClassParam
+            {
+                RunStyleId = null,
+                InlineProperties = rPr
+            });
+
+            Assert.IsTrue(props.SetEquals(result.Props));
+        }
+
+        private void MockStyleProps(string styleId, out RunProperties rPr, out CssPropertiesSet props)
+        {
+            rPr = new RunProperties
+            {
+                RunStyle = new RunStyle { Val = styleId }
+            };
+            props = new CssPropertiesSet {
+                new MockProp1(),
+                new MockProp2()
+            };
+            _rStylePropsCache.Get(styleId).Returns(props);
         }
 
         [TestMethod]

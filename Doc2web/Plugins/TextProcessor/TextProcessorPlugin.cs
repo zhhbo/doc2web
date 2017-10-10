@@ -85,6 +85,7 @@ namespace Doc2web.Plugins.TextProcessor
                 Z = _config.ParagraphZ,
             };
             pNode.AddClasses(_config.ParagraphCls);
+            if (p.InnerText.Length == 0) pNode.TextPrefix = "&#8203;";
             return pNode;
         }
 
@@ -143,11 +144,8 @@ namespace Doc2web.Plugins.TextProcessor
         [PostProcessing]
         public void PostProcess(IGlobalContext context)
         {
-            context.AddCss(RequiredCss);
             var marginApplier = new MarginApplier(_config, context.RootElements.ToArray());
             marginApplier.Apply();
         }
-
-        private string RequiredCss => "p { margin: 0; }";
     }
 }

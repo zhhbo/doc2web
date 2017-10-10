@@ -24,6 +24,7 @@ namespace Doc2web.Tests.Plugins.Style
             _rPropsFac = Substitute.For<ICssPropertiesFactory>();
             _styles = Samples.DocumentSample1.GenerateStyles();
             _instance = new DefaultsProvider(FacBuilder, _styles);
+            _instance.Init();
         }
 
         private ICssPropertiesFactory FacBuilder(CssPropertySource arg)
@@ -83,6 +84,22 @@ namespace Doc2web.Tests.Plugins.Style
             var result = _instance.Run;
 
             Assert.AreEqual(0, result.Count);
+        }
+
+        [TestMethod]
+        public void DefaultParagraphStyle_Test()
+        {
+            var result = _instance.DefaultParagraphStyle;
+
+            Assert.AreEqual("Normal", result);
+        }
+
+        [TestMethod]
+        public void DefaultRunStyle_Test()
+        {
+            var result = _instance.DefaultRunStyle;
+
+            Assert.AreEqual("DefaultParagraphFont", result);
         }
     }
 }

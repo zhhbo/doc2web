@@ -7,6 +7,7 @@ using System.Text;
 using Doc2web.Plugins.Style;
 using DocumentFormat.OpenXml.Wordprocessing;
 using System.Linq;
+using DocumentFormat.OpenXml;
 
 namespace Doc2web.Tests.Plugins.Style.Css
 {
@@ -25,8 +26,12 @@ namespace Doc2web.Tests.Plugins.Style.Css
         {
             _config = new StyleConfig();
             _propsFac = Substitute.For<ICssPropertiesFactory>();
-            _propsFac.Build(null).ReturnsForAnyArgs(x => new CssPropertiesSet());
+            _propsFac
+                .Build(Arg.Any<OpenXmlElement>())
+                .ReturnsForAnyArgs(x => new CssPropertiesSet());
             _stylePropsCache = Substitute.For<IStylePropsCache>();
+            _stylePropsCache.Get(Arg.Any<string>())
+                .Returns(new CssPropertiesSet());
             _numPropsCache = Substitute.For<INumberingPropsCache>();
             _defaults = Substitute.For<IDefaultsProvider>();
             _defaults.Paragraph.Returns(new CssPropertiesSet());
@@ -98,17 +103,9 @@ namespace Doc2web.Tests.Plugins.Style.Css
         public void Build_FromStyleTest()
         {
             string styleId = "yolo";
-            var pPr = new ParagraphProperties
-            {
-                ParagraphStyleId = new ParagraphStyleId { Val = styleId }
-            };
-            var props = new CssPropertiesSet
-            {
-                new MockProp1(),
-                new MockProp2()
-            };
-            _propsFac.Build(Arg.Is(pPr)).Returns(new CssPropertiesSet());
-            _stylePropsCache.Get(styleId).Returns(props);
+            ParagraphProperties pPr;
+            CssPropertiesSet props;
+            MockStyleProps(styleId, out pPr, out props);
 
             var result = _instance.Build(new ParagraphClassParam
             {
@@ -117,6 +114,39 @@ namespace Doc2web.Tests.Plugins.Style.Css
             });
 
             Assert.IsTrue(props.SetEquals(result.Props));
+        }
+
+        [TestMethod]
+        public void Build_FromDefaultStyleTest()
+        {
+            string styleId = "Normal";
+            _defaults.DefaultParagraphStyle.Returns("Normal");
+            ParagraphProperties pPr;
+            CssPropertiesSet props;
+            MockStyleProps(styleId, out pPr, out props);
+
+            var result = _instance.Build(new ParagraphClassParam
+            {
+                StyleId = null,
+                InlineProperties = pPr
+            });
+
+            Assert.IsTrue(props.SetEquals(result.Props));
+        }
+
+        private void MockStyleProps(string styleId, out ParagraphProperties pPr, out CssPropertiesSet props)
+        {
+            pPr = new ParagraphProperties
+            {
+                ParagraphStyleId = new ParagraphStyleId { Val = styleId }
+            };
+            props = new CssPropertiesSet
+            {
+                new MockProp1(),
+                new MockProp2()
+            };
+            _propsFac.Build(Arg.Is(pPr)).Returns(new CssPropertiesSet());
+            _stylePropsCache.Get(styleId).Returns(props);
         }
 
         [TestMethod]

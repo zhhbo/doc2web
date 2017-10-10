@@ -147,6 +147,18 @@ namespace Doc2web.Tests.Plugins.TextProcessor
         }
 
         [TestMethod]
+        public void ProcessParagraph_AddEmptyCharTest()
+        {
+            _p = new Paragraph();
+            _pContext = new RootElementContext(_globalContext, _p) { NestingHandler = _nestingHandler };
+
+            _instance.ProcessParagraph(_pContext, _p);
+
+            var firstNode = _pContext.Nodes.ElementAt(1);
+            Assert.AreEqual("&#8203;", firstNode.TextPrefix);
+        }
+
+        [TestMethod]
         public void ProcessParagraph_AddStyleTest()
         {
             string styleName = "dyn-somestuff";

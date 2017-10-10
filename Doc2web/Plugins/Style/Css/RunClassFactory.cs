@@ -68,8 +68,16 @@ namespace Doc2web.Plugins.Style.Css
 
         private void AddParagraphStyle(CssClass cssClass, string styleId)
         {
-            if (styleId == null) return;
-            cssClass.Props.AddMany(_pStylePropsCache.Get(styleId));
+            if (styleId != null)
+            {
+                cssClass.Props.AddMany(_pStylePropsCache.Get(styleId));
+                return;
+            }
+            if (_defaults.DefaultRunStyle != null)
+            {
+                var props = _rStylePropsCache.Get(_defaults.DefaultRunStyle);
+                cssClass.Props.AddMany(props);
+            }
         }
 
         private void AddRunStyle(CssClass cssClass, string styleId)

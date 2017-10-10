@@ -168,7 +168,8 @@ namespace Doc2web.Plugins.Style
             context.AddCss(sb.ToString());
         }
 
-        public static string BaseCss =
-             ".container { display: flex; } .container > p { flex: 1;  margin-top: 0; }";
+        public string BaseCss =>
+            $"{_config.ContainerCssClassPrefix} {{ display: flex; }} " +
+            $"{_config.ContainerCssClassPrefix} > {_config.ParagraphCssClassPrefix} {{ flex: 1;  margin: 0; }}";
     }
 }

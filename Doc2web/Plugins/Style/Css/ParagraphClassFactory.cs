@@ -36,7 +36,6 @@ namespace Doc2web.Plugins.Style.Css
             var cssClass = new CssClass();
             cssClass.Props = BuildInline(param.InlineProperties);
 
-
             if (param.NumberingId.HasValue)
                 AddNumberingStyleProps(param, cssClass);
             else
@@ -65,8 +64,16 @@ namespace Doc2web.Plugins.Style.Css
 
         private void AddStyleProps(string styleId, CssClass cssClass)
         {
-            if (styleId == null) return;
-            AddOrSet(cssClass, _stylePropsCache.Get(styleId));
+            if (styleId != null)
+            {
+                AddOrSet(cssClass, _stylePropsCache.Get(styleId));
+                return;
+            }
+            if (_defaultsProvider.DefaultParagraphStyle != null)
+            {
+                var props = _stylePropsCache.Get(_defaultsProvider.DefaultParagraphStyle);
+                AddOrSet(cssClass, props);
+            }
         }
 
         private static bool WillBeEmtpyClass(ParagraphClassParam param, CssPropertiesSet propsInline) => 
@@ -83,8 +90,6 @@ namespace Doc2web.Plugins.Style.Css
         private string GenerateDynName()
         {
             return _clsNameGenerator.GenId();
-            //var uid = Guid.NewGuid().ToString().Replace("-", "");
-            //return _config.DynamicCssClassPrefix + uid;
         }
 
         private void AddOrSet(CssClass cssClass, CssPropertiesSet props)
