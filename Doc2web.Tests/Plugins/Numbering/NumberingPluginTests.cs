@@ -72,10 +72,6 @@ namespace Doc2web.Tests.Plugins.Numbering
 
             Assert.IsNotNull(container.Resolve<INumberingMapper>());
             Assert.AreEqual(_config, container.Resolve<NumberingConfig>());
-            Assert.IsTrue(container.TryResolve(
-                typeof(ICssProperty),
-                out object t));
-            Assert.IsInstanceOfType(t, typeof(NumberingIndentationCssProperty));
         }
 
         [TestMethod]
@@ -91,138 +87,45 @@ namespace Doc2web.Tests.Plugins.Numbering
         }
 
         [TestMethod]
-        public void InsertNumbering_ContainerMaxTest()
+        public void InsertNumbering_ContainerTest()
         {
             MockElementContext(1, 2, "1.1.1");
 
             _instance.InsertNumbering(_elementContext, _p);
 
-            var containerMax = _nodes[0];
-            AssertCountNodesBefore(0, containerMax);
-            AssertCountNodesAfter(0, containerMax);
-            AssertHasZAndTag(containerMax);
-            AssertHasClasses(containerMax,
-                "numbering-container-max",
-                "numbering-container-1-2");
+            var numberingContainer = _nodes[0];
+            Assert.AreEqual(_config.NumberingContainerTag, numberingContainer.Tag);
+            Assert.AreEqual(_config.NumberingContainerZ, numberingContainer.Z);
+            AssertHasClasses(numberingContainer, "numbering-container");
         }
 
 
+
         [TestMethod]
-        public void InsertNumbering_ContainerMinTest()
+        public void InsertNumbering_NumberTest()
         {
             MockElementContext(1, 2, "1.1.1");
 
             _instance.InsertNumbering(_elementContext, _p);
 
-            var containerMin = _nodes[1];
-            AssertCountNodesBefore(1, containerMin);
-            AssertCountNodesAfter(1, containerMin);
-            AssertHasZAndTag(containerMin);
-            AssertHasClasses(containerMin, _config.NumberingContainerMinCls);
+            var numberingNumber = _nodes[1];
+            Assert.AreEqual("1.1.1", numberingNumber.TextPrefix);
+            Assert.AreEqual(_config.NumberingNumberTag, numberingNumber.Tag);
+            Assert.AreEqual(_config.NumberingNumberZ, numberingNumber.Z);
+            AssertHasClasses(numberingNumber, "dynamic-cls", _config.NumberingNumberCls);
+            Assert.AreEqual("1.5em", numberingNumber.Style["padding-right"]);
         }
 
         [TestMethod]
-        public void InsertNumbering_NumberMaxTest()
-        {
-            MockElementContext(1, 2, "1.1.1");
-
-            _instance.InsertNumbering(_elementContext, _p);
-
-            var numberMax = _nodes[2];
-            AssertCountNodesBefore(2, numberMax);
-            AssertCountNodesAfter(2, numberMax);
-            AssertHasZAndTag(numberMax);
-            AssertHasClasses(numberMax, _config.NumberingNumberMaxCls);
-        }
-
-        [TestMethod]
-        public void InsertNumbering_NumberMinTest()
-        {
-            MockElementContext(1, 2, "1.1.1");
-
-            _instance.InsertNumbering(_elementContext, _p);
-
-            var numberMin = _nodes[3];
-            AssertCountNodesBefore(3, numberMin);
-            AssertCountNodesAfter(3, numberMin);
-            Assert.AreEqual(_config.NumberingNumberTag, numberMin.Tag);
-            Assert.AreEqual(_config.NumberingNumberZ, numberMin.Z);
-            AssertHasClasses(
-                numberMin, 
-                _config.NumberingNumberMinCls, 
-                "numbering-number-1-2");
-            Assert.AreEqual("1.5em", numberMin.Style["padding-right"]);
-        }
-
-        [TestMethod]
-        public void InsertNumbering_NumberingMinDynTest()
-        {
-            MockElementContext(1, 2, "1.1.1");
-
-            _instance.InsertNumbering(_elementContext, _p);
-
-            var numberMin = _nodes[3];
-            AssertHasClasses(
-                numberMin,
-                _config.NumberingNumberMinCls,
-                "numbering-number-1-2");
-        }
-
-        [TestMethod]
-        public void InsertNumbering_NubmeringMinPaddingSpaceTest()
-        {
-            MockElementContext(1, 2, "1.1.1");
-            _level.LevelSuffix = new LevelSuffix { Val = LevelSuffixValues.Space };
-
-            _instance.InsertNumbering(_elementContext, _p);
-
-            var numberMin = _nodes[3];
-            Assert.AreEqual("0.5em", numberMin.Style["padding-right"]);
-        }
-
-        [TestMethod]
-        public void InsertNumbering_NubmeringMinNoPaddingTest()
+        public void InsertNumbering_NumberNoPaddingTest()
         {
             MockElementContext(1, 2, "1.1.1");
             _level.LevelSuffix = new LevelSuffix { Val = LevelSuffixValues.Nothing };
 
             _instance.InsertNumbering(_elementContext, _p);
 
-            var numberMin = _nodes[3];
+            var numberMin = _nodes[1];
             Assert.IsFalse(numberMin.Style.ContainsKey("padding-right"));
-        }
-
-        [TestMethod]
-        public void InsertNumbering_MutationTest()
-        {
-            MockElementContext(1, 2, "1.1.1");
-
-            _instance.InsertNumbering(_elementContext, _p);
-
-            var mutation = _mutations.Single();
-            Assert.IsFalse(_nodes.Any(x => x.Start > mutation.Position));
-            Assert.IsFalse(_nodes.Any(x => x.End < mutation.Position));
-
-            var textInsert = mutation as TextInsertion;
-            Assert.IsNotNull(textInsert);
-            Assert.AreEqual("1.1.1", textInsert.Text);
-        }
-
-
-        private void AssertHasZAndTag(HtmlNode node)
-        {
-            Assert.AreEqual(_config.NumberingContainerTag, node.Tag);
-            Assert.AreEqual(_config.NumberingContainerZ, node.Z);
-        }
-
-        private void AssertCountNodesBefore(int count, HtmlNode node)
-        {
-            Assert.AreEqual(count, _nodes.Where(x => x.Start < node.Start).Count());
-        }
-
-        private void AssertCountNodesAfter(int count, HtmlNode node)
-        {
-            Assert.AreEqual(count, _nodes.Where(x => x.End > node.End).Count());
         }
 
         private void AssertHasClasses(HtmlNode node, params string[] classes)
@@ -245,13 +148,8 @@ namespace Doc2web.Tests.Plugins.Numbering
             _nMapper.GetNumbering(_p).Returns(_pData);
             _cssRegistrator = Substitute.For<ICssRegistrator>();
             _cssRegistrator
-                //.RegisterNumbering(numberingId, levelId)
-                .RegisterParagraph(Arg.Any<ParagraphProperties>(), (numberingId, levelId))
-                .Returns(new CssClass { Name = $"numbering-container-{numberingId}-{levelId}" });
-            _cssRegistrator
-                //.RegisterNumbering(numberingId, levelId)
                 .RegisterRun(Arg.Any<ParagraphProperties>(), Arg.Any<RunProperties>(), (numberingId, levelId))
-                .Returns(new CssClass { Name = $"numbering-number-{numberingId}-{levelId}" });
+                .Returns(new CssClass { Name = $"dynamic-cls" });
 
             _elementContext = Substitute.For<IElementContext>();
             _elementContext.Resolve<INumberingMapper>().Returns(_nMapper);
@@ -273,8 +171,8 @@ namespace Doc2web.Tests.Plugins.Numbering
             context.Resolve<StyleConfig>().Returns(new StyleConfig());
             context.Resolve<NumberingConfig>().Returns(new NumberingConfig());
             string expectedCss =
-                ".leftspacer, .numbering-container-min { display: flex; } " +
-                ".numbering-number-min { white-space: pre; }";
+                ".numbering-container { display: flex; flex-direction: row-reverse; } " +
+                ".numbering-number { white-space: pre; }";
 
             _instance.PostProcessing(context);
 

@@ -8,16 +8,13 @@ namespace Doc2web.Plugins.Numbering
     {
         public double NumberingIndex { get; set; }
         public double NumberingDelta { get; }
+
         public string NumberingContainerTag { get; set; }
-
-        public string NumberingContainerMaxCls { get; set; }
-        public string NumberingContainerMinCls { get; set; }
-
+        public string NumberingContainerCls { get; set; }
         public int NumberingContainerZ { get; set; }
-        public string NumberingNumberTag { get; set; }
 
-        public string NumberingNumberMaxCls { get; set; }
-        public string NumberingNumberMinCls { get; set; }
+        public string NumberingNumberTag { get; set; }
+        public string NumberingNumberCls { get; set; }
         public int NumberingNumberZ { get; set; }
 
 
@@ -26,12 +23,10 @@ namespace Doc2web.Plugins.Numbering
             NumberingIndex = -1_000_000 + 0.011;
             NumberingDelta = 0.001;
             NumberingContainerTag = "div";
-            NumberingContainerMaxCls = "numbering-container-max";
-            NumberingContainerMinCls = "numbering-container-min";
+            NumberingContainerCls = "numbering-container";
             NumberingContainerZ = 900;
             NumberingNumberTag = "span";
-            NumberingNumberMaxCls = "numbering-number-max";
-            NumberingNumberMinCls = "numbering-number-min";
+            NumberingNumberCls = "numbering-number";
             NumberingNumberZ = 899;
         }
     }

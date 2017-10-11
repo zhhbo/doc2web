@@ -37,10 +37,6 @@ namespace Doc2web.Plugins.Numbering
                 .RegisterType<NumberingMapper>()
                 .As<INumberingMapper>()
                 .SingleInstance();
-            builder
-                .RegisterTypes(typeof(NumberingIndentationCssProperty))
-                .WithMetadataFrom<BaseCssPropertyAttribute>()
-                .As<ICssProperty>();
         }
 
         [ElementProcessing]
@@ -50,75 +46,45 @@ namespace Doc2web.Plugins.Numbering
 
             if (!numberingMapper.IsValid) return;
 
-            var numbering = numberingMapper.GetNumbering(p);
-            if (numbering != null)
+            var paragraphData = numberingMapper.GetNumbering(p);
+            if (paragraphData != null)
             {
                 var cssRegistrator = context.Resolve<ICssRegistrator>();
-                var cssClass = cssRegistrator.RegisterParagraph(
-                    p.ParagraphProperties,
-                    (numbering.NumberingId, numbering.LevelIndex));
-
-
-                context.AddNode(BuildContainerMax(cssClass.Name));
-                context.AddNode(BuildContainerMin());
-                context.AddNode(BuildNumberMax());
-                context.AddNode(BuildNumberMin(p, cssRegistrator, numbering));
-                context.AddMutation(BuildiInsertion(numbering.Verbose));
+                context.AddNode(BuildNumberingContainer());
+                context.AddNode(BuildNumberingNumber(p, cssRegistrator, paragraphData));
             }
         }
 
-        private double PositionWithDelta(int delta = 0) => _config.NumberingIndex + _config.NumberingDelta * delta;
+        private double PositionWithDelta(int delta = 0) => 
+            _config.NumberingIndex + _config.NumberingDelta * delta;
 
-        private HtmlNode BuildContainerMax(string cssClass)
+        private HtmlNode BuildNumberingContainer()
         {
             var node = new HtmlNode
             {
                 Start = PositionWithDelta(0),
-                End = PositionWithDelta(8),
+                End = PositionWithDelta(3),
                 Tag = _config.NumberingContainerTag,
                 Z = _config.NumberingContainerZ,
             };
-            node.AddClasses(_config.NumberingContainerMaxCls);
-            node.AddClasses(cssClass);
+            node.AddClasses(_config.NumberingContainerCls);
             return node;
         }
 
-        private HtmlNode BuildContainerMin()
+        private HtmlNode BuildNumberingNumber(
+            Paragraph p, 
+            ICssRegistrator cssRegistrator, 
+            IParagraphData paragraphData)
         {
             var node = new HtmlNode
             {
                 Start = PositionWithDelta(1),
-                End = PositionWithDelta(7),
-                Tag = _config.NumberingContainerTag,
-                Z = _config.NumberingContainerZ,
-            };
-            node.AddClasses(_config.NumberingContainerMinCls);
-            return node;
-        }
-
-        private HtmlNode BuildNumberMax()
-        {
-            var node = new HtmlNode
-            {
-                Start = PositionWithDelta(2),
-                End = PositionWithDelta(6),
-                Tag = _config.NumberingContainerTag,
-                Z = _config.NumberingContainerZ,
-            };
-            node.AddClasses(_config.NumberingNumberMaxCls);
-            return node;
-        }
-
-        private HtmlNode BuildNumberMin(Paragraph p, ICssRegistrator cssRegistrator, IParagraphData paragraphData)
-        {
-            var node = new HtmlNode
-            {
-                Start = PositionWithDelta(3),
-                End = PositionWithDelta(5),
+                End = PositionWithDelta(2),
                 Tag = _config.NumberingNumberTag,
                 Z = _config.NumberingNumberZ,
+                TextPrefix = paragraphData.Verbose
             };
-            node.AddClasses(_config.NumberingNumberMinCls);
+            node.AddClasses(_config.NumberingNumberCls);
 
             var cssClass = cssRegistrator.RegisterRun(
                 p.ParagraphProperties,
@@ -140,29 +106,19 @@ namespace Doc2web.Plugins.Numbering
             return node;
         }
 
-        private Mutation BuildiInsertion(string verbose) => new TextInsertion
-        {
-            Position = PositionWithDelta(4),
-            Text = verbose
-        };
-
         [PostProcessing]
         public void PostProcessing(IGlobalContext context)
         {
-            var styleConfig = context.Resolve<StyleConfig>();
             var numConfig = context.Resolve<NumberingConfig>();
             context.AddCss(
-                CSS(
-                    styleConfig.LeftIdentationCssClassPrefix,
-                    numConfig.NumberingContainerMinCls,
-                    numConfig.NumberingNumberMinCls));
+                CSS(numConfig.NumberingContainerCls,
+                    numConfig.NumberingNumberCls));
         }
 
         private static string CSS(
-            string leftSpacerCls, 
-            string numContainerMinCls, 
-            string numNumberMinCls) =>
-            $"{leftSpacerCls}, .{numContainerMinCls} {{ display: flex; }} " +
-            $".{numNumberMinCls} {{ white-space: pre; }}";
+            string numberingContainerCls, 
+            string numberingNumberCls) =>
+            $".{numberingContainerCls} {{ display: flex; flex-direction: row-reverse; }} " +
+            $".{numberingNumberCls} {{ white-space: pre; }}";
     }
 }
