@@ -73,7 +73,7 @@ namespace Doc2web.Plugins.TextFixes
 
         private string CSS =>
             $"{BreakAtStartSelector} {{flex-direction: column;}}" +
-            $"{BreakAtStartNumberingSelector}, {BreakAtStartLeftSpacerSelector} {{display: flex; justify-content: center;}}" +
+            $"{BreakAtStartNumberingSelector}, {BreakAtStartLeftSpacerSelector} {{text-align: center;}}" +
             $"{BreakAtStartNumberingSelector} * {{padding: 0!important;}}";
 
     }

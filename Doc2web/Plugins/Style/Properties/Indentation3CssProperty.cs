@@ -6,6 +6,7 @@ using DocumentFormat.OpenXml;
 
 namespace Doc2web.Plugins.Style.Properties
 {
+    [ParagraphCssProperty(typeof(Indentation))]
     public class Indentation3CssProperty : CssProperty<Indentation>
     {
         private StyleConfig _config;
@@ -69,9 +70,9 @@ namespace Doc2web.Plugins.Style.Properties
         {
             get
             {
-                if (Hanging.HasValue) return ToViewWidth(Hanging);
-                if (FirstLine.HasValue) return ToViewWidth(FirstLine);
-                return "auto";
+                if (Hanging.HasValue && Hanging.Value > 0) return ToViewWidth(Hanging);
+                if (FirstLine.HasValue && FirstLine.Value > 0) return ToViewWidth(FirstLine);
+                return "unset";
             }
         }
 
@@ -157,9 +158,9 @@ namespace Doc2web.Plugins.Style.Properties
         private void InsertLeftPadding(CssData cssData)
         {
             cssData.AddAttribute(ContainerWithoutNumbering, "padding-left", NoNumberingLeftPadding);
-            cssData.AddAttribute(NumberingContainerSelector, "width", NumberingContainerWith);
+            cssData.AddAttribute(NumberingContainerSelector, "min-width", NumberingContainerWith);
             if (Hanging.HasValue || FirstLine.HasValue)
-                cssData.AddAttribute(NumberingNumberSelector, "width", NumberingNumberWidth);
+                cssData.AddAttribute(NumberingNumberSelector, "max-width", NumberingNumberWidth);
         }
 
         private string ContainerWithoutNumbering => 

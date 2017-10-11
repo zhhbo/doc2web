@@ -27,14 +27,5 @@ namespace Doc2web.Tests.Plugins.Style
             Assert.AreEqual(CssPropertySource.Run, attr.Source);
             Assert.AreEqual(typeof(Bold), attr.TargetedType);
         }
-
-        [TestMethod]
-        public void Numbering_Test()
-        {
-            var attr = new NumberingCssPropertyAttribute(typeof(LevelJustification));
-
-            Assert.AreEqual(CssPropertySource.Numbering, attr.Source);
-            Assert.AreEqual(typeof(LevelJustification), attr.TargetedType);
-        }
     }
 }

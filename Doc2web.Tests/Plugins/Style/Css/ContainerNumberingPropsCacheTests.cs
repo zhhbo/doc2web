@@ -25,7 +25,7 @@ namespace Doc2web.Tests.Plugins.Style.Css
 
         private ICssPropertiesFactory FactoryBuilder(CssPropertySource arg)
         {
-            if (arg == CssPropertySource.Numbering) return _propsFac;
+            if (arg == CssPropertySource.Paragraph) return _propsFac;
             throw new InvalidOperationException("Unexpected source of css properties");
         }
 

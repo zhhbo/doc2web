@@ -49,6 +49,8 @@ namespace Doc2web.Plugins.Numbering
             var paragraphData = numberingMapper.GetNumbering(p);
             if (paragraphData != null)
             {
+                context.ViewBag[_config.ParagraphNumberingDataKey] = 
+                    (paragraphData.NumberingId, paragraphData.LevelIndex);
                 var cssRegistrator = context.Resolve<ICssRegistrator>();
                 context.AddNode(BuildNumberingContainer());
                 context.AddNode(BuildNumberingNumber(p, cssRegistrator, paragraphData));
@@ -98,10 +100,7 @@ namespace Doc2web.Plugins.Numbering
                 node.SetStyle("padding-right", "0.5em");
             }
             else if (level.LevelSuffix?.Val?.Value == LevelSuffixValues.Nothing) { }
-            else
-            {
-                node.SetStyle("padding-right", "1.5em");
-            }
+            else node.SetStyle("padding-right", "1.5em");
 
             return node;
         }
@@ -118,7 +117,7 @@ namespace Doc2web.Plugins.Numbering
         private static string CSS(
             string numberingContainerCls, 
             string numberingNumberCls) =>
-            $".{numberingContainerCls} {{ display: flex; flex-direction: row-reverse; }} " +
-            $".{numberingNumberCls} {{ white-space: pre; }}";
+            $".{numberingContainerCls} {{ display: block; text-align: right; }} " +
+            $".{numberingNumberCls} {{ display: inline-block; white-space: pre; }}";
     }
 }

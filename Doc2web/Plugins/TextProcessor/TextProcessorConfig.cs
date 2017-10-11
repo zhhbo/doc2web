@@ -16,6 +16,8 @@ namespace Doc2web.Plugins.TextProcessor
 
         public string ContainerCls { get; set; }
 
+        public string ContainerWithNumberingCls { get; set; }
+
         public int ContainerZ { get; set; }
 
         public string IdentationTag { get; set; }
@@ -46,6 +48,7 @@ namespace Doc2web.Plugins.TextProcessor
             ContainerEnd = 1_000_000;
             ContainerTag = "div";
             ContainerCls = "container";
+            ContainerWithNumberingCls = "numbering";
             ContainerZ = 1_000_000;
 
             IdentationTag = "div";

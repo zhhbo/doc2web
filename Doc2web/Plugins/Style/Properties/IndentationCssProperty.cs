@@ -6,7 +6,6 @@ using DocumentFormat.OpenXml;
 
 namespace Doc2web.Plugins.Style.Properties
 {
-    [ParagraphCssProperty(typeof(Indentation))]
     public class IndentationCssProperty : CssProperty<Indentation>
     {
         protected StyleConfig _config;

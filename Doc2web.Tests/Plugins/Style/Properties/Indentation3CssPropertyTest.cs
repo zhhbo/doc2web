@@ -79,7 +79,7 @@ namespace Doc2web.Tests.Plugins.Style.Properties
             Assert.IsFalse(_instance.Hanging.HasValue);
             Assert.IsNull(_instance.NoNumberingTextIndent);
             Assert.AreEqual("0vw", _instance.NumberingContainerWith);
-            Assert.AreEqual("auto", _instance.NumberingNumberWidth);
+            Assert.AreEqual("unset", _instance.NumberingNumberWidth);
         }
 
         [TestMethod]
@@ -156,7 +156,7 @@ namespace Doc2web.Tests.Plugins.Style.Properties
                 "5.88vw");
             expected.AddAttribute(
                 $".test.numbering .numbering-container",
-                "width",
+                "min-width",
                 "5.88vw");
 
             var data = _instance.AsCss();
@@ -179,11 +179,11 @@ namespace Doc2web.Tests.Plugins.Style.Properties
                 "-2.53vw");
             expected.AddAttribute(
                 $".test.numbering .numbering-container",
-                "width",
+                "min-width",
                 "5.88vw");
             expected.AddAttribute(
                 $".test.numbering .numbering-number",
-                "width",
+                "max-width",
                 "2.53vw");
 
             var data = _instance.AsCss();
@@ -206,11 +206,11 @@ namespace Doc2web.Tests.Plugins.Style.Properties
                 "2.53vw");
             expected.AddAttribute(
                 $".test.numbering .numbering-container",
-                "width",
+                "min-width",
                 "8.41vw");
             expected.AddAttribute(
                 $".test.numbering .numbering-number",
-                "width",
+                "max-width",
                 "2.53vw");
 
             var data = _instance.AsCss();

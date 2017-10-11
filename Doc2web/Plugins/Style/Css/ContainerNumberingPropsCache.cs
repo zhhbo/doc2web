@@ -13,7 +13,7 @@ namespace Doc2web.Plugins.Style.Css
             Func<CssPropertySource, ICssPropertiesFactory> facBuilder,
             INumberingProvider numberingCrawler) : base(numberingCrawler)
         {
-            _propsFac = facBuilder(CssPropertySource.Numbering);
+            _propsFac = facBuilder(CssPropertySource.Paragraph);
         }
 
         public override CssPropertiesSet BuildPropertiesSet(Level arg)

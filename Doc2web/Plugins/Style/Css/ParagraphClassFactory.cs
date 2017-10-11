@@ -36,10 +36,9 @@ namespace Doc2web.Plugins.Style.Css
             var cssClass = new CssClass();
             cssClass.Props = BuildInline(param.InlineProperties);
 
-            if (param.NumberingId.HasValue)
-                AddNumberingStyleProps(param, cssClass);
-            else
-                AddStyleProps(param.StyleId, cssClass);
+            AddNumberingStyleProps(param, cssClass);
+
+            AddStyleProps(param.StyleId, cssClass);
 
             AddDefaultsProps(cssClass);
 

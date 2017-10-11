@@ -1,4 +1,6 @@
 ﻿using Autofac;
+using Doc2web.Plugins.Numbering;
+using Doc2web.Plugins.Numbering.Mapping;
 using Doc2web.Plugins.Style;
 using Doc2web.Plugins.Style.Css;
 using Doc2web.Plugins.Style.Properties;
@@ -55,7 +57,20 @@ namespace Doc2web.Plugins.TextProcessor
             if (pPr != null)
             {
                 var cssRegistrator = context.Resolve<ICssRegistrator>();
-                var cssClass = cssRegistrator.RegisterParagraph(pPr);
+                var numberingConfig = context.Resolve<NumberingConfig>();
+                var styleConfig = context.Resolve<StyleConfig>();
+
+                CssClass cssClass;
+                if (context.ViewBag.TryGetValue(numberingConfig.ParagraphNumberingDataKey, out object numbering))
+                {
+                    var numberingData = ((int, int))numbering;
+                    containerNode.AddClasses(_config.ContainerWithNumberingCls);
+                    cssClass = cssRegistrator.RegisterParagraph(pPr, numberingData);
+                } else
+                {
+                    cssClass = cssRegistrator.RegisterParagraph(pPr);
+                }
+
                 containerNode.AddClasses(cssClass.Name);
                 context.ViewBag[_config.PPropsCssClassKey] = cssClass;
                 AddIndentationIfRequired(context, cssClass);

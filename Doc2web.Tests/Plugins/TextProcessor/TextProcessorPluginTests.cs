@@ -1,5 +1,7 @@
 ﻿using Autofac;
 using Doc2web.Core;
+using Doc2web.Plugins.Numbering;
+using Doc2web.Plugins.Numbering.Mapping;
 using Doc2web.Plugins.Style;
 using Doc2web.Plugins.Style.Css;
 using Doc2web.Plugins.Style.Properties;
@@ -19,6 +21,7 @@ namespace Doc2web.Tests.Plugins.TextProcessor
     public class TextProcessorPluginTests
     {
         private TextProcessorConfig _config;
+        private NumberingConfig _numberingConfig;
         private TextProcessorPlugin _instance;
         private Run _r;
         private IGlobalContext _globalContext;
@@ -32,6 +35,7 @@ namespace Doc2web.Tests.Plugins.TextProcessor
         public void Initialize()
         {
             _config = new TextProcessorConfig();
+            _numberingConfig = new NumberingConfig();
             _instance = new TextProcessorPlugin(_config);
             _r = new Run(new Text("Some text."));
             _p = new Paragraph(new ParagraphProperties(), _r);
@@ -39,6 +43,7 @@ namespace Doc2web.Tests.Plugins.TextProcessor
             _cssRegistrator = Substitute.For<ICssRegistrator>();
             _globalContext = Substitute.For<IGlobalContext>();
             _globalContext.Resolve<ICssRegistrator>().Returns(_cssRegistrator);
+            _globalContext.Resolve<NumberingConfig>().Returns(_numberingConfig);
             _cssRegistrator.RegisterParagraph(null, null).ReturnsForAnyArgs(x => new CssClass());
             _cssRegistrator.RegisterRun(null, null, null).ReturnsForAnyArgs(x => new CssClass());
 
@@ -146,6 +151,7 @@ namespace Doc2web.Tests.Plugins.TextProcessor
             Assert.AreEqual(expected, firstNode);
         }
 
+
         [TestMethod]
         public void ProcessParagraph_AddEmptyCharTest()
         {
@@ -171,7 +177,25 @@ namespace Doc2web.Tests.Plugins.TextProcessor
             _instance.ProcessParagraph(_pContext, _p);
             var node = _pContext.Nodes.First();
 
-            node.Classes.Contains(styleName);
+            Assert.IsTrue(node.Classes.Contains(styleName));
+        }
+
+        [TestMethod]
+        public void ProcessParagraph_NumberingTest()
+        {
+            string styleName = "dyn-somestuff";
+            var pPr = new ParagraphProperties();
+            _cssRegistrator
+                .RegisterParagraph(pPr, (1, 2))
+                .Returns(new CssClass { Name = styleName });
+            _p.InsertAt(pPr, 0);
+            _pContext.ViewBag[_numberingConfig.ParagraphNumberingDataKey] = (1, 2);
+
+            _instance.ProcessParagraph(_pContext, _p);
+            var node = _pContext.Nodes.First();
+
+            Assert.IsTrue(node.Classes.Contains(styleName));
+            Assert.IsTrue(node.Classes.Contains(_config.ContainerWithNumberingCls));
         }
 
         [TestMethod]

@@ -75,13 +75,12 @@ namespace Doc2web.Tests.Plugins.Numbering
         }
 
         [TestMethod]
-        public void InsertNumbering_NullNumberingTest()
+        public void InsertNumbering_InvalidNumberingTest()
         {
             MockElementContext(1, 2, "1.1.1");
             _nMapper.IsValid.Returns(false);
 
             _instance.InsertNumbering(_elementContext, _p);
-
 
             Assert.AreEqual(0, _nodes.Count);
         }
@@ -96,7 +95,7 @@ namespace Doc2web.Tests.Plugins.Numbering
             var numberingContainer = _nodes[0];
             Assert.AreEqual(_config.NumberingContainerTag, numberingContainer.Tag);
             Assert.AreEqual(_config.NumberingContainerZ, numberingContainer.Z);
-            AssertHasClasses(numberingContainer, "numbering-container");
+            AssertHasClasses(numberingContainer, "leftspacer");
         }
 
 
@@ -171,8 +170,8 @@ namespace Doc2web.Tests.Plugins.Numbering
             context.Resolve<StyleConfig>().Returns(new StyleConfig());
             context.Resolve<NumberingConfig>().Returns(new NumberingConfig());
             string expectedCss =
-                ".numbering-container { display: flex; flex-direction: row-reverse; } " +
-                ".numbering-number { white-space: pre; }";
+                ".leftspacer { display: block; text-align: right; } " +
+                ".numbering-number { display: inline-block; white-space: pre; }";
 
             _instance.PostProcessing(context);
 

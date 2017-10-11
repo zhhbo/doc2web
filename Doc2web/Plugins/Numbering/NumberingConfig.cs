@@ -8,6 +8,7 @@ namespace Doc2web.Plugins.Numbering
     {
         public double NumberingIndex { get; set; }
         public double NumberingDelta { get; }
+        public string ParagraphNumberingDataKey { get; set; }
 
         public string NumberingContainerTag { get; set; }
         public string NumberingContainerCls { get; set; }
@@ -20,10 +21,11 @@ namespace Doc2web.Plugins.Numbering
 
         public NumberingConfig()
         {
+            ParagraphNumberingDataKey = "numbering";
             NumberingIndex = -1_000_000 + 0.011;
             NumberingDelta = 0.001;
             NumberingContainerTag = "div";
-            NumberingContainerCls = "numbering-container";
+            NumberingContainerCls = "leftspacer";
             NumberingContainerZ = 900;
             NumberingNumberTag = "span";
             NumberingNumberCls = "numbering-number";
