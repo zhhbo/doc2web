@@ -71,6 +71,17 @@ namespace Doc2web.Tests.Plugins.Style
         }
 
         [TestMethod]
+        public void AddScalableAttribte_Test()
+        {
+            double value = 0.05;
+            var cssData = new CssData();
+            cssData.AddScalableAttribute(".test", "width", value);
+
+            Assert.AreEqual("5vw", cssData[""][".test"]["width"]);
+            Assert.AreEqual("1.08cm", cssData[CssData.FULLPAGE_MEDIAQUERY][".test"]["width"]);
+        }
+
+        [TestMethod]
         public void AddRange_Test()
         {
             var expected = new CssData();

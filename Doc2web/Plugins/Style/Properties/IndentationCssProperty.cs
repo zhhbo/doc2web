@@ -10,6 +10,7 @@ namespace Doc2web.Plugins.Style.Properties
     public class IndentationCssProperty : CssProperty<Indentation>
     {
         private StyleConfig _config;
+        public const string PAGE_MEDIA_QUERY = "(min-width: 21.59cm)";
 
         public IndentationCssProperty(StyleConfig config)
         {
@@ -40,47 +41,39 @@ namespace Doc2web.Plugins.Style.Properties
 
         #region CSS values
 
-        public string NoNumberingLeftPadding => ToViewWidth(Left);
-
-        public string RightPadding => ToViewWidth(Right);
-
-        public string NoNumberingTextIndent
+        public double? NoNumberingTextIndent
         {
             get
             {
                 if (Hanging.HasValue)
-                    return ToViewWidth(Hanging.Value * -1);
+                    return Hanging.Value * -1;
                 else if (FirstLine.HasValue)
-                    return ToViewWidth(FirstLine.Value);
+                    return FirstLine.Value;
                 return null;
             }
         }
 
-        public string NumberingContainerWith
+        public double? NumberingContainerWidth
         {
             get
             {
                 if (FirstLine.HasValue && !Hanging.HasValue)
-                    return ToViewWidth(Left + FirstLine);
-                return ToViewWidth(Left);
+                    return Left.Value + FirstLine.Value;
+                return Left;
             }
         }
 
-        public string NumberingNumberWidth
+        public double? NumberingNumberWidth
         {
             get
             {
-                if (Hanging.HasValue && Hanging.Value > 0) return ToViewWidth(Hanging);
-                if (FirstLine.HasValue && FirstLine.Value > 0) return ToViewWidth(FirstLine);
-                return "unset";
+                if (Hanging.HasValue && Hanging.Value > 0) return Hanging;
+                if (FirstLine.HasValue && FirstLine.Value > 0) return FirstLine;
+                return null;
             }
         }
 
         #endregion
-
-        private string ToViewWidth(double v) => Math.Round(v*100, 2) + "vw";
-
-        private string ToViewWidth(double? v) => (v.HasValue) ? ToViewWidth(v.Value) : "0vw";
 
         private void ExtractValues()
         {
@@ -156,17 +149,19 @@ namespace Doc2web.Plugins.Style.Properties
             if (Left.HasValue)
                 InsertLeftPadding(cssData);
             if (Right.HasValue)
-                cssData.AddAttribute(Selector, "padding-right", RightPadding);
-            if (NoNumberingTextIndent != null)
-                cssData.AddAttribute(ContainerWithoutNumbering, "text-indent", NoNumberingTextIndent);
+                cssData.AddScalableAttribute(Selector, "padding-right", Right.Value);
+            if (NoNumberingTextIndent.HasValue)
+                cssData.AddScalableAttribute(ContainerWithoutNumbering, "text-indent", NoNumberingTextIndent.Value);
         }
 
         private void InsertLeftPadding(CssData cssData)
         {
-            cssData.AddAttribute(ContainerWithoutNumbering, "padding-left", NoNumberingLeftPadding);
-            cssData.AddAttribute(NumberingContainerSelector, "min-width", NumberingContainerWith);
-            if (Hanging.HasValue || FirstLine.HasValue)
-                cssData.AddAttribute(NumberingNumberSelector, "max-width", NumberingNumberWidth);
+            cssData.AddScalableAttribute(ContainerWithoutNumbering, "padding-left", Left.Value);
+            cssData.AddScalableAttribute(NumberingContainerSelector, "min-width", NumberingContainerWidth.Value);
+
+            double? numberingNumberWidth = NumberingNumberWidth;
+            if (numberingNumberWidth.HasValue)
+                cssData.AddScalableAttribute(NumberingNumberSelector, "max-width", numberingNumberWidth.Value);
         }
 
         private string ContainerWithoutNumbering => 

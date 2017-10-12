@@ -7,6 +7,9 @@ namespace Doc2web.Plugins.Style
 {
     public class CssData
     {
+        public const double FULLPAGE_WIDTHCM = 21.59;
+        public static readonly string FULLPAGE_MEDIAQUERY = $"(min-width: {FULLPAGE_WIDTHCM}cm)";
+
         private SortedDictionary<string, SortedDictionary<string, SortedDictionary<string, string>>> _data;
 
         public CssData()
@@ -18,11 +21,6 @@ namespace Doc2web.Plugins.Style
 
         public SortedDictionary<string, SortedDictionary<string, string>> this[string mediaQuery] =>
             _data[mediaQuery];
-
-        public IDictionary<string, string> GetMediaQuery(string mediaQuery, string selector)
-        {
-            throw new NotImplementedException();
-        }
 
         public void AddAttribute(string selector, string name, string value)
         {
@@ -45,6 +43,14 @@ namespace Doc2web.Plugins.Style
                     { selector, new SortedDictionary<string, string> { { name, value } } }
                 };
             }
+        }
+
+        public void AddScalableAttribute(string selector, string name, double ratio)
+        {
+            double vw = Math.Round(ratio * 100, 2);
+            double cm = Math.Round(ratio * FULLPAGE_WIDTHCM, 2);
+            AddAttribute(selector, name, vw + "vw");
+            AddAttribute(FULLPAGE_MEDIAQUERY, selector, name, cm + "cm");
         }
 
         public void AddRange(CssData other)

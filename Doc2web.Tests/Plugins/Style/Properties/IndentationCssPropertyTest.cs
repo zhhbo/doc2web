@@ -49,11 +49,10 @@ namespace Doc2web.Tests.Plugins.Style.Properties
         {
             SetValues(100, null, null, 50);
 
-            Assert.AreEqual(ToVW(_instance.Left), _instance.NoNumberingLeftPadding);
-            Assert.AreEqual(ToVW(_instance.Hanging * -1), _instance.NoNumberingTextIndent);
+            Assert.AreEqual(_instance.Hanging * -1, _instance.NoNumberingTextIndent);
 
-            Assert.AreEqual(ToVW(_instance.Left), _instance.NumberingContainerWith);
-            Assert.AreEqual(ToVW(_instance.Hanging), _instance.NumberingNumberWidth);
+            Assert.AreEqual(_instance.Left, _instance.NumberingContainerWidth);
+            Assert.AreEqual(_instance.Hanging, _instance.NumberingNumberWidth);
         }
 
         [TestMethod]
@@ -61,11 +60,10 @@ namespace Doc2web.Tests.Plugins.Style.Properties
         {
             SetValues(100, null, 50, null);
 
-            Assert.AreEqual(ToVW(_instance.Left), _instance.NoNumberingLeftPadding);
-            Assert.AreEqual(ToVW(_instance.FirstLine), _instance.NoNumberingTextIndent);
+            Assert.AreEqual(_instance.FirstLine, _instance.NoNumberingTextIndent);
 
-            Assert.AreEqual(ToVW(_instance.Left + _instance.FirstLine), _instance.NumberingContainerWith);
-            Assert.AreEqual(ToVW(_instance.FirstLine), _instance.NumberingNumberWidth);
+            Assert.AreEqual(_instance.Left + _instance.FirstLine, _instance.NumberingContainerWidth);
+            Assert.AreEqual(_instance.FirstLine, _instance.NumberingNumberWidth);
         }
 
         [TestMethod]
@@ -78,8 +76,8 @@ namespace Doc2web.Tests.Plugins.Style.Properties
             Assert.IsFalse(_instance.FirstLine.HasValue);
             Assert.IsFalse(_instance.Hanging.HasValue);
             Assert.IsNull(_instance.NoNumberingTextIndent);
-            Assert.AreEqual("0vw", _instance.NumberingContainerWith);
-            Assert.AreEqual("unset", _instance.NumberingNumberWidth);
+            Assert.IsNull(_instance.NumberingContainerWidth);
+            Assert.IsNull(_instance.NumberingNumberWidth);
         }
 
         [TestMethod]
@@ -158,6 +156,16 @@ namespace Doc2web.Tests.Plugins.Style.Properties
                 $".test.numbering .numbering-container",
                 "min-width",
                 "5.88vw");
+            expected.AddAttribute(
+                "(min-width: 21.59cm)",
+                ".test:not(.numbering)",
+                "padding-left",
+                "1.27cm");
+            expected.AddAttribute(
+                "(min-width: 21.59cm)",
+                $".test.numbering .numbering-container",
+                "min-width",
+                "1.27cm");
 
             var data = _instance.AsCss();
 
@@ -169,22 +177,22 @@ namespace Doc2web.Tests.Plugins.Style.Properties
         {
             SetValues(720, null, null, 310);
             var expected = new CssData();
-            expected.AddAttribute(
+            expected.AddScalableAttribute(
                 ".test:not(.numbering)",
                 "padding-left",
-                "5.88vw");
-            expected.AddAttribute(
+                0.0588);
+            expected.AddScalableAttribute(
                 ".test:not(.numbering)",
                 "text-indent",
-                "-2.53vw");
-            expected.AddAttribute(
+                -0.0253);
+            expected.AddScalableAttribute(
                 $".test.numbering .numbering-container",
                 "min-width",
-                "5.88vw");
-            expected.AddAttribute(
+                0.0588);
+            expected.AddScalableAttribute(
                 $".test.numbering .numbering-number",
                 "max-width",
-                "2.53vw");
+                0.0253);
 
             var data = _instance.AsCss();
 
@@ -196,22 +204,22 @@ namespace Doc2web.Tests.Plugins.Style.Properties
         {
             SetValues(720, null, 310, null);
             var expected = new CssData();
-            expected.AddAttribute(
+            expected.AddScalableAttribute(
                 ".test:not(.numbering)",
                 "padding-left",
-                "5.88vw");
-            expected.AddAttribute(
+                0.0588);
+            expected.AddScalableAttribute(
                 ".test:not(.numbering)",
                 "text-indent",
-                "2.53vw");
-            expected.AddAttribute(
+                0.0253);
+            expected.AddScalableAttribute(
                 $".test.numbering .numbering-container",
                 "min-width",
-                "8.41vw");
-            expected.AddAttribute(
+                0.0841);
+            expected.AddScalableAttribute(
                 $".test.numbering .numbering-number",
                 "max-width",
-                "2.53vw");
+                0.0253);
 
             var data = _instance.AsCss();
 
@@ -223,22 +231,19 @@ namespace Doc2web.Tests.Plugins.Style.Properties
         {
             SetValues(null, 720, 310, null);
             var expected = new CssData();
-            expected.AddAttribute(
+            expected.AddScalableAttribute(
                 ".test",
                 "padding-right",
-                "5.88vw");
-            expected.AddAttribute(
+                0.0588);
+            expected.AddScalableAttribute(
                 ".test:not(.numbering)",
                 "text-indent",
-                "2.53vw");
+                0.0253);
 
             var data = _instance.AsCss();
 
             Assert.AreEqual(expected, data);
         }
 
-        private string ToVW(double val) => Math.Round(val * 100, 2) + "vw";
-
-        private string ToVW(double? val) => ToVW(val.Value);
     }
 }
