@@ -99,11 +99,17 @@ namespace Doc2web.Plugins.Style.Properties
 
         public override int GetHashCode()
         {
-            uint f = 0;
-            uint s = 0;
-            if (Left.HasValue) f = Convert.ToUInt32(Left.Value * 100000);
-            if (Hanging.HasValue) s = Convert.ToUInt32(Hanging.Value * 100000);
-            return (int)((f + UInt32.MaxValue/2) | s);
+            try
+            {
+                uint f = 0;
+                uint s = 0;
+                if (Left.HasValue) f = Convert.ToUInt32(Math.Round(Left.Value * 100000, 0) );
+                if (Hanging.HasValue) s = Convert.ToUInt32(Math.Round(Hanging.Value * 100000, 0));
+                return (int)((f + UInt32.MaxValue/2) | s);
+            } catch
+            {
+                return -1;
+            }
         }
 
         public override bool Equals(ICssProperty obj)

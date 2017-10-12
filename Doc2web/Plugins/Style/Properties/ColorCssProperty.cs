@@ -71,7 +71,17 @@ namespace Doc2web.Plugins.Style.Properties
 
         //public override short GetHashCode() => (short)Color.Substring(1).GetHashCode();
         //public override int GetHashCode() => Color.GetHashCode();
-        public override int GetHashCode() => (int)Convert.ToUInt32(Color.Substring(1), 16);
+        public override int GetHashCode()
+        {
+            try
+            {
+                return (int)Convert.ToUInt32(Color.Substring(1), 16);
+            }
+            catch
+            {
+                return -1;
+            }
+        }
 
         public override ICssProperty Clone() =>
             new ColorCssProperty(_themeColorProvider)
