@@ -73,21 +73,7 @@ namespace Doc2web.Plugins.TextProcessor
 
                 containerNode.AddClasses(cssClass.Name);
                 context.ViewBag[_config.PPropsCssClassKey] = cssClass;
-                AddIndentationIfRequired(context, cssClass);
             }
-        }
-
-        private void AddIndentationIfRequired(IElementContext context, CssClass cssClass)
-        {
-            if (cssClass.Name.Length == 0) return;
-
-            var identation = cssClass?.Props.Get<IndentationCssProperty>();
-            if (identation == null) return;
-
-            if (identation.LeftIndent.HasValue)
-                context.AddNode(BuildLeftIdentation());
-            if (identation.RightIndent.HasValue)
-                context.AddNode(BuildRightIdentation());
         }
 
         private HtmlNode BuildPNode(IElementContext context, Paragraph p, HtmlNode containerNode)

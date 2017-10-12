@@ -9,9 +9,9 @@ using System.Text;
 namespace Doc2web.Tests.Plugins.Style.Properties
 {
     [TestClass]
-    public class Indentation3CssPropertyTest
+    public class IndentationCssPropertyTest
     {
-        private Indentation3CssProperty _instance;
+        private IndentationCssProperty _instance;
         private StyleConfig _config;
 
         [TestInitialize]
@@ -19,7 +19,7 @@ namespace Doc2web.Tests.Plugins.Style.Properties
         {
             _config = new StyleConfig();
             _config.LeftIdentationCssClassPrefix = ".numbering-container";
-            _instance = new Indentation3CssProperty(_config);
+            _instance = new IndentationCssProperty(_config);
             _instance.Selector = ".test";
         }
 
@@ -87,7 +87,7 @@ namespace Doc2web.Tests.Plugins.Style.Properties
         {
             SetValues(100, 200, 300, 400);
             _instance.Element.Left = "0";
-            var other = _instance.Clone() as Indentation3CssProperty;
+            var other = _instance.Clone() as IndentationCssProperty;
 
             Assert.AreSame(_instance.Element, other.Element);
             Assert.AreEqual(_instance.Left, other.Left);
@@ -100,7 +100,7 @@ namespace Doc2web.Tests.Plugins.Style.Properties
         public void Extends_Test()
         {
             SetValues(1000, 200, null, null);
-            var parent = _instance.Clone() as Indentation3CssProperty;
+            var parent = _instance.Clone() as IndentationCssProperty;
             SetValues(100, null, 300, null);
 
             _instance.Extends(parent);

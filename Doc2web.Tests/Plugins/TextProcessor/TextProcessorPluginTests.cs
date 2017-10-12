@@ -95,44 +95,6 @@ namespace Doc2web.Tests.Plugins.TextProcessor
             Assert.IsNotNull(_pContext.ViewBag[_config.PPropsCssClassKey]);
         }
 
-        [TestMethod]
-        public void ProcessParagraph_AddLeftIdentationsTest()
-        {
-            var indentation = new Indentation { Left = "100" };
-            MockIndentation(indentation, "dyn-class");
-
-            _instance.ProcessParagraph(_pContext, _p);
-
-            var spacer = _pContext.Nodes.ElementAt(0);
-            var expected = new HtmlNode
-            {
-                Tag = _config.IdentationTag,
-                Start = _config.ContainerStart + _config.Delta,
-                End = _config.ContainerStart + _config.Delta * 2,
-                Z = _config.ParagraphZ,
-            };
-            expected.AddClasses(_config.LeftIdentationCls);
-            Assert.AreEqual(expected, spacer);
-        }
-
-
-        [TestMethod]
-        public void ProcessParagraph_AddRightIdentationsTest()
-        {
-            MockIndentation(new Indentation { Right = "100" }, "dyn-class");
-            _instance.ProcessParagraph(_pContext, _p);
-
-            var spacer = _pContext.Nodes.ElementAt(0);
-            var expected = new HtmlNode
-            {
-                Tag = _config.IdentationTag,
-                Start = _config.ContainerEnd - _config.Delta * 2,
-                End = _config.ContainerEnd - _config.Delta,
-                Z = _config.ParagraphZ,
-            };
-            expected.AddClasses(_config.RightIndentationCls);
-            Assert.AreEqual(expected, spacer);
-        }
 
         [TestMethod]
         public void ProcessParagraph_AddParagraphTest()
