@@ -5,6 +5,9 @@ using DocumentFormat.OpenXml.Wordprocessing;
 
 namespace Doc2web.Plugins.TextFixes
 {
+    /// <summary>
+    /// Insert hypens from the open xml to the html document.
+    /// </summary>
     public class HyphenInsertionPlugin
     {
         [ElementProcessing]

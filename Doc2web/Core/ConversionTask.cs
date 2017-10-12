@@ -24,13 +24,6 @@ namespace Doc2web.Core
 
         public IContextRenderer ContextRenderer { get; set; }
 
-        public void Initialize()
-        {
-            GlobalContext = new GlobalContext(
-                Container.BeginLifetimeScope(Processor.InitProcess),
-                RootElements);
-        }
-
         public void PreProcess()
         {
             Processor.PreProcess(GlobalContext);

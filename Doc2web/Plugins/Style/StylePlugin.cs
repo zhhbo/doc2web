@@ -14,6 +14,9 @@ using Doc2web.Plugins.Style.Css;
 
 namespace Doc2web.Plugins.Style
 {
+    /// <summary>
+    /// Add CssRegistrator in the IoC container and render the css in post-processing.
+    /// </summary>
     public class StylePlugin
     {
         private WordprocessingDocument _wpDoc;

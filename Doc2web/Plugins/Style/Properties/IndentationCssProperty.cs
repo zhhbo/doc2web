@@ -172,9 +172,9 @@ namespace Doc2web.Plugins.Style.Properties
             $"{Selector}{_config.ContainerWithNumberingCssClassSuffix}";
 
         private string NumberingContainerSelector =>
-            $"{ContainerWithNumbering} {_config.LeftIdentationCssClassPrefix}";
+            $"{ContainerWithNumbering} {_config.LeftIdentationCssClassSuffix}";
 
         private string NumberingNumberSelector =>
-            $"{ContainerWithNumbering} {_config.NumberingNumber}";
+            $"{ContainerWithNumbering} {_config.NumberingNumberSelector}";
     }
 }

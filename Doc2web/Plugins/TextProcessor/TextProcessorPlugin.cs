@@ -103,19 +103,6 @@ namespace Doc2web.Plugins.TextProcessor
             return node;
         }
 
-        private HtmlNode BuildRightIdentation()
-        {
-            var node = new HtmlNode
-            {
-                Start = _config.ContainerEnd - _config.Delta * 2,
-                End = _config.ContainerEnd - _config.Delta,
-                Tag = _config.IdentationTag,
-                Z = _config.ParagraphZ
-            };
-            node.AddClasses(_config.RightIndentationCls);
-            return node;
-        }
-
         [ElementProcessing]
         public void ProcessRun(IElementContext context, Run r)
         {

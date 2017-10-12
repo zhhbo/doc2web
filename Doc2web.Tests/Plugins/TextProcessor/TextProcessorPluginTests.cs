@@ -66,7 +66,6 @@ namespace Doc2web.Tests.Plugins.TextProcessor
 
             Assert.AreEqual("div", _config.IdentationTag);
             Assert.AreEqual("leftspacer", _config.LeftIdentationCls);
-            Assert.AreEqual("rightspacer", _config.RightIndentationCls);
 
             Assert.AreEqual("p", _config.ParagraphTag);
             Assert.AreEqual("", _config.ParagraphCls);

@@ -18,7 +18,7 @@ namespace Doc2web.Tests.Plugins.Style.Properties
         public void Initialize()
         {
             _config = new StyleConfig();
-            _config.LeftIdentationCssClassPrefix = ".numbering-container";
+            _config.LeftIdentationCssClassSuffix = ".numbering-container";
             _instance = new IndentationCssProperty(_config);
             _instance.Selector = ".test";
         }

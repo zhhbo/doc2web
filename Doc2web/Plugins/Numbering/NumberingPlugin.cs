@@ -12,6 +12,9 @@ using System.Text;
 
 namespace Doc2web.Plugins.Numbering
 {
+    /// <summary>
+    /// Add spacers and automated numbering in the margin.
+    /// </summary>
     public class NumberingPlugin
     {
         private WordprocessingDocument _wpDoc;
@@ -58,7 +61,7 @@ namespace Doc2web.Plugins.Numbering
         }
 
         private double PositionWithDelta(int delta = 0) => 
-            _config.NumberingIndex + _config.NumberingDelta * delta;
+            _config.NumberingStartingPosition + _config.NumberingDelta * delta;
 
         private HtmlNode BuildNumberingContainer()
         {

@@ -52,16 +52,6 @@ namespace Doc2web.Tests.Core
         }
 
         [TestMethod]
-        public void Initialize_Test()
-        {
-            _instance.GlobalContext = null;
-            _instance.Initialize();
-
-            Assert.IsNotNull(_instance.GlobalContext);
-            _engineContainer.Received(1).BeginLifetimeScope(_processor.InitProcess);
-        }
-
-        [TestMethod]
         public void PreProcess_Test()
         {
             _instance.PreProcess();

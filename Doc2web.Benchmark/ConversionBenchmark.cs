@@ -67,13 +67,13 @@ namespace Doc2web.Benchmark
         public ConversionEngine InitializeEngine() => BuildConversionEngine();
 
         //[Benchmark]
-        public string RenderShortest() => _conversionEngine.Render(_shortestParagraph);
+        public string RenderShortest() => _conversionEngine.Convert(_shortestParagraph);
 
         //[Benchmark]
-        public string RenderLongest() => _conversionEngine.Render(_longestParagraph);
+        public string RenderLongest() => _conversionEngine.Convert(_longestParagraph);
 
         [Benchmark]
-        public string RenderComplete() => _conversionEngine.Render(_paragraphs);
+        public string RenderComplete() => _conversionEngine.Convert(_paragraphs);
 
     }
 }

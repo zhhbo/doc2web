@@ -4,6 +4,10 @@ using System.Linq;
 
 namespace Doc2web
 {
+    /// <summary>
+    /// Virtual html node used to decribe the conversion output.
+    /// This is used by the plugin to affect the final result.
+    /// </summary>
     public class HtmlNode
     {
         private Dictionary<string, string> _attributes = new Dictionary<string, string>();
@@ -14,18 +18,40 @@ namespace Doc2web
             Z = int.MinValue;
         }
 
+        /// <summary>
+        /// Position where the opening tag should be placed.
+        /// </summary>
         public double Start { get; set; }
 
+        /// <summary>
+        /// Position where the closing tag should be placed.
+        /// </summary>
         public double End { get; set; }
 
+        /// <summary>
+        /// Name of the DOM Node (ex: p, a, span, div).
+        /// </summary>
         public string Tag { get; set; }
 
+        /// <summary>
+        /// Position in the third dimension that will be used to calculate colisions and prevent
+        /// invalid html.
+        /// </summary>
         public int Z { get; set; }
 
+        /// <summary>
+        /// Text that will be inserted right after the opening tag.
+        /// </summary>
         public string TextPrefix { get; set; }
 
+        /// <summary>
+        /// Text that will be inserted right before the opening tag.
+        /// </summary>
         public string TextSuffix { get; set; }
 
+        /// <summary>
+        /// Css classes that have been added to this DOM element.
+        /// </summary>
         public IReadOnlyCollection<string> Classes
         {
             get
@@ -36,9 +62,20 @@ namespace Doc2web
                     return new string[] { };
             }
         }
+
+        /// <summary>
+        /// Html attributes that have been added to this DOM element.
+        /// The first value of the tupple is the name of the attribute and the 
+        /// seccond value is the value of the attribute.
+        /// </summary>
         public IReadOnlyDictionary<string, string> Attributes =>
             _attributes;
 
+        /// <summary>
+        /// Css properties that are registred in the style attribute.
+        /// The first value of the tupple is the name of the css property and the
+        /// seccond value is the value of the attribute.
+        /// </summary>
         public IReadOnlyDictionary<string, string> Style
         {
             get
@@ -68,6 +105,10 @@ namespace Doc2web
             return result;
         }
 
+        /// <summary>
+        /// Add multuiple css classes to the DOM node.
+        /// </summary>
+        /// <param name="names">Css classes to be added.</param>
         public void AddClasses(params string[] names)
         {
             for(int i =0; i< names.Length; i++)
@@ -78,12 +119,21 @@ namespace Doc2web
             }
         }
 
+        /// <summary>
+        /// Add a single css class to the DOM node.
+        /// </summary>
+        /// <param name="name">Css class to be addded.</param>
         private void AddClass(string name)
         {
             _attributes.TryGetValue("class", out string defaultVal);
             _attributes["class"] = (defaultVal + " " + name).Trim();
         }
 
+        /// <summary>
+        /// Set an inline css property that will be in the "style" attribute.
+        /// </summary>
+        /// <param name="name">Name of the css property (ex: color).</param>
+        /// <param name="value">Value of the css property (ex: red).</param>
         public void SetStyle(string name, string value)
         {
             if (name.Contains(':') || value.Contains(':'))
@@ -122,6 +172,11 @@ namespace Doc2web
                 );
         }
 
+        /// <summary>
+        /// Set the value of one of the DOM element attribute.
+        /// </summary>
+        /// <param name="name">Name of the attribute.</param>
+        /// <param name="value">Value of the attribute.</param>
         public void SetAttribute(string name, string value)
         {
             if (name == "style" || name == "class")
@@ -130,10 +185,16 @@ namespace Doc2web
             _attributes[name] = value;
         }
 
+        /// <summary>
+        /// Compare the properties the other object if it's a HtmlNode.
+        /// Compare the reference if the object is not an HtmlNode.
+        /// </summary>
+        /// <param name="obj">Object to compare with.</param>
+        /// <returns></returns>
         public override bool Equals(object obj)
         {
             var other = obj as HtmlNode;
-            if (other == null) return false;
+            if (other == null) return base.Equals(obj);
 
             return
                 other.Tag == Tag &&
@@ -143,6 +204,10 @@ namespace Doc2web
                 other._attributes.SequenceEqual(_attributes);
         }
 
+        /// <summary>
+        /// Returns a deep copy of the HtmlNode.
+        /// </summary>
+        /// <returns>Deep copy of the HtmlNode.</returns>
         public HtmlNode Clone() =>
             new HtmlNode
             {
@@ -153,6 +218,11 @@ namespace Doc2web
                 _attributes = new Dictionary<string, string>(_attributes)
             };
 
+        /// <summary>
+        /// Returns TRUE if the other HtmlNode is overlapsing this current HtmlNode.
+        /// </summary>
+        /// <param name="other">Other HtmlNode that could have an intersection.</param>
+        /// <returns></returns>
         public bool HasIntersection(HtmlNode other) =>
             (Start < other.Start && other.Start < End) ||
             (Start < other.End && other.End < End) ||

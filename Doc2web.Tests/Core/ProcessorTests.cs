@@ -28,7 +28,6 @@ namespace Doc2web.Tests.Core
         [TestMethod]
         public void Processor_Test()
         {
-            Assert.IsNotNull(_instance.InitProcessActions);
             Assert.IsNotNull(_instance.PreProcessActions);
             Assert.IsNotNull(_instance.PostProcessActions);
             Assert.IsNotNull(_instance.ElementRenderingActions);
@@ -54,21 +53,6 @@ namespace Doc2web.Tests.Core
             AddInitializeEngineAction("C");
 
             _instance.InitEngine(_containerBuilder);
-
-            Assert.AreEqual(3, _calledActions.Count);
-            _calledActions.Contains("A");
-            _calledActions.Contains("B");
-            _calledActions.Contains("C");
-        }
-
-        [TestMethod]
-        public void InitProcess_Test()
-        {
-            AddInitializeProcessingAction("A");
-            AddInitializeProcessingAction("B");
-            AddInitializeProcessingAction("C");
-
-            _instance.InitProcess(_containerBuilder);
 
             Assert.AreEqual(3, _calledActions.Count);
             _calledActions.Contains("A");
@@ -131,7 +115,6 @@ namespace Doc2web.Tests.Core
         {
             var processor = new Processor();
             processor.InitEngineActions.Add(c => { });
-            processor.InitProcessActions.Add(c => { });
             processor.PreProcessActions.Add((c) => { });
             processor.PreProcessActions.Add((c) => { });
             processor.ElementRenderingActions
@@ -148,7 +131,6 @@ namespace Doc2web.Tests.Core
         {
             var processor = new Processor();
             processor.InitEngineActions.Add(c => { });
-            processor.InitProcessActions.Add(c => { });
             processor.PreProcessActions.Add(c => { });
             processor.PostProcessActions.Add(c => { });
             processor.ElementRenderingActions
@@ -172,7 +154,6 @@ namespace Doc2web.Tests.Core
         private void AssertContainsAllProcesssingActions(Processor child)
         {
             AssertContainsAllInitEngineActions(child);
-            AssertContainsAllInitProcessActions(child);
             AssertContainsAllPreProcessingActions(child);
             AssertContainsAllPostProcessingActions(child);
             AssertContainsAllElementProcessingActions(child);
@@ -189,12 +170,6 @@ namespace Doc2web.Tests.Core
         {
             foreach (var preProcessorAction in child.PreProcessActions)
                 Assert.IsTrue(_instance.PreProcessActions.Contains(preProcessorAction));
-        }
-
-        private void AssertContainsAllInitProcessActions(Processor child)
-        {
-            foreach (var initializeAction in child.InitProcessActions)
-                Assert.IsTrue(_instance.InitProcessActions.Contains(initializeAction));
         }
 
         private void AssertContainsAllElementProcessingActions(Processor child)
@@ -220,10 +195,6 @@ namespace Doc2web.Tests.Core
             _instance.InitEngineActions.Add(BuildInitializeAction(key));
         }
 
-        private void AddInitializeProcessingAction(string key)
-        {
-            _instance.InitProcessActions.Add(BuildInitializeAction(key));
-        }
 
         private void AddPreRenderingAction(string key)
         {

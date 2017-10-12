@@ -17,14 +17,12 @@ namespace Doc2web.Core
         public Processor BuildSingle(object plugin)
         {
             var initEngineActions = GetInitializeEngineActions(plugin);
-            var initProcessActions = GetInitializeProcessingActions(plugin);
             var preProcessingActions = GetPreProcessingActions(plugin);
             var postProcessingActions = GetPostProcessingActions(plugin);
             var elementProcessingActions = GetElementProcessingActions(plugin);
 
             var processor = new Processor();
             processor.InitEngineActions.AddRange(initEngineActions);
-            processor.InitProcessActions.AddRange(initProcessActions);
             processor.PreProcessActions.AddRange(preProcessingActions);
             processor.PostProcessActions.AddRange(postProcessingActions);
             processor.ElementRenderingActions = elementProcessingActions;
@@ -40,17 +38,8 @@ namespace Doc2web.Core
             .Select(x => BuildInitializeAction(plugin, x))
             .ToArray();
 
-        private Action<ContainerBuilder>[] GetInitializeProcessingActions(object plugin) =>
-            plugin.GetType().GetMethods()
-            .Where(IsValidInitProcessingMethod)
-            .Select(x => BuildInitializeAction(plugin, x))
-            .ToArray();
-
         private bool IsValidInitEngineMethod(MethodInfo m) =>
             (HasAttribute<InitializeEngineAttribute>(m)) ? HasValidInitProcessingParameters(m) : false;
-
-        private bool IsValidInitProcessingMethod(MethodInfo m) =>
-            (HasAttribute<InitializeProcessingAttribute>(m)) ? HasValidInitProcessingParameters(m) : false;
 
         private bool HasValidInitProcessingParameters(MethodInfo methodInfo)
         {

@@ -6,6 +6,9 @@ using System.Text;
 
 namespace Doc2web.Plugins.TextFixes
 {
+    /// <summary>
+    /// Esacpe html content from the open xml to the html document.
+    /// </summary>
     public class EscapeHtmlPlugin
     {
         [ElementProcessing]

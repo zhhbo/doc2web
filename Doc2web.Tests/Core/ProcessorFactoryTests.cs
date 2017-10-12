@@ -22,12 +22,6 @@ namespace Doc2web.Tests.Core
             public virtual void Initialize(ContainerBuilder x) { }
         }
 
-        public class InitializeProcessorConfig
-        {
-            [InitializeProcessing]
-            public virtual void Initialize(ContainerBuilder x) { }
-        }
-
         public class PreProcessorConfig
         {
             [PreProcessing]
@@ -54,18 +48,6 @@ namespace Doc2web.Tests.Core
         public class InvalidInitializeEngineConfig2
         {
             [InitializeEngine]
-            public virtual void Initialize(object something) { }
-        }
-
-        public class InvalidInitializeProcessorConfig1
-        {
-            [InitializeProcessing]
-            public virtual void Initialize() { }
-        }
-
-        public class InvalidInitializeProcessorConfig2
-        {
-            [InitializeProcessing]
             public virtual void Initialize(object something) { }
         }
 
@@ -146,32 +128,6 @@ namespace Doc2web.Tests.Core
                     _instance.BuildSingle(plugin));
         }
 
-
-        [TestMethod]
-        public void BuildSingle_InitializeProcessing_Test()
-        {
-            var initProcessorConfig = Substitute.For<InitializeProcessorConfig>();
-
-            var processor = _instance.BuildSingle(initProcessorConfig);
-            processor.InitProcess(_containerBuilder);
-
-            Assert.AreEqual(1, processor.InitProcessActions.Count);
-            initProcessorConfig.Received(1).Initialize(_containerBuilder);
-        }
-
-        [TestMethod]
-        public void BuildSingle_InitializeProcessing_InvalidTest()
-        {
-            var initProcessorConfigs = new object[]
-            {
-                Substitute.For<InvalidInitializeProcessorConfig1>(),
-                Substitute.For<InvalidInitializeProcessorConfig2>()
-            };
-
-            foreach (var initProcessingConfig in initProcessorConfigs)
-                Assert.ThrowsException<ArgumentException>(() =>
-                    _instance.BuildSingle(initProcessingConfig));
-        }
 
         [TestMethod]
         public void BuildSingle_PreProcessing_Test()

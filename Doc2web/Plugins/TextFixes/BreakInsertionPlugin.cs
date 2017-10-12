@@ -6,6 +6,9 @@ using System.Linq;
 
 namespace Doc2web.Plugins.TextFixes
 {
+    /// <summary>
+    /// Add Br HtmlNodes to the Html document.
+    /// </summary>
     public class BreakInsertionPlugin
     {
         private BreakInsertionConfig _config;
@@ -65,15 +68,13 @@ namespace Doc2web.Plugins.TextFixes
 
         private string BreakAtStartSelector =>
             $".{_config.ContainerCls}.{_config.BreakAtStartCls}";
-        private string BreakAtStartLeftSpacerSelector =>
-            $"{BreakAtStartSelector} .{_config.NumberingContainerCls}";
 
         private string BreakAtStartNumberingSelector =>
             $"{BreakAtStartSelector} .{_config.LeftSpacerCls}";
 
         private string CSS =>
             $"{BreakAtStartSelector} {{flex-direction: column;}}" +
-            $"{BreakAtStartNumberingSelector}, {BreakAtStartLeftSpacerSelector} {{text-align: center;}}" +
+            $"{BreakAtStartNumberingSelector} {{text-align: center;}}" +
             $"{BreakAtStartNumberingSelector} * {{padding: 0!important;}}";
 
     }
