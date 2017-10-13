@@ -11,7 +11,7 @@ namespace Doc2web.Core
     {
         public IContainer EngineContainer { get; set; }
 
-        public IProcessor Processor { get; set; }
+        public Processor Processor { get; set; }
 
         public IContextRenderer ContextRenderer { get; set; }
 
@@ -20,6 +20,18 @@ namespace Doc2web.Core
             return new ConversionTask
             {
                 Processor = Processor,
+                RootElements = elements,
+                Container = EngineContainer,
+                ContextRenderer = ContextRenderer
+            };
+        }
+
+        public IConversionTask Build(IEnumerable<OpenXmlElement> elements, Processor temporary)
+        {
+            var processor = new Processor(Processor, temporary);
+            return new ConversionTask
+            {
+                Processor = processor,
                 RootElements = elements,
                 Container = EngineContainer,
                 ContextRenderer = ContextRenderer

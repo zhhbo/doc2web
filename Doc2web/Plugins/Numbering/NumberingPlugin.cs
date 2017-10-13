@@ -19,6 +19,7 @@ namespace Doc2web.Plugins.Numbering
     {
         private WordprocessingDocument _wpDoc;
         private NumberingConfig _config;
+        private INumberingMapper _numberingMapper;
 
         public NumberingPlugin(WordprocessingDocument wpDoc) : this(wpDoc, new NumberingConfig()) { }
 
@@ -28,11 +29,33 @@ namespace Doc2web.Plugins.Numbering
             _config = config;
         }
 
+        public NumberingPlugin(INumberingMapper numberingMapper) : this(numberingMapper, new NumberingConfig()) { }
+
+        public NumberingPlugin(INumberingMapper numberingMapper, NumberingConfig config)
+        {
+            _numberingMapper = numberingMapper;
+            _config = config;
+        }
+
+
         [InitializeEngine]
         public void InitEngine(ContainerBuilder builder)
         {
+            builder.RegisterInstance(_config);
+
+            if (_wpDoc != null) RegisterFromWpDoc(builder);
+            else RegisterFromNumberingMapper(builder);
+        }
+
+        private void RegisterFromNumberingMapper(ContainerBuilder builder)
+        {
             builder
-                .RegisterInstance(_config);
+                .RegisterInstance(_numberingMapper)
+                .ExternallyOwned();
+        }
+
+        private void RegisterFromWpDoc(ContainerBuilder builder)
+        {
             builder
                 .RegisterInstance(_wpDoc)
                 .ExternallyOwned();
