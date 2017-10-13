@@ -60,7 +60,7 @@ namespace Doc2web.Tests.Plugins.Numbering
         }
 
         [TestMethod]
-        public void InitEngine_Test()
+        public void InitEngine_WordprocessingDocumentTest()
         {
             MockDocument();
             Initialize();
@@ -71,6 +71,21 @@ namespace Doc2web.Tests.Plugins.Numbering
             var container = containerBuilder.Build();
 
             Assert.IsNotNull(container.Resolve<INumberingMapper>());
+            Assert.AreEqual(_config, container.Resolve<NumberingConfig>());
+        }
+
+        [TestMethod]
+        public void InitEngine_NumberingMapperTest()
+        {
+            var numberingMapper = Substitute.For<INumberingMapper>();
+            _instance = new NumberingPlugin(numberingMapper, _config);
+            var containerBuilder = new ContainerBuilder();
+            containerBuilder.RegisterInstance(new StyleConfig());
+
+            _instance.InitEngine(containerBuilder);
+            var container = containerBuilder.Build();
+
+            Assert.AreSame(numberingMapper, container.Resolve<INumberingMapper>());
             Assert.AreEqual(_config, container.Resolve<NumberingConfig>());
         }
 
