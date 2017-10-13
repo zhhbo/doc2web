@@ -14,6 +14,7 @@ namespace Doc2web
     {
         private IContainer _container;
         private ConversionTaskFactory _conversionTaskFactory;
+        private ProcessorFactory _processorFactory;
         private Processor _processor;
 
         /// <summary>
@@ -23,7 +24,8 @@ namespace Doc2web
         /// hooks(InitializeEngineAttribute,PreProcessingAttribute, ElementProcessingAttribute and PostProcessingAttribute).</param>
         public ConversionEngine(params object[] plugins)
         {
-            _processor = new ProcessorFactory().BuildMultiple(plugins);
+            _processorFactory = new ProcessorFactory();
+            _processor = _processorFactory.BuildMultiple(plugins);
             Initialize();
         }
 
@@ -58,6 +60,26 @@ namespace Doc2web
         {
             var conversionTask = _conversionTaskFactory.Build(elements);
 
+            return ExecuteConversionTask(conversionTask);
+        }
+
+        /// <summary>
+        /// Convert some open xml elements in HTML.
+        /// Add some temporary plugins for this conversion task.
+        /// </summary>
+        /// <param name="elements">Targeted open xml elements.</param>
+        /// <param name="temporaryPlugins">Plugins that will be added for this conversion task.</param>
+        /// <returns>HTML produce by the conversion engine.</returns>
+        public string Convert(IEnumerable<OpenXmlElement> elements, params object[] temporaryPlugins)
+        {
+            var tempPlugin = _processorFactory.BuildMultiple(temporaryPlugins);
+            var conversionTask = _conversionTaskFactory.Build(elements, tempPlugin);
+
+            return ExecuteConversionTask(conversionTask);
+        }
+
+        private static string ExecuteConversionTask(IConversionTask conversionTask)
+        {
             conversionTask.PreProcess();
             conversionTask.ProcessElements();
             conversionTask.PostProcess();
