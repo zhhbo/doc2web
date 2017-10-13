@@ -2,6 +2,20 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <PackageProjectUrl>https://github.com/osasseville/doc2web</PackageProjectUrl>
+    <PackageIconUrl>https://raw.githubusercontent.com/osasseville/doc2web/master/logo.png</PackageIconUrl>
+    <RepositoryUrl>https://github.com/osasseville/doc2web</RepositoryUrl>
+    <PackageTags>openxml word html</PackageTags>
+    <PackageLicenseUrl>https://raw.githubusercontent.com/osasseville/doc2web/master/LICENSE.md</PackageLicenseUrl>
+    <RepositoryType>git</RepositoryType>
+    <Company>TermLynx</Company>
+    <Authors>Olivier Sasseville</Authors>
+    <AssemblyVersion>0.0.1.0</AssemblyVersion>
+    <FileVersion>0.0.1.0</FileVersion>
+    <PackageVersion>0.0.1.0</PackageVersion>
+    <Description>Docx to HTML converter.</Description>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

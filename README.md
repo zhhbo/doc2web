@@ -59,8 +59,8 @@ is simple and 40 pages in ~115 ms when the open xml is very complicated.
       - [x] Indentation (responsive)
       - [x] Italic
       - [x] Justification
-      - [ ] Run fonts
-      - [ ] Spacing
+      - [x] Run fonts
+      - [x] Spacing
       - [x] Small caps
       - [x] Vanish
       - [x] Underline
@@ -88,7 +88,7 @@ is simple and 40 pages in ~115 ms when the open xml is very complicated.
   - [x] Crash tests
   - [ ] Search for keywords in documents
 - [ ] Documentation
-  - [ ] XML documentation
+  - [x] XML documentation
   - [ ] How to use the C# Api
   - [ ] How to extend with plugins
   - [ ] Benchmark and performance breakdown
