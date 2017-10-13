@@ -54,9 +54,11 @@ namespace Doc2web.Tests.Core
         [TestMethod]
         public void PreProcess_Test()
         {
+            _instance.GlobalContext = null;
             _instance.PreProcess();
 
-            _processor.Received(1).PreProcess(_globalContext);
+            Assert.IsNotNull(_instance.GlobalContext);
+            _processor.Received(1).PreProcess(_instance.GlobalContext);
         }
 
         [TestMethod]

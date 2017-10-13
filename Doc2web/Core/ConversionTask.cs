@@ -26,6 +26,7 @@ namespace Doc2web.Core
 
         public void PreProcess()
         {
+            GlobalContext = new GlobalContext(Container.BeginLifetimeScope(), RootElements);
             Processor.PreProcess(GlobalContext);
         }
 
