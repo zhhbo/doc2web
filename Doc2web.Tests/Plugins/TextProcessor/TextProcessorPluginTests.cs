@@ -58,6 +58,17 @@ namespace Doc2web.Tests.Plugins.TextProcessor
         }
 
         [TestMethod]
+        public void InitializeEngine_Test()
+        {
+            var containerBuilder = new ContainerBuilder();
+
+            _instance.InitializeEngine(containerBuilder);
+
+            var container = containerBuilder.Build();
+            Assert.AreSame(_config, container.Resolve<TextProcessorConfig>());
+        }
+
+        [TestMethod]
         public void TextProcessorPlugin_Test()
         {
             Assert.AreEqual("div", _config.ContainerTag);
