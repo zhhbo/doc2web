@@ -25,6 +25,12 @@ namespace Doc2web.Plugins.TextProcessor
             _config = config;
         }
 
+        [InitializeEngine]
+        public void InitializeEngine(ContainerBuilder containerBuilder)
+        {
+            containerBuilder.RegisterInstance(_config);
+        }
+
         [ElementProcessing]
         public void ProcessParagraph(IElementContext context, Paragraph p)
         {
