@@ -6,33 +6,25 @@ using DocumentFormat.OpenXml.Wordprocessing;
 namespace Doc2web.Plugins.Style.Properties
 {
     [RunCssProperty(typeof(FontSize))]
-    public class FontSizeCssProperty : CssProperty<FontSize>
+    public class FontSizeCssProperty : HaflPointCssProperty<FontSize>
     {
+        /// <summary>
+        /// Only used as a commodity during testing.
+        /// </summary>
         public override void InsertCss(CssData cssData)
         {
-            var size = GetHashCode();
-            if (size != -1)
-            {
-                string points = Math.Round((double)size / 2, 2).ToString();
-                cssData.AddAttribute(Selector, "font-size", points + "pt");
-            }
+            InsertCss(new CssPropertiesSet(), cssData);
         }
 
-        public override int GetHashCode() => GetSize(Element);
-
-        public override bool Equals(ICssProperty element)
+        public override void InsertCss(CssPropertiesSet set, CssData cssData)
         {
-            if (element is FontSizeCssProperty other)
-                return other.GetHashCode() == GetHashCode();
-            return false;
-        }
+            if (Val == -1) return;
 
-        private static short GetSize(FontSize e)
-        {
-            var val = e.Val?.Value;
-            if (val != null && short.TryParse(val, out short result))
-                return result;
-            return -1;
+            if (set.Get<FontSizeCSCssProperty>() != null &&
+                Utils.ComplexScriptApplies(set)) return;
+
+            string points = Math.Round(Val, 2).ToString();
+            cssData.AddAttribute(Selector, "font-size", points + "pt");
         }
     }
 }

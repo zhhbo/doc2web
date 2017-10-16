@@ -39,6 +39,27 @@ namespace Doc2web.Plugins.Style.Properties
         {
             return twips / (567.0 * 21.59);
         }
+
+        public static double? GetSize(HpsMeasureType element)
+        {
+            var val = element.Val?.Value;
+            if (val != null && int.TryParse(val, out int result))
+                return result / 2;
+            return null;
+        }
+
+        public static bool ComplexScriptApplies(CssPropertiesSet set)
+        {
+            var csProp = set.Get<ComplexScriptCssProperty>();
+            if (csProp != null && csProp.ExplicitVal.GetValueOrDefault(true))
+                return true;
+
+            var fonts = set.Get<RunFontsCssProperty>();
+            if (fonts != null && fonts.CanOnlyUseComplexScript)
+                return true;
+
+            return false;
+        }
     }
 
     public class IndentationDecorator
