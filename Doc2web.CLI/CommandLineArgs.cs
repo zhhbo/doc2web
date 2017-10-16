@@ -4,30 +4,36 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Doc2web.CLI
 {
     class CommandLineArgs
     {
         private bool _shouldShowHelp;
-        private int _start;
-        private int _end;
+        private int _skip;
+        private int _take;
         private string _outputPath;
         private OptionSet _optionSet;
         private string[] _targets;
         private int _verbosity;
         private bool _interactive;
         private bool _blank;
+        private string _find;
+        private Regex _regex;
 
         public CommandLineArgs()
         {
-            _start = 0;
-            _end = -1;
+            _skip = 0;
+            _take = -1;
             _outputPath = "";
+            _find = null;
+            _regex = null;
 
             _optionSet = new OptionSet {
-                { "s|start=", "the number of paragraph to skip from the begining", n => _start = int.Parse(n) },
-                { "e|end=",   "the number of paragraph to skip from the end",      n => _end = int.Parse(n) },
+                { "s|skip=", "the number of paragraph to skip from the begining", n => _skip = int.Parse(n) },
+                { "t|take=",   "the maximum of paragraph to render",               n => _take = int.Parse(n) },
+                { "f|find=",  "a regex that fill filter out paragraphs using their contenxt",  n => _find = n },
                 { "o|out=",   "the path of the output folder.",                    n => _outputPath = n },
                 { "b|blank",  "toggle on/off if the html output will be written",  n => _blank = n != null },
                 { "v|verbose",        "increase debug message verbosity",          v => { if (v != null) ++_verbosity; } },
@@ -41,9 +47,11 @@ namespace Doc2web.CLI
 
         public bool ShouldShowHelp => _shouldShowHelp;
 
-        public int Start => _start;
+        public int Skip => _skip;
 
-        public int End => _end;
+        public int Take => _take;
+
+        public Regex Regex => _regex;
 
         public bool Blank => _blank;
 
@@ -64,6 +72,9 @@ namespace Doc2web.CLI
                     _optionSet.Parse(args)
                     .Select(ParsePath)
                     .ToArray();
+
+                if (_find != null)
+                    _regex = new Regex(_find);
             }
             catch (OptionException e)
             {
