@@ -31,6 +31,15 @@ namespace Doc2web.Plugins.Style.Properties
             }
         }
 
+        public bool CanOnlyUseComplexScript =>
+            _inlineFonts[0] == null &&
+            _inlineFonts[1] == null &&
+            _inlineFonts[2] == null &&
+            _themeFonts[0] == null &&
+            _themeFonts[1] == null &&
+            _themeFonts[2] == null &&
+            (_inlineFonts[3] != null || _themeFonts[3] != null);
+
         private void SneakySetElement(OpenXmlElement elem)
         {
             base.OpenXmlElement = elem;
@@ -62,7 +71,32 @@ namespace Doc2web.Plugins.Style.Properties
             }
         }
 
+        /// <summary>
+        /// Only as a convience in unit tests.
+        /// </summary>
         public override void InsertCss(CssData cssData)
+        {
+            InsertCss(new CssPropertiesSet(), cssData);
+        }
+
+        public override void InsertCss(CssPropertiesSet set, CssData cssData)
+        {
+            var complexScript = set?.Get<ComplexScriptCssProperty>();
+            if (complexScript != null)
+                UseComplexScript(complexScript, cssData);
+            else
+                UseAllFonts(cssData);
+        }
+
+        private void UseComplexScript(ComplexScriptCssProperty prop, CssData cssData)
+        {
+            if (!prop.ExplicitVal.GetValueOrDefault(true)) return;
+            string fontFamily = GetFontAt(3);
+            if (fontFamily == null) return;
+            cssData.AddAttribute(Selector, "font-family", fontFamily);
+        }
+
+        private void UseAllFonts(CssData cssData)
         {
             string fontFamily = CreateFontFamilyValue();
             if (fontFamily.Length == 0) return;
