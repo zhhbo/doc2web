@@ -113,8 +113,8 @@ namespace Doc2web.Tests.Plugins.Style
             prop1CssData.AddAttribute(".test", "", "red");
             var prop1 = Substitute.For<ICssProperty>();
             prop1
-                .When(x => x.InsertCss(Arg.Any<CssData>()))
-                .Do(x => x.ArgAt<CssData>(0).AddRange(prop1CssData));
+                .When(x => x.InsertCss(Arg.Any<CssPropertiesSet>(), Arg.Any<CssData>()))
+                .Do(x => x.ArgAt<CssData>(1).AddRange(prop1CssData));
 
             _instance.Add(prop1);
             _instance.Selector = ".test";

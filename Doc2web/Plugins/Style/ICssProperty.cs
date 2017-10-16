@@ -14,7 +14,7 @@ namespace Doc2web.Plugins.Style
 
         void Extends(ICssProperty parent);
 
-        void InsertCss(CssData cssData);
+        void InsertCss(CssPropertiesSet others, CssData cssData);
 
         ICssProperty Clone();
     }

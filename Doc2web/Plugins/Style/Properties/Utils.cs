@@ -26,7 +26,7 @@ namespace Doc2web.Plugins.Style.Properties
         public static CssData AsCss(this ICssProperty prop)
         {
             var cssData = new CssData();
-            prop.InsertCss(cssData);
+            prop.InsertCss(new CssPropertiesSet(), cssData);
             return cssData;
         }
 

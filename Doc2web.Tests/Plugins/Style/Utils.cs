@@ -24,7 +24,7 @@ namespace Doc2web.Tests.Plugins.Style
 
         public OpenXmlElement OpenXmlElement { get; set; }
 
-        public void InsertCss(CssData cssData)
+        public void InsertCss(CssPropertiesSet other, CssData cssData)
         {
             cssData.AddRange(_cssData);
         } 

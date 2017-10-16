@@ -72,7 +72,7 @@ namespace Doc2web.Plugins.Style
             foreach(var prop in this)
             {
                 prop.Selector = Selector;
-                prop.InsertCss(cssData);
+                prop.InsertCss(this, cssData);
             }
         }
 

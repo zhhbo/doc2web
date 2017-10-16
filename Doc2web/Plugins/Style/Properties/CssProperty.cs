@@ -18,7 +18,12 @@ namespace Doc2web.Plugins.Style.Properties
             set => OpenXmlElement = value;
         }
 
-        public abstract void InsertCss(CssData cssData);
+        public virtual void InsertCss(CssData cssData) { }
+
+        public virtual void InsertCss(CssPropertiesSet others, CssData cssData)
+        {
+            InsertCss(cssData);
+        }
 
         public abstract override int GetHashCode();
 
