@@ -61,7 +61,10 @@ namespace Doc2web.CLI
                     InputPath = file,
                     OutputPath = _args.OutputPath,
                     Verbose = _args.Verbosity > 1,
-                    Blank = _args.Blank
+                    Blank = _args.Blank,
+                    Skip = _args.Skip,
+                    Take = _args.Take,
+                    Regex = _args.Regex
                 };
 
                 task.Execute();

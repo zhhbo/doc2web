@@ -14,7 +14,7 @@ namespace Doc2web.Plugins.Style.Css
             Func<CssPropertySource, ICssPropertiesFactory> _facBuiler,
             IEnumerable<WStyle> styles) : base(styles)
         {
-            _propsFac = _facBuiler(CssPropertySource.Paragraph);
+            _propsFac = _facBuiler(CssPropertySource.Run);
         }
 
         public override CssPropertiesSet BuildProps(WStyle style)

@@ -19,13 +19,14 @@ namespace Doc2web.Plugins.Style.Css
 
         public IReadOnlyDictionary<(int, int), CssPropertiesSet> Cache => _cache;
 
-        public CssPropertiesSet Get(int numberingId, int levelIndex) 
+        public CssPropertiesSet Get(int numberingId, int levelIndex)
         {
-            if (_cache.TryGetValue((numberingId, levelIndex), out CssPropertiesSet cached)) {
+            if (_cache.TryGetValue((numberingId, levelIndex), out CssPropertiesSet cached))
+            {
                 return cached.Clone();
             }
 
-            var newEntry = 
+            var newEntry =
                 _numberingCrawer
                 .Collect(numberingId, levelIndex)
                 .Select(BuildPropertiesSet)

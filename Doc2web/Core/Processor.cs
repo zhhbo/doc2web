@@ -1,7 +1,9 @@
 ﻿using Autofac;
 using DocumentFormat.OpenXml;
+using DocumentFormat.OpenXml.Wordprocessing;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Doc2web.Core
@@ -44,7 +46,7 @@ namespace Doc2web.Core
                 action(context);
         }
 
-        public void ProcessElement(Doc2web.IElementContext context, OpenXmlElement element)
+        public void ProcessElement(IElementContext context, OpenXmlElement element)
         {
             if (ElementRenderingActions.TryGetValue(element.GetType(), 
                 out List<Action<IElementContext, OpenXmlElement>> processorActions))
@@ -73,9 +75,12 @@ namespace Doc2web.Core
             {
                 if (ElementRenderingActions.TryGetValue(type, 
                     out List<Action<IElementContext, OpenXmlElement>> current))
-                    current.AddRange(processor.ElementRenderingActions[type]);
+                    current.AddRange(processor.ElementRenderingActions[type].Select(x => x));
                 else
-                    ElementRenderingActions.Add(type, processor.ElementRenderingActions[type]);
+                {
+                    var list = processor.ElementRenderingActions[type].Select(x => x).ToList();
+                    ElementRenderingActions[type] = list;
+                }
             }
         }
     }
