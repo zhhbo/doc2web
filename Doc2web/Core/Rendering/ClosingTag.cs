@@ -18,6 +18,8 @@ namespace Doc2web.Core.Rendering
 
         public double RelatedPosition => Related.Position;
 
+        public int Z { get; set; }
+
         public string Render() => $"{TextBefore}</{Related.Name}>";
 
         public override string ToString() => Render();

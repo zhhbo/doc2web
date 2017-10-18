@@ -12,13 +12,13 @@ namespace Doc2web.Tests.Core.Rendering
     {
         private static List<HtmlNode> InputOpenClose => new List<HtmlNode>
         {
-            new HtmlNode { Start=0, End=10, Z=0, Tag="div", TextPrefix="prefix", TextSuffix="suffix" }
+            new HtmlNode { Start=0, End=10, Z=1, Tag="div", TextPrefix="prefix", TextSuffix="suffix" }
         };
 
         private static (int, ITag)[] ExpectedOpenClose => new(int, ITag)[]
         {
-           (1, new OpeningTag { Position = 0, Name = "div", TextAfter="prefix" }),
-           (0, new ClosingTag { Position = 10, TextBefore="suffix" })
+           (1, new OpeningTag { Position = 0, Name = "div", TextAfter="prefix", Z = 1 }),
+           (0, new ClosingTag { Position = 10, TextBefore="suffix", Z = 1 })
         };
 
 
@@ -29,7 +29,7 @@ namespace Doc2web.Tests.Core.Rendering
 
         private static (int, ITag)[] ExpectedSelfClosing => new(int, ITag)[]
         {
-           (0, new SelfClosingTag { Position = 0, Name = "br" }),
+           (0, new SelfClosingTag { Position = 0, Name = "br", Z = 0 }),
         };
 
 

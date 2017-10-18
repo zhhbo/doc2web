@@ -82,6 +82,7 @@ namespace Doc2web.Tests.Core.Rendering
 
         private static void AssertSelfClosingTagAreEqual(SelfClosingTag expected, SelfClosingTag result)
         {
+            Assert.AreEqual(expected.Z, result.Z);
             Assert.AreEqual(expected.Name, result.Name);
             Assert.AreEqual(expected.Position, result.Position);
             AssertAttributesAreEquals(expected.Attributes, result.Attributes);
@@ -89,6 +90,7 @@ namespace Doc2web.Tests.Core.Rendering
 
         private static void AssertOpeningTagsAreEqual(OpeningTag expected, OpeningTag result)
         {
+            Assert.AreEqual(expected.Z, result.Z);
             Assert.AreEqual(expected.Name, result.Name);
             Assert.AreEqual(expected.Position, result.Position);
             Assert.AreEqual(expected.Attributes, result.Attributes);
@@ -99,6 +101,7 @@ namespace Doc2web.Tests.Core.Rendering
 
         private static void AssertClosingTagsAreEqual(ClosingTag expected, ClosingTag result)
         {
+            Assert.AreEqual(expected.Z, result.Z);
             Assert.AreEqual(expected.Position, result.Position);
             Assert.AreEqual(expected.Name, result.Name);
             Assert.AreEqual(expected.RelatedPosition, result.RelatedPosition);

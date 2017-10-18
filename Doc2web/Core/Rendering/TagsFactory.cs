@@ -63,13 +63,15 @@ namespace Doc2web.Core.Rendering
                 Name = node.Tag,
                 Position = node.Start,
                 Attributes = node.Attributes,
-                TextAfter = node.TextPrefix
+                TextAfter = node.TextPrefix,
+                Z = node.Z,
             };
             var closing = new ClosingTag
             {
                 Related = opening,
                 Position = node.End,
-                TextBefore = node.TextSuffix
+                TextBefore = node.TextSuffix,
+                Z = node.Z
             };
             opening.Related = closing;
             return new ITag[2] { opening, closing };
@@ -81,7 +83,8 @@ namespace Doc2web.Core.Rendering
             {
                 Name = node.Tag,
                 Position = node.Start,
-                Attributes = node.Attributes
+                Attributes = node.Attributes,
+                Z = node.Z
             };
         }
     }
