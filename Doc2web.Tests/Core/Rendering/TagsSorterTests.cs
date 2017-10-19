@@ -87,6 +87,40 @@ namespace Doc2web.Tests.Core.Rendering
            (12, new ClosingTag { Position = Epsilon(15, 0), Z = 15 }),
         };
 
+        private static List<HtmlNode> RealCase1Input => new List<HtmlNode>
+        {
+            new HtmlNode { Start = 000, End = 132, Tag = "p", Z = int.MaxValue },
+            new HtmlNode { Start = 000, End = 001, Tag = "s", Z = 00 },
+            new HtmlNode { Start = 001, End = 009, Tag = "s", Z = 00 },
+            new HtmlNode { Start = 009, End = 054, Tag = "s", Z = 00 },
+            new HtmlNode { Start = 054, End = 065, Tag = "s", Z = 00 },
+            new HtmlNode { Start = 065, End = 132, Tag = "s", Z = 00 },
+            new HtmlNode { Start = 001, End = 009, Tag = "s", Z = 05 },
+            new HtmlNode { Start = 001, End = 009, Tag = "a", Z = 10 },
+            new HtmlNode { Start = 054, End = 065, Tag = "a", Z = 10 },
+        };
+
+        private static (int, ITag)[] RealCase1Expected => new(int, ITag)[]
+        {
+           (17, new OpeningTag { Position = Epsilon(000, 0), Name = "p", Z = int.MaxValue }),
+           (02, new OpeningTag { Position = Epsilon(000, 1), Name = "s", Z = 0 }),
+           (01, new ClosingTag { Position = Epsilon(001, 0), Z = 0 }),
+           (08, new OpeningTag { Position = Epsilon(001, 1), Name = "a", Z = 10 }),
+           (07, new OpeningTag { Position = Epsilon(001, 2), Name = "s", Z = 05 }),
+           (06, new OpeningTag { Position = Epsilon(001, 3), Name = "s", Z = 00 }),
+           (05, new ClosingTag { Position = Epsilon(009, 0), Z = 00 }),
+           (04, new ClosingTag { Position = Epsilon(009, 1), Z = 05 }),
+           (03, new ClosingTag { Position = Epsilon(009, 2), Z = 10 }),
+           (10, new OpeningTag { Position = Epsilon(009, 3), Name = "s", Z = 00 }),
+           (09, new ClosingTag { Position = Epsilon(054, 0), Z = 0 }),
+           (14, new OpeningTag { Position = Epsilon(054, 1), Name = "a", Z = 10 }),
+           (13, new OpeningTag { Position = Epsilon(054, 2), Name = "s", Z = 00 }),
+           (12, new ClosingTag { Position = Epsilon(065, 0), Z = 00 }),
+           (11, new ClosingTag { Position = Epsilon(065, 1), Z = 10 }),
+           (16, new OpeningTag { Position = Epsilon(065, 2), Name = "s", Z = 00 }),
+           (15, new ClosingTag { Position = Epsilon(132, 0), Z = 00 }),
+           (00, new ClosingTag { Position = Epsilon(132, 1), Z = int.MaxValue }),
+        };
 
         private static double Epsilon(double v, int eCount) =>
             v + double.Epsilon * eCount;
@@ -101,6 +135,12 @@ namespace Doc2web.Tests.Core.Rendering
         public void Sort_ZTest()
         {
             Test(ExpectedZColision, InputZColision);
+        }
+
+        [TestMethod]
+        public void Sort_RealseCase1Test()
+        {
+            Test(RealCase1Expected, RealCase1Input);
         }
 
         private void Test((int, ITag)[] expectedConfig, List<HtmlNode> sample)

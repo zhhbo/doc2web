@@ -101,26 +101,29 @@ namespace Doc2web.CLI
         [ElementProcessing]
         public void ProcessP(IElementContext ctx, Paragraph p)
         {
+            ctx.AddNode(new HtmlNode { Start = 0, End = p.InnerText.Length, Tag = "p" });
             foreach(string span in spans)
             {
                 ctx.AddNode(new HtmlNode
                 {
                     Start = sentence.IndexOf(span),
-                    End = span.Length,
+                    End = sentence.IndexOf(span) + span.Length,
                     Z = 0,
-                    Tag = "div"
+                    Tag = "span"
                 });
             }
 
             foreach(string highlight in highlights)
             {
-                ctx.AddNode(new HtmlNode
+                var node = new HtmlNode
                 {
                     Start = sentence.IndexOf(highlight),
-                    End = highlight.Length,
+                    End = sentence.IndexOf(highlight) + highlight.Length,
                     Z = 5,
-                    Tag = "div"
-                });
+                    Tag = "span"
+                };
+                node.SetStyle("background", "yellow");
+                ctx.AddNode(node);
             }
 
             foreach(string anchor in anchors)
@@ -128,11 +131,10 @@ namespace Doc2web.CLI
                 var node = new HtmlNode
                 {
                     Start = sentence.IndexOf(anchor),
-                    End = anchor.Length,
+                    End = sentence.IndexOf(anchor) + anchor.Length,
                     Z = 10,
-                    Tag = "div"
+                    Tag = "a"
                 };
-                node.SetStyle("background", "yellow");
                 ctx.AddNode(node);
             }
         }
