@@ -115,8 +115,8 @@ namespace Doc2web.Tests.Plugins.TextProcessor
             var expected = new HtmlNode
             {
                 Tag = _config.ParagraphTag,
-                Start = 0 - _config.Delta,
-                End = _p.InnerText.Length + _config.Delta,
+                Start = 0,
+                End = _p.InnerText.Length,
                 Z = _config.ParagraphZ,
             };
             expected.AddClasses(_config.ParagraphCls);
@@ -179,7 +179,7 @@ namespace Doc2web.Tests.Plugins.TextProcessor
             var expected = new HtmlNode
             {
                 Tag = _config.RunTag,
-                Start = _config.Delta,
+                Start = 0,
                 End = _r.InnerText.Length,
                 Z = _config.RunZ,
             };

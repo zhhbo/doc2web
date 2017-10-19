@@ -20,7 +20,7 @@ namespace Doc2web
         /// </summary>
         /// <param name="wpDoc">Document to be converted.</param>
         /// <returns>Html document that is result of the conversion.</returns>
-        public static string ConvertCompleteDocument(WordprocessingDocument wpDoc) => 
+        public static string ConvertCompleteDocument(WordprocessingDocument wpDoc) =>
             ConvertPartialDocument(wpDoc, wpDoc.MainDocumentPart.Document.Body.Elements());
 
         /// <summary>
@@ -37,7 +37,7 @@ namespace Doc2web
             }
         }
 
-        private static ConversionEngine BuildDefaultEngine(WordprocessingDocument wpDoc) => 
+        private static ConversionEngine BuildDefaultEngine(WordprocessingDocument wpDoc) =>
             new ConversionEngine(
                 new StylePlugin(wpDoc),
                 new NumberingPlugin(wpDoc),

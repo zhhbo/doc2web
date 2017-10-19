@@ -86,8 +86,8 @@ namespace Doc2web.Plugins.TextProcessor
         {
             var pNode = new HtmlNode
             {
-                Start = context.TextIndex - _config.Delta,
-                End = context.TextIndex + p.InnerText.Length + _config.Delta,
+                Start = context.TextIndex,
+                End = context.TextIndex + p.InnerText.Length,
                 Tag = _config.ParagraphTag,
                 Z = _config.ParagraphZ,
             };
@@ -117,7 +117,7 @@ namespace Doc2web.Plugins.TextProcessor
             {
                 var node = new HtmlNode
                 {
-                    Start = context.TextIndex + _config.Delta,
+                    Start = context.TextIndex,
                     End = context.TextIndex + r.InnerText.Length,
                     Tag = _config.RunTag,
                     Z = _config.RunZ,

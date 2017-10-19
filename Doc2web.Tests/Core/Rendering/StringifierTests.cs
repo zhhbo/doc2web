@@ -11,6 +11,7 @@ namespace Doc2web.Tests.Core.Rendering
     [TestClass]
     public class Rendering2Tests
     {
+
         [TestMethod]
         public void Stringify_OffLimitsTests()
         {
@@ -21,6 +22,22 @@ namespace Doc2web.Tests.Core.Rendering
                 {
                     BuildSingle(double.MinValue, 0, "<div>"),
                     BuildSingle(double.MaxValue, 0, "</div>"),
+                }
+            };
+
+            Assert.AreEqual("<div>Something.</div>", r.Stringify());
+        }
+
+        [TestMethod]
+        public void Stringify_UnsortedElementsTests()
+        {
+            var r = new Stringifier()
+            {
+                Text = "Something.",
+                Elements = new IRenderable[]
+                {
+                    BuildSingle(double.MaxValue, 0, "</div>"),
+                    BuildSingle(double.MinValue, 0, "<div>"),
                 }
             };
 

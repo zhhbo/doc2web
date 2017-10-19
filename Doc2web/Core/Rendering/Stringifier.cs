@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Doc2web.Core.Rendering
@@ -18,8 +19,9 @@ namespace Doc2web.Core.Rendering
         {
             StringBuilder sb = new StringBuilder();
             top = double.MinValue;
+            Elements = Elements.OrderBy(x => x.Position).ToArray();
 
-            foreach(var e in Elements)
+            foreach (var e in Elements)
             {
                 if ((top <= 0 && e.Position >= LimText) ||
                     (top >= 0 && LimText >= e.Position) ||
