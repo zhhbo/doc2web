@@ -1,4 +1,5 @@
-﻿using DocumentFormat.OpenXml.Packaging;
+﻿using DocumentFormat.OpenXml.Drawing;
+using DocumentFormat.OpenXml.Packaging;
 using Mono.Options;
 using System;
 using System.Collections.Generic;
@@ -18,25 +19,28 @@ namespace Doc2web.CLI
 
         public static void Main(string[] args)
         {
-            var cliArgs = new CommandLineArgs();
+            //var cliArgs = new CommandLineArgs();
 
-            try
-            {
-                cliArgs.Parse(args);
-            }
-            catch
-            {
-                Console.Error.WriteLine("Could not parse arguments.");
-                return;
-            }
+            //try
+            //{
+            //    cliArgs.Parse(args);
+            //}
+            //catch
+            //{
+            //    Console.Error.WriteLine("Could not parse arguments.");
+            //    return;
+            //}
 
-            if (cliArgs.ShouldShowHelp)
-            {
-                cliArgs.ShowHelp();
-                return;
-            }
+            //if (cliArgs.ShouldShowHelp)
+            //{
+            //    cliArgs.ShowHelp();
+            //    return;
+            //}
 
-            new Program(cliArgs).Execute();
+            //new Program(cliArgs).Execute();
+
+            var t = new Program(null);
+            t.Test();
 
             Console.WriteLine("Press enter to continue...");
             Console.ReadKey();
@@ -73,5 +77,72 @@ namespace Doc2web.CLI
             Console.WriteLine(@"-----------------------------------------------------");
             Console.WriteLine($"Converted {fileList.Count} document(s) in {sw.Elapsed.ToString()}.");
         }
+
+        string sentence = "“Articles” means the articles of incorporation of the Corporation, as amended, replaced, restated or supplemented from time to time;";
+
+
+        string[] spans = new string[]
+        {
+            "“",
+            "Articles",
+            "” means the articles of incorporation of the ",
+            "Corporation",
+            ", as amended, replaced, restated or supplemented from time to time;"
+        };
+        string[] highlights = new string[]
+        {
+            "Articles"
+        };
+        string[] anchors = new string[] {
+            "Articles",
+            "Corporation"
+        };
+
+        [ElementProcessing]
+        public void ProcessP(IElementContext ctx, Paragraph p)
+        {
+            foreach(string span in spans)
+            {
+                ctx.AddNode(new HtmlNode
+                {
+                    Start = sentence.IndexOf(span),
+                    End = span.Length,
+                    Z = 0,
+                    Tag = "div"
+                });
+            }
+
+            foreach(string highlight in highlights)
+            {
+                ctx.AddNode(new HtmlNode
+                {
+                    Start = sentence.IndexOf(highlight),
+                    End = highlight.Length,
+                    Z = 5,
+                    Tag = "div"
+                });
+            }
+
+            foreach(string anchor in anchors)
+            {
+                var node = new HtmlNode
+                {
+                    Start = sentence.IndexOf(anchor),
+                    End = anchor.Length,
+                    Z = 10,
+                    Tag = "div"
+                };
+                node.SetStyle("background", "yellow");
+                ctx.AddNode(node);
+            }
+        }
+
+        public void Test()
+        {
+            var conversionEngine = new ConversionEngine(this);
+            var html = conversionEngine.Convert(new Paragraph[1] { new Paragraph(new Run(new Text(sentence))) });
+            Console.WriteLine(html);
+        }
+
     }
 }

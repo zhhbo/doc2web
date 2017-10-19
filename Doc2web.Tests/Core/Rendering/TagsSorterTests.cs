@@ -53,20 +53,38 @@ namespace Doc2web.Tests.Core.Rendering
 
         private static List<HtmlNode> InputZColision => new List<HtmlNode>
         {
-            new HtmlNode{Start = 0, End = 10, Tag = "div",  Z = 15 },
-            new HtmlNode{Start = 0, End = 10, Tag = "a",    Z = 10 },
-            new HtmlNode{Start = 0, End = 10, Tag = "span", Z = 05 },
+            new HtmlNode{Start = 00, End = 05, Tag = "x", Z = 15 },
+            new HtmlNode{Start = 00, End = 05, Tag = "x", Z = 10 },
+            new HtmlNode{Start = 00, End = 05, Tag = "x", Z = 05 },
+            new HtmlNode{Start = 05, End = 10, Tag = "x", Z = 15 },
+            new HtmlNode{Start = 05, End = 10, Tag = "x", Z = 10 },
+            new HtmlNode{Start = 05, End = 10, Tag = "x", Z = 05 },
+            new HtmlNode{Start = 10, End = 15, Tag = "x", Z = 15 },
+            new HtmlNode{Start = 10, End = 15, Tag = "x", Z = 10 },
+            new HtmlNode{Start = 10, End = 15, Tag = "x", Z = 05 },
         };
 
         private static (int, ITag)[] ExpectedZColision => new(int, ITag)[]
         {
-           (05, new OpeningTag { Position = 00, Name = "div", Z = 15 }),
-           (04, new OpeningTag { Position = Epsilon(00, 1), Name = "a", Z = 10 }),
-           (03, new OpeningTag { Position = Epsilon(00, 2), Name = "span", Z = 05 }),
 
-           (02, new ClosingTag { Position = 10, Z = 05 }),
-           (01, new ClosingTag { Position = Epsilon(10, 01), Z = 10 }),
-           (00, new ClosingTag { Position = Epsilon(10, 02), Z = 15 }),
+           (05, new OpeningTag { Position = Epsilon(00, 0), Name = "x", Z = 15 }),
+           (04, new OpeningTag { Position = Epsilon(00, 1), Name = "x", Z = 10 }),
+           (03, new OpeningTag { Position = Epsilon(00, 2), Name = "x", Z = 05 }),
+           (02, new ClosingTag { Position = Epsilon(05, 0), Z = 05 }),
+           (01, new ClosingTag { Position = Epsilon(05, 1), Z = 10 }),
+           (00, new ClosingTag { Position = Epsilon(05, 2), Z = 15 }),
+           (11, new OpeningTag { Position = Epsilon(05, 3), Name = "x", Z = 15 }),
+           (10, new OpeningTag { Position = Epsilon(05, 4), Name = "x", Z = 10 }),
+           (09, new OpeningTag { Position = Epsilon(05, 5), Name = "x", Z = 05 }),
+           (08, new ClosingTag { Position = Epsilon(10, 0), Z = 05 }),
+           (07, new ClosingTag { Position = Epsilon(10, 1), Z = 10 }),
+           (06, new ClosingTag { Position = Epsilon(10, 2), Z = 15 }),
+           (17, new OpeningTag { Position = Epsilon(10, 3), Name = "x", Z = 15 }),
+           (16, new OpeningTag { Position = Epsilon(10, 4), Name = "x", Z = 10 }),
+           (15, new OpeningTag { Position = Epsilon(10, 5), Name = "x", Z = 05 }),
+           (14, new ClosingTag { Position = Epsilon(15, 0), Z = 05 }),
+           (13, new ClosingTag { Position = Epsilon(15, 0), Z = 10 }),
+           (12, new ClosingTag { Position = Epsilon(15, 0), Z = 15 }),
         };
 
 
