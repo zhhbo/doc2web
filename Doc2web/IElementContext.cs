@@ -18,6 +18,14 @@ namespace Doc2web
         T Resolve<T>();
 
         /// <summary>
+        /// Try to resolve a service using the IoC container.
+        /// </summary>
+        /// <typeparam name="T">Type of service to be resolved.</typeparam>
+        /// <param name="service">Service instance to be resolved.</param>
+        /// <returns>Returns TRUE if the service could be resolved.</returns>
+        bool TryResolve<T>(out T service);
+
+        /// <summary>
         /// OpenXmlElement that is the root of this context. Must
         /// has been passed to the ConversionEngine directly.
         /// </summary>

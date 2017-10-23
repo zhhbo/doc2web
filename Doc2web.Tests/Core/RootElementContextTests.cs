@@ -113,6 +113,13 @@ namespace Doc2web.Tests.Core
             _globalContext.Received(1).Resolve<Test>();
         }
 
+        [TestMethod]
+        public void TryResolve_Test()
+        {
+            _instance.TryResolve(out Test v);
+
+            _globalContext.Received(1).TryResolve(out Test x);
+        }
         private static Paragraph BuildParagraph() =>
             new Paragraph(new Run(new Text("Sample text.")));
     }

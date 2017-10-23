@@ -56,5 +56,13 @@ namespace Doc2web
         /// <typeparam name="T">Type of the service to be resolved.</typeparam>
         /// <returns>Service instance that has been resolved.</returns>
         T Resolve<T>();
+
+        /// <summary>
+        /// Try to resolve a service using the IoC container.
+        /// </summary>
+        /// <typeparam name="T">Type of service to be resolved.</typeparam>
+        /// <param name="service">Service instance to be resolved.</param>
+        /// <returns>Returns TRUE if the service could be resolved.</returns>
+        bool TryResolve<T>(out T service);
     }
 }

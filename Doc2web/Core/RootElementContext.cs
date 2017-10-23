@@ -61,5 +61,7 @@ namespace Doc2web.Core
         }
 
         public T Resolve<T>() => _globalContext.Resolve<T>();
+
+        public bool TryResolve<T>(out T service) => _globalContext.TryResolve<T>(out service);
     }
 }
