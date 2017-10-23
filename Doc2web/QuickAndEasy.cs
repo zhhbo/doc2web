@@ -8,6 +8,7 @@ using System.Text;
 using Doc2web.Plugins.Numbering;
 using DocumentFormat.OpenXml;
 using Doc2web.Plugins.Tables;
+using Doc2web.Plugins.TableOfContent;
 
 namespace Doc2web
 {
@@ -43,6 +44,7 @@ namespace Doc2web
                 new StylePlugin(wpDoc),
                 new NumberingPlugin(wpDoc),
                 new TextProcessorPlugin(),
+                new TableOfContentPlugin(),
                 new TablePlugin(),
                 new CrossReferencesCleanupPlugin(),
                 new HyphenInsertionPlugin(),
