@@ -35,6 +35,7 @@ is simple and 40 pages in ~115 ms when the open xml is very complicated.
 
 ### Roadmap 1.0 (2017 Q4)
 - [x] Core
+  - [x] IoC Integration
   - [x] Virtual nodes
     - [x] Tag, style and attributes
   - [x] Text tranformation
@@ -48,7 +49,7 @@ is simple and 40 pages in ~115 ms when the open xml is very complicated.
     - [x] Dynamic styling
     - [x] Paragraph styling
     - [x] Run styling
-    - [ ] Interconnected styling
+    - [x] Interconnected styling
     - [ ] OpenXML Properties support
       - [x] Bold
       - [ ] Borders
@@ -72,6 +73,9 @@ is simple and 40 pages in ~115 ms when the open xml is very complicated.
     - [x] Paragraphs
     - [x] Runs
     - [ ] Tabulation configuration
+  - [x] Tables
+    - [x] Warning to let the user know it's not supported yet.
+  - [ ] Table of content
   - [x] Text fixes
     - [x] Break/tabs/hypen character insertions
     - [x] Cross references clean up
