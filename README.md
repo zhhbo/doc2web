@@ -75,7 +75,7 @@ is simple and 40 pages in ~115 ms when the open xml is very complicated.
     - [ ] Tabulation configuration
   - [x] Tables
     - [x] Warning to let the user know it's not supported yet.
-  - [ ] Table of content
+  - [x] Table of content
   - [x] Text fixes
     - [x] Break/tabs/hypen character insertions
     - [x] Cross references clean up

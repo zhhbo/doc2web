@@ -38,7 +38,6 @@ namespace Doc2web.Plugins.TableOfContent
             ReplaceCrossRefBySpacer(context, m);
             AddCssClassParagraph(context.Nodes);
             context.ProcessChilden();
-            AddTocSpacer(context, m);
         }
 
         private void AddCssClassParagraph(IEnumerable<HtmlNode> nodes)
