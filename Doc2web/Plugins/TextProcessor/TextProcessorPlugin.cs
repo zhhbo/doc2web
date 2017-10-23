@@ -60,14 +60,13 @@ namespace Doc2web.Plugins.TextProcessor
         private void ProcessParagraphProperties(IElementContext context, Paragraph p, HtmlNode containerNode)
         {
             var pPr = p.ParagraphProperties;
-            if (pPr != null)
+            if (pPr != null && context.TryResolve(out ICssRegistrator cssRegistrator))
             {
-                var cssRegistrator = context.Resolve<ICssRegistrator>();
-                var numberingConfig = context.Resolve<NumberingConfig>();
+                CssClass cssClass;
                 var styleConfig = context.Resolve<StyleConfig>();
 
-                CssClass cssClass;
-                if (context.ViewBag.TryGetValue(numberingConfig.ParagraphNumberingDataKey, out object numbering))
+                if (context.TryResolve(out NumberingConfig numberingConfig) &&
+                    context.ViewBag.TryGetValue(numberingConfig.ParagraphNumberingDataKey, out object numbering))
                 {
                     var numberingData = ((int, int))numbering;
                     containerNode.AddClasses(_config.ContainerWithNumberingCls);
@@ -112,7 +111,6 @@ namespace Doc2web.Plugins.TextProcessor
         [ElementProcessing]
         public void ProcessRun(IElementContext context, Run r)
         {
-            var cssRegistrator = context.Resolve<ICssRegistrator>();
             if (r.InnerText.Length > 0)
             {
                 var node = new HtmlNode
@@ -126,8 +124,12 @@ namespace Doc2web.Plugins.TextProcessor
 
                 var pPr = (context.RootElement as Paragraph)?.ParagraphProperties;
                 var rPr = r.RunProperties;
-                var cls = cssRegistrator.RegisterRun(pPr, rPr, null);
-                node.AddClasses(cls.Name);
+
+                if (context.TryResolve(out ICssRegistrator cssRegistrator))
+                {
+                    var cls = cssRegistrator.RegisterRun(pPr, rPr, null);
+                    node.AddClasses(cls.Name);
+                }
 
                 context.AddNode(node);
 

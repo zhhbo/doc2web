@@ -167,7 +167,11 @@ namespace Doc2web.Tests.Plugins.Numbering
 
             _elementContext = Substitute.For<IElementContext>();
             _elementContext.Resolve<INumberingMapper>().Returns(_nMapper);
-            _elementContext.Resolve<ICssRegistrator>().Returns(_cssRegistrator);
+            _elementContext.TryResolve(out ICssRegistrator z).Returns(x =>
+            {
+                x[0] = _cssRegistrator;
+                return true;
+            });
             _elementContext.Element.Returns(_p);
             _elementContext.RootElement.Returns(_p);
             _elementContext

@@ -42,8 +42,15 @@ namespace Doc2web.Tests.Plugins.TextProcessor
             _nestingHandler = Substitute.For<IContextNestingHandler>();
             _cssRegistrator = Substitute.For<ICssRegistrator>();
             _globalContext = Substitute.For<IGlobalContext>();
-            _globalContext.Resolve<ICssRegistrator>().Returns(_cssRegistrator);
-            _globalContext.Resolve<NumberingConfig>().Returns(_numberingConfig);
+            _globalContext.TryResolve(out ICssRegistrator val1).Returns(x => {
+                x[0] = _cssRegistrator;
+                return true;
+            });
+            _globalContext.TryResolve(out NumberingConfig val2).Returns(x =>
+            {
+                x[0] = _numberingConfig;
+                return true;
+            });
             _cssRegistrator.RegisterParagraph(null, null).ReturnsForAnyArgs(x => new CssClass());
             _cssRegistrator.RegisterRun(null, null, null).ReturnsForAnyArgs(x => new CssClass());
 

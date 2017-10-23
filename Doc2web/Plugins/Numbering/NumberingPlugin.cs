@@ -77,9 +77,12 @@ namespace Doc2web.Plugins.Numbering
             {
                 context.ViewBag[_config.ParagraphNumberingDataKey] = 
                     (paragraphData.NumberingId, paragraphData.LevelIndex);
-                var cssRegistrator = context.Resolve<ICssRegistrator>();
                 context.AddNode(BuildNumberingContainer());
-                context.AddNode(BuildNumberingNumber(p, cssRegistrator, paragraphData));
+
+                if (context.TryResolve(out ICssRegistrator cssRegistrator))
+                    context.AddNode(BuildNumberingNumber(p, cssRegistrator, paragraphData));
+                else
+                    context.AddNode(BuildNumberingNumber(p, paragraphData));
             }
         }
 
@@ -104,6 +107,19 @@ namespace Doc2web.Plugins.Numbering
             ICssRegistrator cssRegistrator, 
             IParagraphData paragraphData)
         {
+            var node = BuildNumberingNumber(p, paragraphData);
+            var cssClass = cssRegistrator.RegisterRun(
+                p.ParagraphProperties,
+                p.ParagraphProperties?.ParagraphMarkRunProperties,
+                (paragraphData.NumberingId, paragraphData.LevelIndex));
+            node.AddClasses(cssClass.Name);
+            return node;
+        }
+
+        private HtmlNode BuildNumberingNumber(
+            Paragraph p, 
+            IParagraphData paragraphData)
+        {
             var node = new HtmlNode
             {
                 Start = PositionWithDelta(1),
@@ -113,12 +129,6 @@ namespace Doc2web.Plugins.Numbering
                 TextPrefix = paragraphData.Verbose
             };
             node.AddClasses(_config.NumberingNumberCls);
-
-            var cssClass = cssRegistrator.RegisterRun(
-                p.ParagraphProperties,
-                p.ParagraphProperties?.ParagraphMarkRunProperties,
-                (paragraphData.NumberingId, paragraphData.LevelIndex));
-            node.AddClasses(cssClass.Name);
 
             var level = paragraphData.LevelXmlElement;
             if (level.LevelSuffix?.Val?.Value == LevelSuffixValues.Space)
