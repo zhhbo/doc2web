@@ -85,8 +85,9 @@ namespace Doc2web.Plugins.TableOfContent
         }
 
         public static string CSS(string pCssClass, string spacerCssClass) =>
-            $".{pCssClass} " + "{ display: flex; flex-direction: row; }" + 
-            $".{spacerCssClass}" + "{ flex: 1; border-bottom:1px dotted black; " +
+            $".{pCssClass} " + "{ display: flex; flex-direction: row; }" +
+            $".{pCssClass} * " + "{ height: auto; vertical-align: top; }" +
+            $".{spacerCssClass} " + "{ flex: 1; border-bottom:1px dotted black; " +
             "margin: 0 5pt; position: relative; top: -3pt;}";
     }
 }
