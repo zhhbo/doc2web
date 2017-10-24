@@ -82,7 +82,7 @@ namespace Doc2web.Tests.Plugins.Style.Properties
         [TestMethod]
         public void HasSameOutput_TrueTest()
         {
-            Assert.IsTrue(_instance.HaveSameOutput(new ColorCssProperty(_themeColorProvider)
+            Assert.IsTrue(_instance.Equals(new ColorCssProperty(_themeColorProvider)
             {
                 Element = _instance.Element.CloneNode(true) as Color
             }));
@@ -94,9 +94,10 @@ namespace Doc2web.Tests.Plugins.Style.Properties
             var elem = new Color { Val = new StringValue("123456") };
             _instance.Element = elem.CloneNode(true) as Color;
 
-            var result = _instance.GetSpecificHashcode();
+            var result = _instance.GetHashCode();
+            var expected = Convert.ToUInt32("123456", 16);
 
-            Assert.AreEqual((short)"123456".GetHashCode(), result);
+            Assert.AreEqual((int)expected, result);
         }
 
         [TestMethod]

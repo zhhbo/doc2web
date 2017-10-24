@@ -16,8 +16,7 @@ namespace Doc2web.Tests.Core
     {
         private ConversionTaskFactory _instance;
         private IContainer _engineContainer;
-        private ILifetimeScope _taskContainer;
-        private IProcessor _processor;
+        private Processor _processor;
         private IContextRenderer _contextRenderer;
 
         [TestInitialize]
@@ -25,7 +24,7 @@ namespace Doc2web.Tests.Core
         {
             _instance = new ConversionTaskFactory();
             _engineContainer = Substitute.For<IContainer>();
-            _processor = Substitute.For<IProcessor>();
+            _processor = new Processor();
             _contextRenderer = Substitute.For<IContextRenderer>();
             _instance.EngineContainer = _engineContainer;
             _instance.Processor = _processor;
@@ -50,5 +49,23 @@ namespace Doc2web.Tests.Core
             Assert.AreSame(_contextRenderer, conversionTask.ContextRenderer);
         }
 
+        [TestMethod]
+        public void Build_TemporyPluginsTest()
+        {
+            var elements = new OpenXmlElement[] { };
+
+            var tempProcessor = new Processor();
+            tempProcessor.ElementRenderingActions.Add(typeof(Paragraph), new List<Action<IElementContext, OpenXmlElement>> { tempMethod });
+            var conversionTask = _instance.Build(elements, tempProcessor) as ConversionTask;
+
+            var finalProcessor = conversionTask.Processor as Processor; ;
+            Assert.IsTrue(finalProcessor.ElementRenderingActions[typeof(Paragraph)].Contains(tempMethod));
+
+        }
+
+        private void tempMethod(IElementContext arg1, OpenXmlElement arg2)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

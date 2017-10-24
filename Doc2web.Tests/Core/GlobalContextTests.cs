@@ -85,5 +85,13 @@ namespace Doc2web.Tests.Core
 
             Assert.AreSame(t, t2);
         }
+
+        [TestMethod]
+        public void TryResolve_Test()
+        {
+            _instance.TryResolve(out Test x);
+
+            _container.Received(1).TryResolve(out Test y);
+        }
     }
 }

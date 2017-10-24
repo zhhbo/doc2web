@@ -80,7 +80,7 @@ namespace Doc2web.Tests.Plugins.Style.Properties
         }
 
         [TestMethod]
-        public void GetSpecificHashcode_EqualTest()
+        public void GetHashCode_EqualTest()
         {
             _instance.Element.Val = new EnumValue<UnderlineValues>(UnderlineValues.DotDash);
             _instance.Element.Color = new StringValue("FFFFFF");
@@ -89,11 +89,11 @@ namespace Doc2web.Tests.Plugins.Style.Properties
                 Element = _instance.Element.CloneNode(true) as Underline
             };
 
-            Assert.AreEqual(_instance.GetSpecificHashcode(), other.GetSpecificHashcode());
+            Assert.AreEqual(_instance.GetHashCode(), other.GetHashCode());
         }
 
         [TestMethod]
-        public void GetSpecificHashcode_NotEqualTest()
+        public void GetHashCode_NotEqualTest()
         {
             _instance.Element.Val = new EnumValue<UnderlineValues>(UnderlineValues.DotDash);
             _instance.Element.Color = new StringValue("FFFFFF");
@@ -103,11 +103,11 @@ namespace Doc2web.Tests.Plugins.Style.Properties
             };
             other.Element.Color = null;
 
-            Assert.AreNotEqual(_instance.GetSpecificHashcode(), other.GetSpecificHashcode());
+            Assert.AreNotEqual(_instance.GetHashCode(), other.GetHashCode());
         }
 
         [TestMethod]
-        public void HaveSameOutput_TrueTest()
+        public void Equals_TrueTest()
         {
             _themeColorProvider.GetColor(Arg.Is(ThemeColorValues.Dark1)).Returns("000000");
             _instance.Element.Val = new EnumValue<UnderlineValues>(UnderlineValues.DotDash);
@@ -115,7 +115,7 @@ namespace Doc2web.Tests.Plugins.Style.Properties
             _instance.Element.ThemeColor = new EnumValue<ThemeColorValues>(ThemeColorValues.Dark1);
             var other = _instance.Element.CloneNode(true) as Underline;
 
-            Assert.IsTrue(_instance.HaveSameOutput(new UnderlineCssProperty(_themeColorProvider)
+            Assert.IsTrue(_instance.Equals(new UnderlineCssProperty(_themeColorProvider)
             {
                 Element = other
             }));
@@ -123,13 +123,13 @@ namespace Doc2web.Tests.Plugins.Style.Properties
         }
 
         [TestMethod]
-        public void HaveSameOutput_FalseTest()
+        public void Equals_FalseTest()
         {
             _instance.Element.Val = new EnumValue<UnderlineValues>(UnderlineValues.DotDash);
             var other = _instance.Element.CloneNode(true) as Underline;
             other.Color = new StringValue("#FFFFFF");
 
-            Assert.IsFalse(_instance.HaveSameOutput(new UnderlineCssProperty(_themeColorProvider)
+            Assert.IsFalse(_instance.Equals(new UnderlineCssProperty(_themeColorProvider)
             {
                 Element = other
             }));

@@ -1,4 +1,6 @@
 ﻿using Autofac;
+using Doc2web.Plugins.Numbering;
+using Doc2web.Plugins.Numbering.Mapping;
 using Doc2web.Plugins.Style;
 using Doc2web.Plugins.Style.Css;
 using Doc2web.Plugins.Style.Properties;
@@ -21,6 +23,12 @@ namespace Doc2web.Plugins.TextProcessor
         public TextProcessorPlugin(TextProcessorConfig config)
         {
             _config = config;
+        }
+
+        [InitializeEngine]
+        public void InitializeEngine(ContainerBuilder containerBuilder)
+        {
+            containerBuilder.RegisterInstance(_config);
         }
 
         [ElementProcessing]
@@ -52,35 +60,33 @@ namespace Doc2web.Plugins.TextProcessor
         private void ProcessParagraphProperties(IElementContext context, Paragraph p, HtmlNode containerNode)
         {
             var pPr = p.ParagraphProperties;
-            if (pPr != null)
+            if (pPr != null && context.TryResolve(out ICssRegistrator cssRegistrator))
             {
-                var cssRegistrator = context.Resolve<ICssRegistrator>();
-                var cssClass = cssRegistrator.RegisterParagraph(pPr);
+                CssClass cssClass;
+                var styleConfig = context.Resolve<StyleConfig>();
+
+                if (context.TryResolve(out NumberingConfig numberingConfig) &&
+                    context.ViewBag.TryGetValue(numberingConfig.ParagraphNumberingDataKey, out object numbering))
+                {
+                    var numberingData = ((int, int))numbering;
+                    containerNode.AddClasses(_config.ContainerWithNumberingCls);
+                    cssClass = cssRegistrator.RegisterParagraph(pPr, numberingData);
+                } else
+                {
+                    cssClass = cssRegistrator.RegisterParagraph(pPr);
+                }
+
                 containerNode.AddClasses(cssClass.Name);
                 context.ViewBag[_config.PPropsCssClassKey] = cssClass;
-                AddIndentationIfRequired(context, cssClass);
             }
-        }
-
-        private void AddIndentationIfRequired(IElementContext context, CssClass cssClass)
-        {
-            if (cssClass.Name.Length == 0) return;
-
-            var identation = cssClass?.Props.Get<IndentationCssProperty>();
-            if (identation == null) return;
-
-            if (identation.LeftIndent.HasValue)
-                context.AddNode(BuildLeftIdentation());
-            if (identation.RightIndent.HasValue)
-                context.AddNode(BuildRightIdentation());
         }
 
         private HtmlNode BuildPNode(IElementContext context, Paragraph p, HtmlNode containerNode)
         {
             var pNode = new HtmlNode
             {
-                Start = context.TextIndex - _config.Delta,
-                End = context.TextIndex + p.InnerText.Length + _config.Delta,
+                Start = context.TextIndex,
+                End = context.TextIndex + p.InnerText.Length,
                 Tag = _config.ParagraphTag,
                 Z = _config.ParagraphZ,
             };
@@ -102,28 +108,14 @@ namespace Doc2web.Plugins.TextProcessor
             return node;
         }
 
-        private HtmlNode BuildRightIdentation()
-        {
-            var node = new HtmlNode
-            {
-                Start = _config.ContainerEnd - _config.Delta * 2,
-                End = _config.ContainerEnd - _config.Delta,
-                Tag = _config.IdentationTag,
-                Z = _config.ParagraphZ
-            };
-            node.AddClasses(_config.RightIndentationCls);
-            return node;
-        }
-
         [ElementProcessing]
         public void ProcessRun(IElementContext context, Run r)
         {
-            var cssRegistrator = context.Resolve<ICssRegistrator>();
             if (r.InnerText.Length > 0)
             {
                 var node = new HtmlNode
                 {
-                    Start = context.TextIndex + _config.Delta,
+                    Start = context.TextIndex,
                     End = context.TextIndex + r.InnerText.Length,
                     Tag = _config.RunTag,
                     Z = _config.RunZ,
@@ -132,8 +124,12 @@ namespace Doc2web.Plugins.TextProcessor
 
                 var pPr = (context.RootElement as Paragraph)?.ParagraphProperties;
                 var rPr = r.RunProperties;
-                var cls = cssRegistrator.RegisterRun(pPr, rPr, null);
-                node.AddClasses(cls.Name);
+
+                if (context.TryResolve(out ICssRegistrator cssRegistrator))
+                {
+                    var cls = cssRegistrator.RegisterRun(pPr, rPr, null);
+                    node.AddClasses(cls.Name);
+                }
 
                 context.AddNode(node);
 

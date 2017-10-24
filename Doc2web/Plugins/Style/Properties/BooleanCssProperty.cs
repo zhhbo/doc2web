@@ -46,7 +46,7 @@ namespace Doc2web.Plugins.Style.Properties
             else SetDefault(cssData);
         }
 
-        public override short GetSpecificHashcode()
+        public override int GetHashCode()
         {
             if (ExplicitVal.HasValue)
             {
@@ -55,7 +55,7 @@ namespace Doc2web.Plugins.Style.Properties
             }
             return 0;
         }
-        public override bool HaveSameOutput(ICssProperty element)
+        public override bool Equals(ICssProperty element)
         {
             if (element is BooleanCssProperty<T> other)
             {

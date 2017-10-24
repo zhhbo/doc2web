@@ -24,25 +24,19 @@ namespace Doc2web.Tests.Plugins.Style
 
         public OpenXmlElement OpenXmlElement { get; set; }
 
-        public void InsertCss(CssData cssData)
+        public void InsertCss(CssPropertiesSet other, CssData cssData)
         {
             cssData.AddRange(_cssData);
         } 
 
         public override int GetHashCode() => GetType().GetHashCode();
 
-        public override bool Equals(object obj) =>
-            obj.GetType().Equals(GetType());
+        public override bool Equals(object obj) => obj.GetType().Equals(GetType());
 
         public void Extends(ICssProperty parent) { }
 
         public ICssProperty Clone() =>
             GetType().GetConstructors()[0].Invoke(new object[0]) as ICssProperty;
-
-        public bool HaveSameOutput(ICssProperty prop)
-        {
-            return Equals(prop);
-        }
     }
 
     public class MockProp1 : BaseMockProp { }

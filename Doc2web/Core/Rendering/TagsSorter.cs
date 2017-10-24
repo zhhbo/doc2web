@@ -38,8 +38,8 @@ namespace Doc2web.Core.Rendering
 
         private static IEnumerable<ITag> SortSubCluster(IGrouping<int, ITag> arg)
         {
-            if (arg.Key < 0) return arg.OrderBy(x => -1 * (x.RelatedPosition - x.Position));
-            if (arg.Key > 0) return arg.OrderBy(x => -1 * (x.RelatedPosition - x.Position));
+            if (arg.Key < 0) return arg.OrderBy(x => (-1 * (x.RelatedPosition - x.Position), x.Z));
+            if (arg.Key > 0) return arg.OrderBy(x => (-1 * (x.RelatedPosition - x.Position), x.Z * -1));
             return arg.OrderBy(x => (x.Name, GetNumForType(x)));
         }
 

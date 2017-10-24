@@ -27,7 +27,7 @@ namespace Doc2web.Tests.Plugins.Style.Css
 
         private ICssPropertiesFactory buildPropsFactory(CssPropertySource arg)
         {
-            if (arg == CssPropertySource.Paragraph) return _propsFac;
+            if (arg == CssPropertySource.Run) return _propsFac;
             throw new ArgumentException("Not expected propety source, should be a paragraph");
         }
 

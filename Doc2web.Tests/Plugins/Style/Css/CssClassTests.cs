@@ -44,9 +44,9 @@ namespace Doc2web.Tests.Plugins.Style.Css
             var cssProp1 = Substitute.For<ICssProperty>();
             _instance.Name = "some-class";
             cssProp1
-                .When(x => x.InsertCss(Arg.Any<CssData>()))
+                .When(x => x.InsertCss(Arg.Any<CssPropertiesSet>(), Arg.Any<CssData>()))
                 .Do(x =>
-                    x.ArgAt<CssData>(0).AddAttribute(".some-class", "color", "red")
+                    x.ArgAt<CssData>(1).AddAttribute(".some-class", "color", "red")
                 );
             _instance.Props.Add(cssProp1);
         }

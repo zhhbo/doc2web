@@ -1,5 +1,7 @@
 ﻿using Autofac;
 using Doc2web.Core;
+using Doc2web.Plugins.Numbering;
+using Doc2web.Plugins.Numbering.Mapping;
 using Doc2web.Plugins.Style;
 using Doc2web.Plugins.Style.Css;
 using Doc2web.Plugins.Style.Properties;
@@ -19,6 +21,7 @@ namespace Doc2web.Tests.Plugins.TextProcessor
     public class TextProcessorPluginTests
     {
         private TextProcessorConfig _config;
+        private NumberingConfig _numberingConfig;
         private TextProcessorPlugin _instance;
         private Run _r;
         private IGlobalContext _globalContext;
@@ -32,13 +35,22 @@ namespace Doc2web.Tests.Plugins.TextProcessor
         public void Initialize()
         {
             _config = new TextProcessorConfig();
+            _numberingConfig = new NumberingConfig();
             _instance = new TextProcessorPlugin(_config);
             _r = new Run(new Text("Some text."));
             _p = new Paragraph(new ParagraphProperties(), _r);
             _nestingHandler = Substitute.For<IContextNestingHandler>();
             _cssRegistrator = Substitute.For<ICssRegistrator>();
             _globalContext = Substitute.For<IGlobalContext>();
-            _globalContext.Resolve<ICssRegistrator>().Returns(_cssRegistrator);
+            _globalContext.TryResolve(out ICssRegistrator val1).Returns(x => {
+                x[0] = _cssRegistrator;
+                return true;
+            });
+            _globalContext.TryResolve(out NumberingConfig val2).Returns(x =>
+            {
+                x[0] = _numberingConfig;
+                return true;
+            });
             _cssRegistrator.RegisterParagraph(null, null).ReturnsForAnyArgs(x => new CssClass());
             _cssRegistrator.RegisterRun(null, null, null).ReturnsForAnyArgs(x => new CssClass());
 
@@ -53,6 +65,17 @@ namespace Doc2web.Tests.Plugins.TextProcessor
         }
 
         [TestMethod]
+        public void InitializeEngine_Test()
+        {
+            var containerBuilder = new ContainerBuilder();
+
+            _instance.InitializeEngine(containerBuilder);
+
+            var container = containerBuilder.Build();
+            Assert.AreSame(_config, container.Resolve<TextProcessorConfig>());
+        }
+
+        [TestMethod]
         public void TextProcessorPlugin_Test()
         {
             Assert.AreEqual("div", _config.ContainerTag);
@@ -61,7 +84,6 @@ namespace Doc2web.Tests.Plugins.TextProcessor
 
             Assert.AreEqual("div", _config.IdentationTag);
             Assert.AreEqual("leftspacer", _config.LeftIdentationCls);
-            Assert.AreEqual("rightspacer", _config.RightIndentationCls);
 
             Assert.AreEqual("p", _config.ParagraphTag);
             Assert.AreEqual("", _config.ParagraphCls);
@@ -90,44 +112,6 @@ namespace Doc2web.Tests.Plugins.TextProcessor
             Assert.IsNotNull(_pContext.ViewBag[_config.PPropsCssClassKey]);
         }
 
-        [TestMethod]
-        public void ProcessParagraph_AddLeftIdentationsTest()
-        {
-            var indentation = new Indentation { Left = "100" };
-            MockIndentation(indentation, "dyn-class");
-
-            _instance.ProcessParagraph(_pContext, _p);
-
-            var spacer = _pContext.Nodes.ElementAt(0);
-            var expected = new HtmlNode
-            {
-                Tag = _config.IdentationTag,
-                Start = _config.ContainerStart + _config.Delta,
-                End = _config.ContainerStart + _config.Delta * 2,
-                Z = _config.ParagraphZ,
-            };
-            expected.AddClasses(_config.LeftIdentationCls);
-            Assert.AreEqual(expected, spacer);
-        }
-
-
-        [TestMethod]
-        public void ProcessParagraph_AddRightIdentationsTest()
-        {
-            MockIndentation(new Indentation { Right = "100" }, "dyn-class");
-            _instance.ProcessParagraph(_pContext, _p);
-
-            var spacer = _pContext.Nodes.ElementAt(0);
-            var expected = new HtmlNode
-            {
-                Tag = _config.IdentationTag,
-                Start = _config.ContainerEnd - _config.Delta * 2,
-                End = _config.ContainerEnd - _config.Delta,
-                Z = _config.ParagraphZ,
-            };
-            expected.AddClasses(_config.RightIndentationCls);
-            Assert.AreEqual(expected, spacer);
-        }
 
         [TestMethod]
         public void ProcessParagraph_AddParagraphTest()
@@ -138,13 +122,14 @@ namespace Doc2web.Tests.Plugins.TextProcessor
             var expected = new HtmlNode
             {
                 Tag = _config.ParagraphTag,
-                Start = 0 - _config.Delta,
-                End = _p.InnerText.Length + _config.Delta,
+                Start = 0,
+                End = _p.InnerText.Length,
                 Z = _config.ParagraphZ,
             };
             expected.AddClasses(_config.ParagraphCls);
             Assert.AreEqual(expected, firstNode);
         }
+
 
         [TestMethod]
         public void ProcessParagraph_AddEmptyCharTest()
@@ -171,7 +156,25 @@ namespace Doc2web.Tests.Plugins.TextProcessor
             _instance.ProcessParagraph(_pContext, _p);
             var node = _pContext.Nodes.First();
 
-            node.Classes.Contains(styleName);
+            Assert.IsTrue(node.Classes.Contains(styleName));
+        }
+
+        [TestMethod]
+        public void ProcessParagraph_NumberingTest()
+        {
+            string styleName = "dyn-somestuff";
+            var pPr = new ParagraphProperties();
+            _cssRegistrator
+                .RegisterParagraph(pPr, (1, 2))
+                .Returns(new CssClass { Name = styleName });
+            _p.InsertAt(pPr, 0);
+            _pContext.ViewBag[_numberingConfig.ParagraphNumberingDataKey] = (1, 2);
+
+            _instance.ProcessParagraph(_pContext, _p);
+            var node = _pContext.Nodes.First();
+
+            Assert.IsTrue(node.Classes.Contains(styleName));
+            Assert.IsTrue(node.Classes.Contains(_config.ContainerWithNumberingCls));
         }
 
         [TestMethod]
@@ -183,7 +186,7 @@ namespace Doc2web.Tests.Plugins.TextProcessor
             var expected = new HtmlNode
             {
                 Tag = _config.RunTag,
-                Start = _config.Delta,
+                Start = 0,
                 End = _r.InnerText.Length,
                 Z = _config.RunZ,
             };

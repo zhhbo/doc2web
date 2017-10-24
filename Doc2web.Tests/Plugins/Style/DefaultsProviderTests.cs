@@ -44,7 +44,7 @@ namespace Doc2web.Tests.Plugins.Style
 
             var result = _instance.Paragraph;
 
-            Assert.IsTrue(expected.SetEquals(result));
+            Assert.IsTrue(expected.Equals(result));
         }
 
         private ParagraphPropertiesBaseStyle PDefaults =>
@@ -70,7 +70,7 @@ namespace Doc2web.Tests.Plugins.Style
 
             var result = _instance.Run;
 
-            Assert.IsTrue(expected.SetEquals(result));
+            Assert.IsTrue(expected.Equals(result));
         }
 
         private RunPropertiesBaseStyle RDefaults() => 

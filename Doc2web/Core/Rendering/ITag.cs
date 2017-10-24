@@ -8,6 +8,8 @@ namespace Doc2web.Core.Rendering
     {
         double RelatedPosition { get; }
 
+        int Z { get; }
+
         string Name { get; }
     }
 

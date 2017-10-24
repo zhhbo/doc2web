@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Doc2web.Core.Rendering
 {
-    public class Stringifier : IComparer<IRenderable>
+    public class Stringifier
     {
         public string Text { get; set; }
 
@@ -18,9 +19,9 @@ namespace Doc2web.Core.Rendering
         {
             StringBuilder sb = new StringBuilder();
             top = double.MinValue;
-            Array.Sort(Elements, this);
+            Elements = Elements.OrderBy(x => x.Position).ToArray();
 
-            foreach(var e in Elements)
+            foreach (var e in Elements)
             {
                 if ((top <= 0 && e.Position >= LimText) ||
                     (top >= 0 && LimText >= e.Position) ||
@@ -48,13 +49,6 @@ namespace Doc2web.Core.Rendering
             }
 
             return sb.ToString();
-        }
-
-        public int Compare(IRenderable x, IRenderable y)
-        {
-            if (x.Position < y.Position) return -1;
-            else if (x.Position > y.Position) return 1;
-            return 0;
         }
     }
 }

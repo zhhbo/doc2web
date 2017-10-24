@@ -78,7 +78,7 @@ namespace Doc2web.Tests.Plugins.Style.Css
             });
 
             Utils.AssertDynamicClass(_config, result);
-            Assert.IsTrue(props.SetEquals(result.Props));
+            Assert.IsTrue(props.Equals(result.Props));
         }
 
         [TestMethod]
@@ -95,7 +95,7 @@ namespace Doc2web.Tests.Plugins.Style.Css
                 InlineProperties = rPr
             });
 
-            Assert.IsTrue(props.SetEquals(result.Props));
+            Assert.IsTrue(props.Equals(result.Props));
         }
 
         [TestMethod]
@@ -113,7 +113,7 @@ namespace Doc2web.Tests.Plugins.Style.Css
                 InlineProperties = rPr
             });
 
-            Assert.IsTrue(props.SetEquals(result.Props));
+            Assert.IsTrue(props.Equals(result.Props));
         }
 
         private void MockStyleProps(string styleId, out RunProperties rPr, out CssPropertiesSet props)
@@ -145,7 +145,7 @@ namespace Doc2web.Tests.Plugins.Style.Css
                 NumberingLevel = 2
             });
 
-            Assert.IsTrue(props.SetEquals(result.Props));
+            Assert.IsTrue(props.Equals(result.Props));
             Utils.AssertDynamicClass(_config, result);
         }
 
@@ -168,7 +168,7 @@ namespace Doc2web.Tests.Plugins.Style.Css
             });
 
             Utils.AssertDynamicClass(_config, result);
-            Assert.IsTrue(props.SetEquals(props));
+            Assert.IsTrue(props.Equals(props));
         }
 
         [TestMethod]
@@ -195,7 +195,7 @@ namespace Doc2web.Tests.Plugins.Style.Css
             });
 
             Utils.AssertDynamicClass(_config, result);
-            Assert.IsTrue(result.Props.SetEquals(expected));
+            Assert.IsTrue(result.Props.Equals(expected));
         }
     }
 }

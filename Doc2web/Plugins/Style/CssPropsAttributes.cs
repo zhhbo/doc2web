@@ -7,8 +7,7 @@ namespace Doc2web.Plugins.Style
     public enum CssPropertySource
     {
         Paragraph,
-        Run,
-        Numbering
+        Run
     }
 
     public abstract class BaseCssPropertyAttribute : Attribute
@@ -36,13 +35,6 @@ namespace Doc2web.Plugins.Style
     {
         public RunCssPropertyAttribute(Type targetedType) :
             base(CssPropertySource.Run, targetedType)
-        { }
-    }
-
-    public class NumberingCssPropertyAttribute : BaseCssPropertyAttribute
-    {
-        public NumberingCssPropertyAttribute(Type targetedType) :
-            base(CssPropertySource.Numbering, targetedType)
         { }
     }
 }

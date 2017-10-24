@@ -42,7 +42,7 @@ namespace Doc2web.Plugins.Style.Properties
             return rawColor;
         }
 
-        private string Color
+        public string Color
         {
             get
             {
@@ -61,7 +61,7 @@ namespace Doc2web.Plugins.Style.Properties
             }
         }
 
-        public override bool HaveSameOutput(ICssProperty element)
+        public override bool Equals(ICssProperty element)
         {
             if (element is ColorCssProperty other)
                 return other.Color == Color;
@@ -69,7 +69,19 @@ namespace Doc2web.Plugins.Style.Properties
         }
 
 
-        public override short GetSpecificHashcode() => (short)Color.Substring(1).GetHashCode();
+        //public override short GetHashCode() => (short)Color.Substring(1).GetHashCode();
+        //public override int GetHashCode() => Color.GetHashCode();
+        public override int GetHashCode()
+        {
+            try
+            {
+                return (int)Convert.ToUInt32(Color.Substring(1), 16);
+            }
+            catch
+            {
+                return -1;
+            }
+        }
 
         public override ICssProperty Clone() =>
             new ColorCssProperty(_themeColorProvider)

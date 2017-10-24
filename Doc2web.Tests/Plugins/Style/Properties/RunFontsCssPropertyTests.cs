@@ -26,8 +26,24 @@ namespace Doc2web.Tests.Plugins.Style.Properties
                 .GetFontFace(Arg.Any<ThemeFontValues>())
                 .Returns(x =>
                    Enum.GetName(
-                       typeof(ThemeFontValues), 
+                       typeof(ThemeFontValues),
                        x.Arg<ThemeFontValues>()));
+        }
+
+        [TestMethod]
+        public void CanOnlyUseComplexScript_TrueTest()
+        {
+            SetFontsValues("a", "a", "a", "a");
+
+            Assert.IsFalse(_instance.CanOnlyUseComplexScript);
+        }
+
+        [TestMethod]
+        public void CanOnlyUseComplexScript_FalseTest()
+        {
+            SetFontsValues(null, null, null, "a");
+
+            Assert.IsTrue(_instance.CanOnlyUseComplexScript);
         }
 
 
@@ -39,7 +55,7 @@ namespace Doc2web.Tests.Plugins.Style.Properties
             var result = _instance.AsCss();
 
             Assert.AreEqual(
-                "Arial, HighAnsi, EastAsia, ComplexScript", 
+                "Arial, HighAnsi, EastAsia, ComplexScript",
                 result[""]["span.test"]["font-family"]
             );
         }
@@ -52,7 +68,7 @@ namespace Doc2web.Tests.Plugins.Style.Properties
             var result = _instance.AsCss();
 
             Assert.AreEqual(
-                "MajorAscii, MajorHighAnsi, MajorEastAsia, MajorBidi", 
+                "MajorAscii, MajorHighAnsi, MajorEastAsia, MajorBidi",
                 result[""]["span.test"]["font-family"]);
         }
 
@@ -81,6 +97,23 @@ namespace Doc2web.Tests.Plugins.Style.Properties
                 result[""]["span.test"]["font-family"]
             );
 
+        }
+
+        [TestMethod]
+        public void AsCss_ComplexScriptTest()
+        {
+            SetFontsValues("no", null, null, "yes");
+            var set = new CssPropertiesSet {
+                new ComplexScriptCssProperty {
+                    Element = new ComplexScript()
+                }
+            };
+
+            var cssData = new CssData();
+            _instance.InsertCss(set, cssData);
+            var result = cssData[""]["span.test"]["font-family"];
+
+            Assert.AreEqual("yes", result);
         }
 
         [TestMethod]
@@ -117,7 +150,7 @@ namespace Doc2web.Tests.Plugins.Style.Properties
             _instance.Extends(instanceA);
 
             Assert.AreEqual(
-                "MajorAscii, MajorHighAnsi, MajorEastAsia, MajorBidi", 
+                "MajorAscii, MajorHighAnsi, MajorEastAsia, MajorBidi",
                 _instance.CreateFontFamilyValue()
             );
         }
@@ -126,15 +159,15 @@ namespace Doc2web.Tests.Plugins.Style.Properties
         public void Extends_ThemeTest()
         {
             SetThemeFontValues(
-                ThemeFontValues.MajorAscii, 
-                null, 
-                ThemeFontValues.MajorEastAsia, 
+                ThemeFontValues.MajorAscii,
+                null,
+                ThemeFontValues.MajorEastAsia,
                 null);
             var instanceA = _instance.Clone() as RunFontsCssProperty;
             Initialize();
             SetThemeFontValues(
-                ThemeFontValues.MinorAscii, 
-                ThemeFontValues.MinorHighAnsi, 
+                ThemeFontValues.MinorAscii,
+                ThemeFontValues.MinorHighAnsi,
                 ThemeFontValues.MinorEastAsia,
                 ThemeFontValues.MinorBidi);
 
@@ -155,28 +188,28 @@ namespace Doc2web.Tests.Plugins.Style.Properties
             SetThemeFontValues(ThemeFontValues.MajorAscii);
 
             Assert.AreEqual(
-                instance1.GetSpecificHashcode(), 
-                _instance.GetSpecificHashcode());
+                instance1.GetHashCode(),
+                _instance.GetHashCode());
         }
 
         [TestMethod]
-        public void HaveSameOutput_TrueTest()
+        public void Equals_TrueTest()
         {
             SetThemeFontValues();
             var instance1 = _instance.Clone();
             SetFontsValues("MajorAscii", "MajorHighAnsi", "MajorEastAsia", "MajorBidi");
 
-            Assert.IsTrue(instance1.HaveSameOutput(_instance));
+            Assert.IsTrue(instance1.Equals(_instance));
         }
 
         [TestMethod]
-        public void HaveSameOutput_FalseTest()
+        public void Equals_FalseTest()
         {
             SetFontsValues();
             var other = _instance.Clone();
             SetFontsValues("Arial", "MajorHighAnsi", "EastAsia", "ComplexScript");
 
-            Assert.IsFalse(_instance.HaveSameOutput(other));
+            Assert.IsFalse(_instance.Equals(other));
         }
 
         private void SetFontsValues(

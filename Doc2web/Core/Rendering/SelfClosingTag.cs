@@ -17,6 +17,8 @@ namespace Doc2web.Core.Rendering
 
         public double Position { get; set; }
 
+        public int Z { get; set; }
+
         public string Name { get; set; }
 
         public IReadOnlyDictionary<string, string> Attributes { get; set; }

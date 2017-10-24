@@ -40,6 +40,8 @@ namespace Doc2web.Core
         public void AddJs(string js) => _js.AppendLine(js);
 
         public T Resolve<T>() => _container.Resolve<T>();
+
+        public bool TryResolve<T>(out T service) => _container.TryResolve(out service);
     }
 }
 

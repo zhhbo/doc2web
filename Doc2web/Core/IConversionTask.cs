@@ -4,8 +4,6 @@
     {
         void AssembleDocument();
 
-        void Initialize();
-
         void PreProcess();
 
         void ProcessElements();

@@ -9,111 +9,172 @@ namespace Doc2web.Plugins.Style.Properties
     [ParagraphCssProperty(typeof(Indentation))]
     public class IndentationCssProperty : CssProperty<Indentation>
     {
-        protected StyleConfig _config;
+        private StyleConfig _config;
+        public const string PAGE_MEDIA_QUERY = "(min-width: 21.59cm)";
 
-        public IndentationCssProperty(StyleConfig config) : base()
+        public IndentationCssProperty(StyleConfig config)
         {
             _config = config;
         }
 
-        public override void InsertCss(CssData cssData)
+        public override OpenXmlElement OpenXmlElement
         {
-            AddTryIdentation(cssData, LeftIndent, _config.LeftIdentationCssClassPrefix);
-            AddTryIdentation(cssData, RightIndent, _config.RightIdentationCssClassPrefix);
-            AddTryAlinea(cssData, Hanging);
-            AddTryAlinea(cssData, FirstLine);
+            get => base.OpenXmlElement;
+            set
+            {
+                base.OpenXmlElement = value;
+                ExtractValues();
+            }
         }
 
-        private void AddTryAlinea(CssData cssData, int? indentation)
-        {
-            if (!indentation.HasValue) return;
-            cssData.AddAttribute(
-                @"(max-width: 21.59cm)",
-                Selector + " " + _config.ParagraphCssClassPrefix,
-                "text-indent",
-                Math.Round(Utils.TwipsToPageRatio(indentation.Value) * 100, 3) + "vw"
-            );
-            cssData.AddAttribute(
-                @"(min-width: 21.59cm)",
-                Selector + " " + _config.ParagraphCssClassPrefix,
-                "text-indent",
-                Math.Round(Utils.TwipsToCm(indentation.Value), 3) + "cm"
-            );
-        }
+        #region Extracted props
 
-        private void AddTryIdentation(CssData cssData, int? indent, string cssSuffix)
-        {
-            if (!indent.HasValue) return;
-            string selector = $"{Selector} {cssSuffix}";
-            cssData.AddAttribute(
-                selector,
-                "max-width",
-                $"{Math.Round(Utils.TwipsToCm(indent.Value), 3)}cm"
-            );
-            cssData.AddAttribute(
-                selector,
-                "width",
-                $"{Math.Round(Utils.TwipsToPageRatio(indent.Value) * 100, 3)}vw"
-            );
-            cssData.AddAttribute(
-                selector,
-                "min-width",
-                $"fit-content"
-            );
-        }
+        public double? Left { get; private set; }
 
-        public int? LeftIndent => TryGetValue(Element.Left);
+        public double? Right { get; private set; }
 
-        public int? RightIndent => TryGetValue(Element.Right);
+        public double? FirstLine { get; private set; }
 
-        public int? Hanging
+        public double? Hanging { get; private set; }
+
+        #endregion
+
+        #region CSS values
+
+        public double? NoNumberingTextIndent
         {
             get
             {
-                var x = TryGetValue(Element.Hanging);
-                if (x.HasValue) return x * -1;
-                return x;
-
+                if (Hanging.HasValue)
+                    return Hanging.Value * -1;
+                else if (FirstLine.HasValue)
+                    return FirstLine.Value;
+                return null;
             }
         }
-        public int? FirstLine => TryGetValue(Element.FirstLine);
 
-        private int? TryGetValue(StringValue v)
+        public double? NumberingContainerWidth
         {
-            if (v?.Value != null)
+            get
             {
-                try
-                {
-                    return int.Parse(v.Value);
-                } catch
-                {
-                    return null;
-                }
+                if (FirstLine.HasValue && !Hanging.HasValue)
+                    return Left.Value + FirstLine.Value;
+                return Left;
             }
+        }
+
+        public double? NumberingNumberWidth
+        {
+            get
+            {
+                if (Hanging.HasValue && Hanging.Value > 0) return Hanging;
+                if (FirstLine.HasValue && FirstLine.Value > 0) return FirstLine;
+                return null;
+            }
+        }
+
+        #endregion
+
+        private void ExtractValues()
+        {
+            Left = ExtractValue(Element.Left);
+            Right = ExtractValue(Element.Right);
+            FirstLine = ExtractValue(Element.FirstLine);
+            Hanging = ExtractValue(Element.Hanging);
+        }
+
+        private double? ExtractValue(StringValue value)
+        {
+            if (value?.Value != null)
+                return Utils.TwipsToPageRatio(int.Parse(value));
             return null;
         }
 
-        public override short GetSpecificHashcode()
+        public override int GetHashCode()
         {
-            if (LeftIndent.HasValue) return (short)LeftIndent.Value;
-            return 0;
-        }
-
-        public override bool HaveSameOutput(ICssProperty element)
-        {
-            if (element is IndentationCssProperty other)
+            try
             {
-                return other.LeftIndent == LeftIndent && other.RightIndent == RightIndent;
+                uint f = 0;
+                uint s = 0;
+                if (Left.HasValue) f = Convert.ToUInt32(Math.Round(Left.Value * 100000, 0) );
+                if (Hanging.HasValue) s = Convert.ToUInt32(Math.Round(Hanging.Value * 100000, 0));
+                return (int)((f + UInt32.MaxValue/2) | s);
+            } catch
+            {
+                return -1;
             }
-            return false;
         }
 
-        public override ICssProperty Clone() =>
-            new IndentationCssProperty(_config)
-            {
-                Element = Element,
-                Selector = Selector
-            };
+        public override bool Equals(ICssProperty obj)
+        {
+            var other = obj as IndentationCssProperty;
+            return
+                other != null &&
+                other.Left == Left &&
+                other.Right == Right &&
+                other.FirstLine == FirstLine &&
+                other.Hanging == Hanging;
+        }
 
+        public override ICssProperty Clone()
+        {
+            var other = new IndentationCssProperty(_config);
+            other.Selector = Selector;
+            other.SneakySetElement(Element);
+            other.Left = Left;
+            other.Right = Right;
+            other.FirstLine = FirstLine;
+            other.Hanging = Hanging;
+            return other;
+        }
+
+        public override void Extends(CssProperty<Indentation> parent)
+        {
+            var other = parent as IndentationCssProperty;
+            if (other == null) return;
+
+            if (!Left.HasValue) Left = other.Left;
+            if (!Right.HasValue) Right = other.Right;
+            if (!FirstLine.HasValue) FirstLine = other.FirstLine;
+            if (!Hanging.HasValue) Hanging = other.Hanging;
+        }
+
+        private void SneakySetElement(Indentation element)
+        {
+            base.OpenXmlElement = element;
+        }
+
+        public override void InsertCss(CssData cssData)
+        {
+            if (Left.HasValue)
+                InsertLeftPadding(cssData);
+            if (Right.HasValue)
+                cssData.AddScalableAttribute(Selector, "padding-right", Right.Value);
+            if (NoNumberingTextIndent.HasValue)
+                cssData.AddScalableAttribute(ContainerWithoutNumbering, "text-indent", NoNumberingTextIndent.Value);
+        }
+
+        private void InsertLeftPadding(CssData cssData)
+        {
+            cssData.AddScalableAttribute(ContainerWithoutNumbering, "padding-left", Left.Value);
+            cssData.AddScalableAttribute(NumberingContainerSelector, "min-width", NumberingContainerWidth.Value);
+
+            double? numberingNumberWidth = NumberingNumberWidth;
+            if (numberingNumberWidth.HasValue)
+                cssData.AddScalableAttribute(NumberingNumberSelector, "max-width", numberingNumberWidth.Value);
+        }
+
+        private string ContainerWithoutNumbering => 
+            $"{Selector}" +
+            $":not({_config.ContainerWithNumberingCssClassSuffix})";
+
+        private string ContainerWithNumbering =>
+            $"{Selector}{_config.ContainerWithNumberingCssClassSuffix}";
+
+        private string NumberingContainerSelector =>
+            $"{ContainerWithNumbering} {_config.LeftIdentationCssClassSuffix}";
+
+        private string NumberingNumberSelector =>
+            $"{ContainerWithNumbering} {_config.NumberingNumberSelector}";
     }
 }

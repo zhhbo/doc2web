@@ -1,4 +1,5 @@
-﻿using DocumentFormat.OpenXml.Packaging;
+﻿using DocumentFormat.OpenXml;
+using DocumentFormat.OpenXml.Packaging;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -17,6 +18,10 @@ namespace Doc2web.CLI
         private long _ms;
         private string _directory;
 
+        private int _skip = 0;
+        private int _take = -1;
+        private Regex _regex = null;
+
         public bool Blank { get; set; }
 
         public string InputPath { get; set; }
@@ -26,6 +31,10 @@ namespace Doc2web.CLI
         public bool Verbose { get; set; }
 
         private string FileName => Regex.Match(InputPath, @"[^\\\/]+$").Value;
+
+        public int Skip { get => _skip; set => _skip = value; }
+        public int Take { get => _take; set => _take = value; }
+        public Regex Regex { get => _regex; set => _regex = value; }
 
         public void Execute()
         {
@@ -72,7 +81,8 @@ namespace Doc2web.CLI
             _sw = Stopwatch.StartNew();
             try
             {
-                html = QuickAndEasy.ConvertCompleteDocument(wpDoc);
+                var elems = FindElements(wpDoc);
+                html = QuickAndEasy.ConvertPartialDocument(wpDoc, elems);
             }
             catch (Exception ex)
             {
@@ -83,6 +93,19 @@ namespace Doc2web.CLI
                 _sw.Stop();
                 _ms = _sw.ElapsedMilliseconds;
             }
+        }
+
+        private OpenXmlElement[] FindElements(WordprocessingDocument wpDoc)
+        {
+            var elements = wpDoc.MainDocumentPart.Document.Body.Elements();
+
+            if (Regex != null)
+                elements = elements.Where(x => Regex.IsMatch(x.InnerText));
+
+            elements = elements.Skip(Skip);
+            if (Take != -1) elements = elements.Take(Take);
+
+            return elements.ToArray();
         }
 
         private void Debug(string format, params object[] args)

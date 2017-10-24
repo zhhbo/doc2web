@@ -12,10 +12,14 @@ using System.Text;
 
 namespace Doc2web.Plugins.Numbering
 {
+    /// <summary>
+    /// Add spacers and automated numbering in the margin.
+    /// </summary>
     public class NumberingPlugin
     {
         private WordprocessingDocument _wpDoc;
         private NumberingConfig _config;
+        private INumberingMapper _numberingMapper;
 
         public NumberingPlugin(WordprocessingDocument wpDoc) : this(wpDoc, new NumberingConfig()) { }
 
@@ -25,11 +29,33 @@ namespace Doc2web.Plugins.Numbering
             _config = config;
         }
 
+        public NumberingPlugin(INumberingMapper numberingMapper) : this(numberingMapper, new NumberingConfig()) { }
+
+        public NumberingPlugin(INumberingMapper numberingMapper, NumberingConfig config)
+        {
+            _numberingMapper = numberingMapper;
+            _config = config;
+        }
+
+
         [InitializeEngine]
         public void InitEngine(ContainerBuilder builder)
         {
+            builder.RegisterInstance(_config);
+
+            if (_wpDoc != null) RegisterFromWpDoc(builder);
+            else RegisterFromNumberingMapper(builder);
+        }
+
+        private void RegisterFromNumberingMapper(ContainerBuilder builder)
+        {
             builder
-                .RegisterInstance(_config);
+                .RegisterInstance(_numberingMapper)
+                .ExternallyOwned();
+        }
+
+        private void RegisterFromWpDoc(ContainerBuilder builder)
+        {
             builder
                 .RegisterInstance(_wpDoc)
                 .ExternallyOwned();
@@ -37,10 +63,6 @@ namespace Doc2web.Plugins.Numbering
                 .RegisterType<NumberingMapper>()
                 .As<INumberingMapper>()
                 .SingleInstance();
-            builder
-                .RegisterTypes(typeof(NumberingIndentationCssProperty))
-                .WithMetadataFrom<BaseCssPropertyAttribute>()
-                .As<ICssProperty>();
         }
 
         [ElementProcessing]
@@ -50,81 +72,63 @@ namespace Doc2web.Plugins.Numbering
 
             if (!numberingMapper.IsValid) return;
 
-            var numbering = numberingMapper.GetNumbering(p);
-            if (numbering != null)
+            var paragraphData = numberingMapper.GetNumbering(p);
+            if (paragraphData != null)
             {
-                var cssRegistrator = context.Resolve<ICssRegistrator>();
-                var cssClass = cssRegistrator.RegisterParagraph(
-                    p.ParagraphProperties,
-                    (numbering.NumberingId, numbering.LevelIndex));
+                context.ViewBag[_config.ParagraphNumberingDataKey] = 
+                    (paragraphData.NumberingId, paragraphData.LevelIndex);
+                context.AddNode(BuildNumberingContainer());
 
-
-                context.AddNode(BuildContainerMax(cssClass.Name));
-                context.AddNode(BuildContainerMin());
-                context.AddNode(BuildNumberMax());
-                context.AddNode(BuildNumberMin(p, cssRegistrator, numbering));
-                context.AddMutation(BuildiInsertion(numbering.Verbose));
+                if (context.TryResolve(out ICssRegistrator cssRegistrator))
+                    context.AddNode(BuildNumberingNumber(p, cssRegistrator, paragraphData));
+                else
+                    context.AddNode(BuildNumberingNumber(p, paragraphData));
             }
         }
 
-        private double PositionWithDelta(int delta = 0) => _config.NumberingIndex + _config.NumberingDelta * delta;
+        private double PositionWithDelta(int delta = 0) => 
+            _config.NumberingStartingPosition + _config.NumberingDelta * delta;
 
-        private HtmlNode BuildContainerMax(string cssClass)
+        private HtmlNode BuildNumberingContainer()
         {
             var node = new HtmlNode
             {
                 Start = PositionWithDelta(0),
-                End = PositionWithDelta(8),
+                End = PositionWithDelta(3),
                 Tag = _config.NumberingContainerTag,
                 Z = _config.NumberingContainerZ,
             };
-            node.AddClasses(_config.NumberingContainerMaxCls);
-            node.AddClasses(cssClass);
+            node.AddClasses(_config.NumberingContainerCls);
             return node;
         }
 
-        private HtmlNode BuildContainerMin()
+        private HtmlNode BuildNumberingNumber(
+            Paragraph p, 
+            ICssRegistrator cssRegistrator, 
+            IParagraphData paragraphData)
         {
-            var node = new HtmlNode
-            {
-                Start = PositionWithDelta(1),
-                End = PositionWithDelta(7),
-                Tag = _config.NumberingContainerTag,
-                Z = _config.NumberingContainerZ,
-            };
-            node.AddClasses(_config.NumberingContainerMinCls);
-            return node;
-        }
-
-        private HtmlNode BuildNumberMax()
-        {
-            var node = new HtmlNode
-            {
-                Start = PositionWithDelta(2),
-                End = PositionWithDelta(6),
-                Tag = _config.NumberingContainerTag,
-                Z = _config.NumberingContainerZ,
-            };
-            node.AddClasses(_config.NumberingNumberMaxCls);
-            return node;
-        }
-
-        private HtmlNode BuildNumberMin(Paragraph p, ICssRegistrator cssRegistrator, IParagraphData paragraphData)
-        {
-            var node = new HtmlNode
-            {
-                Start = PositionWithDelta(3),
-                End = PositionWithDelta(5),
-                Tag = _config.NumberingNumberTag,
-                Z = _config.NumberingNumberZ,
-            };
-            node.AddClasses(_config.NumberingNumberMinCls);
-
+            var node = BuildNumberingNumber(p, paragraphData);
             var cssClass = cssRegistrator.RegisterRun(
                 p.ParagraphProperties,
                 p.ParagraphProperties?.ParagraphMarkRunProperties,
                 (paragraphData.NumberingId, paragraphData.LevelIndex));
             node.AddClasses(cssClass.Name);
+            return node;
+        }
+
+        private HtmlNode BuildNumberingNumber(
+            Paragraph p, 
+            IParagraphData paragraphData)
+        {
+            var node = new HtmlNode
+            {
+                Start = PositionWithDelta(1),
+                End = PositionWithDelta(2),
+                Tag = _config.NumberingNumberTag,
+                Z = _config.NumberingNumberZ,
+                TextPrefix = paragraphData.Verbose
+            };
+            node.AddClasses(_config.NumberingNumberCls);
 
             var level = paragraphData.LevelXmlElement;
             if (level.LevelSuffix?.Val?.Value == LevelSuffixValues.Space)
@@ -132,37 +136,24 @@ namespace Doc2web.Plugins.Numbering
                 node.SetStyle("padding-right", "0.5em");
             }
             else if (level.LevelSuffix?.Val?.Value == LevelSuffixValues.Nothing) { }
-            else
-            {
-                node.SetStyle("padding-right", "1.5em");
-            }
+            else node.SetStyle("padding-right", "1.5em");
 
             return node;
         }
 
-        private Mutation BuildiInsertion(string verbose) => new TextInsertion
-        {
-            Position = PositionWithDelta(4),
-            Text = verbose
-        };
-
         [PostProcessing]
         public void PostProcessing(IGlobalContext context)
         {
-            var styleConfig = context.Resolve<StyleConfig>();
             var numConfig = context.Resolve<NumberingConfig>();
             context.AddCss(
-                CSS(
-                    styleConfig.LeftIdentationCssClassPrefix,
-                    numConfig.NumberingContainerMinCls,
-                    numConfig.NumberingNumberMinCls));
+                CSS(numConfig.NumberingContainerCls,
+                    numConfig.NumberingNumberCls));
         }
 
         private static string CSS(
-            string leftSpacerCls, 
-            string numContainerMinCls, 
-            string numNumberMinCls) =>
-            $"{leftSpacerCls}, .{numContainerMinCls} {{ display: flex; }} " +
-            $".{numNumberMinCls} {{ white-space: pre; }}";
+            string numberingContainerCls, 
+            string numberingNumberCls) =>
+            $".{numberingContainerCls} {{ display: block; text-align: right; }} " +
+            $".{numberingNumberCls} {{ display: inline-block; white-space: pre; }}";
     }
 }

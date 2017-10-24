@@ -6,6 +6,9 @@ using System.Text.RegularExpressions;
 
 namespace Doc2web.Plugins.TextFixes
 {
+    /// <summary>
+    /// Remove the text script created by cross-references to the html document.
+    /// </summary>
     public class CrossReferencesCleanupPlugin
     {
         private static Regex crossReferenceRegex =

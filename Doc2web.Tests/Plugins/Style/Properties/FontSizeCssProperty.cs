@@ -17,7 +17,7 @@ namespace Doc2web.Tests.Plugins.Style.Properties
         public string FontSize
         {
             get => _instance.Element.Val.Value;
-            set => _instance.Element.Val = new StringValue(value);
+            set => _instance.Element = new FontSize { Val = new StringValue(value) };
         }
 
         [TestInitialize]
@@ -43,34 +43,25 @@ namespace Doc2web.Tests.Plugins.Style.Properties
         }
 
         [TestMethod]
-        public void GetSpecificHashcode_Test()
+        public void AsCss_UseComplexScriptSizeTest()
         {
-            FontSize = "35";
-
-            Assert.AreEqual(35, _instance.GetSpecificHashcode());
-        }
-
-        [TestMethod]
-        public void HaveSameOutput_TrueTest()
-        {
-            var element = new FontSize { Val = new StringValue("40") };
-            FontSize = "40";
-
-            Assert.IsTrue(_instance.HaveSameOutput(new FontSizeCssProperty
+            FontSize = "20";
+            var set = new CssPropertiesSet
             {
-                OpenXmlElement = _instance.Element.CloneNode(true)
-            }));
-        }
+                new FontSizeCSCssProperty(),
+                new ComplexScriptCssProperty
+                {
+                    Element = new DocumentFormat.OpenXml.Wordprocessing.ComplexScript
+                    {
+                        Val = true
+                    }
+                }
+            };
 
-        [TestMethod]
-        public void HaveSameOutput_FalseTest()
-        {
-            var element = new FontSize { Val = new StringValue("40") };
+            var cssData = new CssData();
+            _instance.InsertCss(set, cssData);
 
-            Assert.IsFalse(_instance.HaveSameOutput(new FontSizeCssProperty
-            {
-                Element = element
-            }));
+            Assert.AreEqual(0, cssData.Selectors.Length);
         }
     }
 }

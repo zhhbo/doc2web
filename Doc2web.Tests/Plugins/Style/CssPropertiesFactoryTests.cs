@@ -20,12 +20,12 @@ namespace Doc2web.Tests.Plugins.Style
 
         public class MockBaseBoldCssProp : CssProperty<Bold>
         {
-            public override short GetSpecificHashcode()
+            public override int GetHashCode()
             {
                 throw new NotImplementedException();
             }
 
-            public override bool HaveSameOutput(ICssProperty prop)
+            public override bool Equals(ICssProperty prop)
             {
                 throw new NotImplementedException();
             }
@@ -38,12 +38,12 @@ namespace Doc2web.Tests.Plugins.Style
 
         public class MockBaseIdentationCssProp : CssProperty<Indentation>
         {
-            public override short GetSpecificHashcode()
+            public override int GetHashCode()
             {
                 throw new NotImplementedException();
             }
 
-            public override bool HaveSameOutput(ICssProperty prop)
+            public override bool Equals(ICssProperty prop)
             {
                 throw new NotImplementedException();
             }
@@ -60,17 +60,11 @@ namespace Doc2web.Tests.Plugins.Style
         [RunCssProperty(typeof(Bold))]
         public class RunBoldCssProp : MockBaseBoldCssProp { }
 
-        [NumberingCssProperty(typeof(Bold))]
-        public class NumberingBoldCssProp : MockBaseBoldCssProp { }
-
         [ParagraphCssProperty(typeof(Indentation))]
         public class ParagraphIndentCssProp : MockBaseIdentationCssProp { }
 
         [RunCssProperty(typeof(Indentation))]
         public class RunIndentCssProp : MockBaseIdentationCssProp { }
-
-        [NumberingCssProperty(typeof(Indentation))]
-        public class NumberingIndentCssProp : MockBaseIdentationCssProp { }
 
         [TestInitialize]
         public void Initialize()
@@ -90,10 +84,8 @@ namespace Doc2web.Tests.Plugins.Style
                 .RegisterTypes(
                     typeof(ParagraphBoldCssProp),
                     typeof(RunBoldCssProp),
-                    typeof(NumberingBoldCssProp),
                     typeof(ParagraphIndentCssProp),
-                    typeof(RunIndentCssProp),
-                    typeof(NumberingIndentCssProp)
+                    typeof(RunIndentCssProp)
                 )
                 .WithMetadataFrom<BaseCssPropertyAttribute>()
                 .As<ICssProperty>();

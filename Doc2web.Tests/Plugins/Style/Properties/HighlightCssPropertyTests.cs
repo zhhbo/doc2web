@@ -46,17 +46,17 @@ namespace Doc2web.Tests.Plugins.Style.Properties
         }
 
         [TestMethod]
-        public void GetSpecificHashcode_ColorTest ()
+        public void GetHashCode_ColorTest ()
         {
             HighlightColor = HighlightColorValues.Black;
 
-            Assert.AreEqual(0, _instance.GetSpecificHashcode());
+            Assert.AreEqual(0, _instance.GetHashCode());
         }
 
         [TestMethod]
-        public void GetSpecificHashcode_NotColorTest()
+        public void GetHashCode_NotColorTest()
         {
-            Assert.AreEqual(-1, _instance.GetSpecificHashcode());
+            Assert.AreEqual(-1, _instance.GetHashCode());
         }
 
         [TestMethod]
@@ -69,7 +69,7 @@ namespace Doc2web.Tests.Plugins.Style.Properties
                 Val = new EnumValue<HighlightColorValues>(highlightColor)
             };
 
-            Assert.IsTrue(_instance.HaveSameOutput(new HighlightCssProperty
+            Assert.IsTrue(_instance.Equals(new HighlightCssProperty
             {
                 Element = elem
             }));
@@ -83,7 +83,7 @@ namespace Doc2web.Tests.Plugins.Style.Properties
                 Val = new EnumValue<HighlightColorValues>(HighlightColorValues.Yellow)
             };
 
-            Assert.IsFalse(_instance.HaveSameOutput(new HighlightCssProperty
+            Assert.IsFalse(_instance.Equals(new HighlightCssProperty
             {
                 Element = elem
             }));

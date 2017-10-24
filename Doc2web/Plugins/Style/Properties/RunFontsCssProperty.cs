@@ -31,6 +31,15 @@ namespace Doc2web.Plugins.Style.Properties
             }
         }
 
+        public bool CanOnlyUseComplexScript =>
+            _inlineFonts[0] == null &&
+            _inlineFonts[1] == null &&
+            _inlineFonts[2] == null &&
+            _themeFonts[0] == null &&
+            _themeFonts[1] == null &&
+            _themeFonts[2] == null &&
+            (_inlineFonts[3] != null || _themeFonts[3] != null);
+
         private void SneakySetElement(OpenXmlElement elem)
         {
             base.OpenXmlElement = elem;
@@ -62,7 +71,32 @@ namespace Doc2web.Plugins.Style.Properties
             }
         }
 
+        /// <summary>
+        /// Only as a convience in unit tests.
+        /// </summary>
         public override void InsertCss(CssData cssData)
+        {
+            InsertCss(new CssPropertiesSet(), cssData);
+        }
+
+        public override void InsertCss(CssPropertiesSet set, CssData cssData)
+        {
+            var complexScript = set?.Get<ComplexScriptCssProperty>();
+            if (complexScript != null)
+                UseComplexScript(complexScript, cssData);
+            else
+                UseAllFonts(cssData);
+        }
+
+        private void UseComplexScript(ComplexScriptCssProperty prop, CssData cssData)
+        {
+            if (!prop.ExplicitVal.GetValueOrDefault(true)) return;
+            string fontFamily = GetFontAt(3);
+            if (fontFamily == null) return;
+            cssData.AddAttribute(Selector, "font-family", fontFamily);
+        }
+
+        private void UseAllFonts(CssData cssData)
         {
             string fontFamily = CreateFontFamilyValue();
             if (fontFamily.Length == 0) return;
@@ -76,6 +110,7 @@ namespace Doc2web.Plugins.Style.Properties
             {
                 string fontFace = GetFontAt(i);
                 if (fontFace != null &&
+                    fontFace.Length > 0 &&
                     !result.Contains(fontFace))
                 {
                     result.Add(fontFace);
@@ -105,17 +140,17 @@ namespace Doc2web.Plugins.Style.Properties
             }
         }
 
-        public override short GetSpecificHashcode()
+        public override int GetHashCode()
         {
             for (int i = 0; i < 4; i++)
             {
                 string fontFace = GetFontAt(i);
-                if (fontFace != null) return (short)fontFace.GetHashCode();
+                if (fontFace != null) return fontFace.GetHashCode();
             }
             return -1;
         }
 
-        public override bool HaveSameOutput(ICssProperty element)
+        public override bool Equals(ICssProperty element)
         {
             var other = element as RunFontsCssProperty;
             if (other == null) return false;
