@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Text;
 using DocumentFormat.OpenXml.Wordprocessing;
 using System.Linq;
+using Autofac;
 
 namespace Doc2web.Tests.Plugins.Tables
 {
@@ -40,6 +41,19 @@ namespace Doc2web.Tests.Plugins.Tables
                 .When(x => x.AddCss(Arg.Any<string>()))
                 .Do(x => _css += x.ArgAt<string>(0));
         }
+
+        [TestMethod]
+        public void RegisterConfig_Test()
+        {
+            var containerBuilder = new ContainerBuilder();
+
+            _instance.RegisterConfig(containerBuilder);
+            var container = containerBuilder.Build();
+            var config = container.Resolve<TableConfig>();
+
+            Assert.AreSame(_config, config);
+        }
+
 
         [TestMethod]
         public void ProcessTable_Test()

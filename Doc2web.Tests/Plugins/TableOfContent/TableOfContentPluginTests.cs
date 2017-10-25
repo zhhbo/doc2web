@@ -1,4 +1,5 @@
-﻿using Doc2web.Plugins.TableOfContent;
+﻿using Autofac;
+using Doc2web.Plugins.TableOfContent;
 using Doc2web.Tests.Samples;
 using DocumentFormat.OpenXml.Drawing.Wordprocessing;
 using DocumentFormat.OpenXml.Wordprocessing;
@@ -27,6 +28,18 @@ namespace Doc2web.Tests.Plugins.TableOfContent
             _pNode = new HtmlNode { Start = 0, Tag = "p" };
             _elementContext = Substitute.For<IElementContext>();
             _elementContext.Nodes.Returns(new HtmlNode[] { _pNode });
+        }
+
+        [TestMethod]
+        public void RegisterConfig_Test()
+        {
+            var containerBuilder = new ContainerBuilder();
+
+            _instance.RegisterConfig(containerBuilder);
+            var container = containerBuilder.Build();
+            var config = container.Resolve<TableOfContentConfig>();
+
+            Assert.AreSame(_config, config);
         }
 
         [TestMethod]

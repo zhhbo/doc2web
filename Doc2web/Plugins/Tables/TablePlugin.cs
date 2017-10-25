@@ -2,19 +2,26 @@
 using System.Collections.Generic;
 using System.Text;
 using DocumentFormat.OpenXml.Wordprocessing;
+using Autofac;
 
 namespace Doc2web.Plugins.Tables
 {
     public class TablePlugin
     {
-        private TableConfig _tableConfig;
+        private TableConfig _config;
 
         public TablePlugin(TableConfig tableConfig)
         {
-            _tableConfig = tableConfig;
+            _config = tableConfig;
         }
 
         public TablePlugin() : this(new TableConfig()) { }
+
+        [InitializeEngine]
+        public void RegisterConfig(ContainerBuilder builder)
+        {
+            builder.RegisterInstance(_config);
+        }
 
         [ElementProcessing]
         public void ProcessTable(IElementContext context, Table table)
@@ -38,16 +45,16 @@ namespace Doc2web.Plugins.Tables
             {
                 Start = 0,
                 End = 0,
-                TextPrefix = _tableConfig.WarningMessage
+                TextPrefix = _config.WarningMessage
             };
-            node.AddClasses(_tableConfig.WarningCssClass);
+            node.AddClasses(_config.WarningCssClass);
             context.AddNode(node);
         }
 
         [PostProcessing]
         public void PostProcessing(IGlobalContext context)
         {
-            context.AddCss(CSS(_tableConfig.WarningCssClass));
+            context.AddCss(CSS(_config.WarningCssClass));
         }
 
         public static string CSS(string tableWarningCssClass) =>

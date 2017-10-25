@@ -21,18 +21,21 @@ namespace Doc2web.Plugins.Style
     {
         private WordprocessingDocument _wpDoc;
 
-        private StyleConfig _config = new StyleConfig();
+        private StyleConfig _config;
 
-        public StylePlugin(WordprocessingDocument wpDoc)
+        public StylePlugin(WordprocessingDocument wpDoc, StyleConfig config)
         {
             _wpDoc = wpDoc;
+            _config = config;
         }
+
+        public StylePlugin(WordprocessingDocument wpDoc) : this(wpDoc, new StyleConfig()) { }
 
         [InitializeEngine]
         public void InitEngine(ContainerBuilder builder)
         {
             // Starting point, wpDoc disceted
-            RegisterWpDoc(builder);
+            RegisterWpDocConfig(builder);
 
             // Providers
             RegisterProviders(builder);
@@ -131,11 +134,10 @@ namespace Doc2web.Plugins.Style
                 .SingleInstance();
         }
 
-        private void RegisterWpDoc(ContainerBuilder builder)
+        private void RegisterWpDocConfig(ContainerBuilder builder)
         {
             builder
-                .RegisterInstance(_config)
-                .ExternallyOwned();
+                .RegisterInstance(_config);
             builder
                 .RegisterInstance(_wpDoc)
                 .ExternallyOwned();

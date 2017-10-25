@@ -1,4 +1,5 @@
-﻿using DocumentFormat.OpenXml.Wordprocessing;
+﻿using Autofac;
+using DocumentFormat.OpenXml.Wordprocessing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,6 +18,12 @@ namespace Doc2web.Plugins.TableOfContent
         public TableOfContentPlugin(TableOfContentConfig config)
         {
             _config = config;
+        }
+
+        [InitializeEngine]
+        public void RegisterConfig(ContainerBuilder builder)
+        {
+            builder.RegisterInstance(_config);
         }
 
         [ElementProcessing]

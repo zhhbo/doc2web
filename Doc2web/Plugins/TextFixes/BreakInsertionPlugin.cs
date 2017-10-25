@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using DocumentFormat.OpenXml.Wordprocessing;
 using System.Linq;
+using Autofac;
 
 namespace Doc2web.Plugins.TextFixes
 {
@@ -18,6 +19,12 @@ namespace Doc2web.Plugins.TextFixes
         public BreakInsertionPlugin(BreakInsertionConfig config)
         {
             _config = config;
+        }
+
+        [InitializeEngine]
+        public void RegisterConfig(ContainerBuilder builder)
+        {
+            builder.RegisterInstance(_config);
         }
 
         [ElementProcessing]

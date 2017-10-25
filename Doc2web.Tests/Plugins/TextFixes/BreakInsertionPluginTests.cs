@@ -8,6 +8,7 @@ using DocumentFormat.OpenXml.Wordprocessing;
 using System.Linq;
 using System.Collections;
 using Doc2web.Plugins.Numbering;
+using Autofac;
 
 namespace Doc2web.Tests.Plugins.TextFixes
 {
@@ -42,6 +43,18 @@ namespace Doc2web.Tests.Plugins.TextFixes
                 .Do(x => _nodes.Add(x.ArgAt<HtmlNode>(0)));
             _context.TextIndex.Returns(100);
             _context.Nodes.Returns(new HtmlNode[] { _container, _numberingContainerMax });
+        }
+
+        [TestMethod]
+        public void RegisterConfig_Test()
+        {
+            var containerBuilder = new ContainerBuilder();
+
+            _instance.RegisterConfig(containerBuilder);
+            var container = containerBuilder.Build();
+            var config = container.Resolve<BreakInsertionConfig>();
+
+            Assert.AreSame(_config, config);
         }
 
         [TestMethod]

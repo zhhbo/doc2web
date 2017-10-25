@@ -65,11 +65,11 @@ namespace Doc2web.Tests.Plugins.TextProcessor
         }
 
         [TestMethod]
-        public void InitializeEngine_Test()
+        public void RegisterConfig_Test()
         {
             var containerBuilder = new ContainerBuilder();
 
-            _instance.InitializeEngine(containerBuilder);
+            _instance.RegisterConfig(containerBuilder);
 
             var container = containerBuilder.Build();
             Assert.AreSame(_config, container.Resolve<TextProcessorConfig>());
