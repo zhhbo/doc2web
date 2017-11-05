@@ -13,7 +13,7 @@ namespace Doc2web
     /// </summary>
     public class ConversionEngine : IDisposable
     {
-        private IContainer _container;
+        private ILifetimeScope _lifetimeScope;
         private ConversionTaskFactory _conversionTaskFactory;
         private ProcessorFactory _processorFactory;
         private Processor _processor;
@@ -25,20 +25,45 @@ namespace Doc2web
         /// hooks(InitializeEngineAttribute,PreProcessingAttribute, ElementProcessingAttribute and PostProcessingAttribute).</param>
         public ConversionEngine(params object[] plugins)
         {
-            _processorFactory = new ProcessorFactory();
-            _processor = _processorFactory.BuildMultiple(plugins);
-            Initialize();
+            SetupProcessors(plugins);
+            SetupLifetimeScopeFromScratch();
+            SetupConversionTaskFactory();
         }
 
-        private void Initialize()
+        /// <summary>
+        /// Creates a new conversion engine.
+        /// </summary>
+        /// <param name="plugins">Instances of classes that have methods with attributes that register 
+        /// hooks(InitializeEngineAttribute,PreProcessingAttribute, ElementProcessingAttribute and PostProcessingAttribute).</param>
+        public ConversionEngine(ILifetimeScope parentScope, params object[] plugins)
+        {
+            SetupProcessors(plugins);
+            SetupLifetimeScopeFromParent(parentScope);
+            SetupConversionTaskFactory();
+        }
+
+        private void SetupProcessors(object[] plugins)
+        {
+            _processorFactory = new ProcessorFactory();
+            _processor = _processorFactory.BuildMultiple(plugins);
+        }
+
+        private void SetupLifetimeScopeFromScratch()
         {
             var containerBuilder = new ContainerBuilder();
             _processor.InitEngine(containerBuilder);
-            _container = containerBuilder.Build();
+            _lifetimeScope = containerBuilder.Build();
+        }
+        private void SetupLifetimeScopeFromParent(ILifetimeScope parentScope)
+        {
+            _lifetimeScope = parentScope.BeginLifetimeScope(_processor.InitEngine);
+        }
 
+        private void SetupConversionTaskFactory()
+        {
             _conversionTaskFactory = new ConversionTaskFactory
             {
-                EngineContainer = _container,
+                LifetimeScope = _lifetimeScope,
                 Processor = _processor,
                 ContextRenderer = new Core.Rendering.ContextRenderer()
             };
@@ -49,7 +74,7 @@ namespace Doc2web
         /// </summary>
         public void Dispose()
         {
-            _container.Dispose();
+            _lifetimeScope.Dispose();
         }
 
         /// <summary>

@@ -10,7 +10,7 @@ namespace Doc2web.Core
 {
     public class ConversionTaskFactory
     {
-        public IContainer EngineContainer { get; set; }
+        public ILifetimeScope LifetimeScope { get; set; }
 
         public Processor Processor { get; set; }
 
@@ -22,7 +22,7 @@ namespace Doc2web.Core
             {
                 Processor = Processor,
                 RootElements = elements,
-                Container = EngineContainer,
+                LifetimeScope = LifetimeScope,
                 ContextRenderer = ContextRenderer,
                 Out = new StreamWriter(stream)
             };
@@ -35,7 +35,7 @@ namespace Doc2web.Core
             {
                 Processor = processor,
                 RootElements = elements,
-                Container = EngineContainer,
+                LifetimeScope = LifetimeScope,
                 ContextRenderer = ContextRenderer,
                 Out = new StreamWriter(stream)
             };

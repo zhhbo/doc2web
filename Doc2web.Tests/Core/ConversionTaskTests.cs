@@ -55,7 +55,7 @@ namespace Doc2web.Tests.Core
                 GlobalContext = _globalContext,
                 Processor = _processor,
                 ContextRenderer = _contextRenderer,
-                Container = _engineContainer,
+                LifetimeScope = _engineContainer,
                 RootElements = _rootElementContext.Select(x => x.RootElement),
                 Out = new StreamWriter(_stream)
             };

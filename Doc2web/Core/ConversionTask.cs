@@ -17,7 +17,7 @@ namespace Doc2web.Core
 
         public IEnumerable<OpenXmlElement> RootElements { get; set; }
 
-        public IContainer Container { get; set; }
+        public ILifetimeScope LifetimeScope { get; set; }
 
         public IGlobalContext GlobalContext { get; set; }
 
@@ -27,7 +27,7 @@ namespace Doc2web.Core
 
         public void PreProcess()
         {
-            GlobalContext = new GlobalContext(Container.BeginLifetimeScope(), RootElements);
+            GlobalContext = new GlobalContext(LifetimeScope.BeginLifetimeScope(), RootElements);
             Processor.PreProcess(GlobalContext);
         }
 
