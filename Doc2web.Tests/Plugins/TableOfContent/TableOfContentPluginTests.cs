@@ -169,7 +169,7 @@ namespace Doc2web.Tests.Plugins.TableOfContent
         {
             _elementContext.DidNotReceiveWithAnyArgs().AddNode(null);
             _elementContext.DidNotReceiveWithAnyArgs().AddMutation(null);
-            _elementContext.DidNotReceiveWithAnyArgs().AddMultipleNodes(null);
+            _elementContext.DidNotReceiveWithAnyArgs().AddNodes(null);
             _elementContext.DidNotReceiveWithAnyArgs().AddMutations(null);
         }
     }

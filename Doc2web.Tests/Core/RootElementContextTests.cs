@@ -47,11 +47,11 @@ namespace Doc2web.Tests.Core
         }
 
         [TestMethod]
-        public void AddMultiple_NodeTest()
+        public void AddNodes_Test()
         {
             var nodes = new HtmlNode[] { new HtmlNode(), new HtmlNode() };
 
-            _instance.AddMultipleNodes(nodes);
+            _instance.AddNodes(nodes);
 
             Assert.AreEqual(nodes.Length, _instance.Nodes.Count());
             foreach (var node in nodes)
@@ -70,17 +70,17 @@ namespace Doc2web.Tests.Core
         }
 
         [TestMethod]
-        public void AddMultipleTransformations_Test()
+        public void AddMutations_Test()
         {
-            var transformations = new Mutation[] {
+            var mutations = new Mutation[] {
                 Substitute.For<Mutation>(),
                 Substitute.For<Mutation>()
             };
 
-            _instance.AddMutations(transformations);
+            _instance.AddMutations(mutations);
 
-            Assert.AreEqual(transformations.Length, _instance.Mutations.Count());
-            foreach (var transformation in transformations)
+            Assert.AreEqual(mutations.Length, _instance.Mutations.Count());
+            foreach (var transformation in mutations)
                 Assert.IsTrue(_instance.Mutations.Contains(transformation));
         }
 

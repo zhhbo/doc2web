@@ -42,18 +42,6 @@ namespace Doc2web.Plugins.Style
         public CssPropertiesSet Build(OpenXmlElement elem)
         {
             return new CssPropertiesSet(BuildMultiple(elem.ChildElements));
-            //if (_constructorsDic.TryGetValue(
-            //    elem.GetType(), 
-            //    out Func<ICssProperty> cons))
-            //{
-            //    var prop = cons();
-            //    prop.OpenXmlElement = elem;
-            //    return new ICssProperty[1] { prop };
-            //}
-            //else
-            //{
-            //    return BuildMultiple(elem.ChildElements);
-            //}
         }
 
         private ICssProperty[] BuildMultiple(OpenXmlElementList childElements)

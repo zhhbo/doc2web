@@ -26,14 +26,14 @@ namespace Doc2web.Core
 
         public IContextNestingHandler NestingHandler { get => _parent.NestingHandler; set => _parent.NestingHandler = value; }
 
-        public void AddMultipleNodes(IEnumerable<HtmlNode> nodes)
+        public void AddNodes(IEnumerable<HtmlNode> nodes)
         {
-            _parent.AddMultipleNodes(nodes);
+            _parent.AddNodes(nodes);
         }
 
-        public void AddMutations(IEnumerable<Mutation> transformations)
+        public void AddMutations(IEnumerable<Mutation> mutations)
         {
-            _parent.AddMutations(transformations);
+            _parent.AddMutations(mutations);
         }
 
         public void AddNode(HtmlNode node)
@@ -41,9 +41,9 @@ namespace Doc2web.Core
             _parent.AddNode(node);
         }
 
-        public void AddMutation(Mutation transformation)
+        public void AddMutation(Mutation mutation)
         {
-            _parent.AddMutation(transformation);
+            _parent.AddMutation(mutation);
         }
 
         public void ProcessChilden()

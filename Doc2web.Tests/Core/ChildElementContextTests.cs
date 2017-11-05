@@ -51,13 +51,13 @@ namespace Doc2web.Tests.Core
         {
             var nodes = new HtmlNode[] { };
 
-            _instance.AddMultipleNodes(nodes);
+            _instance.AddNodes(nodes);
 
-            _parent.Received(1).AddMultipleNodes(Arg.Is<IEnumerable<HtmlNode>>(nodes));
+            _parent.Received(1).AddNodes(Arg.Is<IEnumerable<HtmlNode>>(nodes));
         }
 
         [TestMethod]
-        public void AddMultipleTransformations_Test()
+        public void AddMutations_Test()
         {
             var transfortions = new Mutation[] { };
 

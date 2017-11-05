@@ -8,7 +8,7 @@ namespace Doc2web.Core
     public class RootElementContext : INestableElementContext
     {
         private List<HtmlNode> _nodes;
-        private List<Mutation> _transformations;
+        private List<Mutation> _mutations;
         private IGlobalContext _globalContext;
 
         public RootElementContext(IGlobalContext context, OpenXmlElement rootElement)
@@ -17,7 +17,7 @@ namespace Doc2web.Core
             ViewBag = new Dictionary<string, object>();
             RootElement = rootElement;
             _nodes = new List<HtmlNode>();
-            _transformations = new List<Mutation>();
+            _mutations = new List<Mutation>();
         }
 
 
@@ -27,7 +27,7 @@ namespace Doc2web.Core
 
         public IEnumerable<HtmlNode> Nodes => _nodes;
 
-        public IEnumerable<Mutation> Mutations => _transformations;
+        public IEnumerable<Mutation> Mutations => _mutations;
 
         public OpenXmlElement Element => RootElement;
 
@@ -37,13 +37,13 @@ namespace Doc2web.Core
 
         public void AddNode(HtmlNode node) => _nodes.Add(node);
 
-        public void AddMultipleNodes(IEnumerable<HtmlNode> nodes) => _nodes.AddRange(nodes);
+        public void AddNodes(IEnumerable<HtmlNode> nodes) => _nodes.AddRange(nodes);
 
         public void AddMutation(Mutation transformation) =>
-            _transformations.Add(transformation);
+            _mutations.Add(transformation);
 
-        public void AddMutations(IEnumerable<Mutation> transformations) =>
-            _transformations.AddRange(transformations);
+        public void AddMutations(IEnumerable<Mutation> mutations) =>
+            _mutations.AddRange(mutations);
 
         public void ProcessChilden()
         {
