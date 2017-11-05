@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <PackageProjectUrl>https://github.com/osasseville/doc2web</PackageProjectUrl>
@@ -29,7 +29,10 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>bin\Release\netstandard2.0\Doc2web.xml</DocumentationFile>
+    <DocumentationFile>bin\Release\Doc2web.xml</DocumentationFile>
+    <DefineConstants>TRACE;RELEASE;NETSTANDARD1_4;RELEASE;NETSTANDARD1_46</DefineConstants>
+    <OutputPath>bin\Release\</OutputPath>
+    <LangVersion>7.1</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
