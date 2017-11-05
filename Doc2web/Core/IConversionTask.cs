@@ -1,4 +1,6 @@
-﻿namespace Doc2web.Core
+﻿using System.IO;
+
+namespace Doc2web.Core
 {
     public interface IConversionTask
     {
@@ -10,6 +12,6 @@
 
         void PostProcess();
 
-        string Result { get; }
+        StreamWriter Out { get; set; }
     }
 }

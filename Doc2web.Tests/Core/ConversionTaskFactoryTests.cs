@@ -8,12 +8,14 @@ using System.Collections.Generic;
 using System.Text;
 using Doc2web.Core;
 using Doc2web.Core.Rendering;
+using System.IO;
 
 namespace Doc2web.Tests.Core
 {
     [TestClass]
     public class ConversionTaskFactoryTests
     {
+        private MemoryStream _stream;
         private ConversionTaskFactory _instance;
         private IContainer _engineContainer;
         private Processor _processor;
@@ -22,6 +24,7 @@ namespace Doc2web.Tests.Core
         [TestInitialize]
         public void Initialize()
         {
+            _stream = new MemoryStream();
             _instance = new ConversionTaskFactory();
             _engineContainer = Substitute.For<IContainer>();
             _processor = new Processor();
@@ -29,6 +32,12 @@ namespace Doc2web.Tests.Core
             _instance.EngineContainer = _engineContainer;
             _instance.Processor = _processor;
             _instance.ContextRenderer = _contextRenderer;
+        }
+        
+        [TestCleanup]
+        public void Cleanup()
+        {
+            _stream.Dispose();
         }
 
         [TestMethod]
@@ -40,13 +49,14 @@ namespace Doc2web.Tests.Core
                 new Paragraph()
             };
 
-            var conversionTask = _instance.Build(elements) as ConversionTask;
+            var conversionTask = _instance.Build(elements, _stream) as ConversionTask;
 
             Assert.IsNotNull(conversionTask);
             Assert.AreSame(_engineContainer, conversionTask.Container);
             Assert.AreSame(elements, conversionTask.RootElements);
             Assert.AreSame(_processor, conversionTask.Processor);
             Assert.AreSame(_contextRenderer, conversionTask.ContextRenderer);
+            Assert.AreSame(_stream, conversionTask.Out.BaseStream);
         }
 
         [TestMethod]
@@ -56,11 +66,10 @@ namespace Doc2web.Tests.Core
 
             var tempProcessor = new Processor();
             tempProcessor.ElementRenderingActions.Add(typeof(Paragraph), new List<Action<IElementContext, OpenXmlElement>> { tempMethod });
-            var conversionTask = _instance.Build(elements, tempProcessor) as ConversionTask;
+            var conversionTask = _instance.Build(elements, _stream, tempProcessor) as ConversionTask;
 
             var finalProcessor = conversionTask.Processor as Processor; ;
             Assert.IsTrue(finalProcessor.ElementRenderingActions[typeof(Paragraph)].Contains(tempMethod));
-
         }
 
         private void tempMethod(IElementContext arg1, OpenXmlElement arg2)

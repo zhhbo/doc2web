@@ -39,7 +39,12 @@ namespace Doc2web
             }
         }
 
-        private static ConversionEngine BuildDefaultEngine(WordprocessingDocument wpDoc) =>
+        /// <summary>
+        /// Create a conversion engine using all plugins provided in Doc2web.
+        /// </summary>
+        /// <param name="wpDoc"></param>
+        /// <returns></returns>
+        public static ConversionEngine BuildDefaultEngine(WordprocessingDocument wpDoc) =>
             new ConversionEngine(
                 new StylePlugin(wpDoc),
                 new NumberingPlugin(wpDoc),

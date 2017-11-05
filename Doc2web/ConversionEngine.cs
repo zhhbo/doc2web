@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Doc2web.Core;
+using System.IO;
 
 namespace Doc2web
 {
@@ -53,14 +54,20 @@ namespace Doc2web
 
         /// <summary>
         /// Convert some open xml elements in HTML.
+        /// Add some temporary plugins for this conversion task.
         /// </summary>
         /// <param name="elements">Targeted open xml elements.</param>
+        /// <param name="temporaryPlugins">Plugins that will be added for this conversion task.</param>
         /// <returns>HTML produce by the conversion engine.</returns>
-        public string Convert(IEnumerable<OpenXmlElement> elements)
+        public string Convert(IEnumerable<OpenXmlElement> elements, params object[] temporaryPlugins)
         {
-            var conversionTask = _conversionTaskFactory.Build(elements);
-
-            return ExecuteConversionTask(conversionTask);
+            using (var stream = new MemoryStream())
+            {
+                var tempPlugin = _processorFactory.BuildMultiple(temporaryPlugins);
+                var conversionTask = _conversionTaskFactory.Build(elements, new MemoryStream(), tempPlugin);
+                ExecuteConversionTask(conversionTask);
+                return ReadOutput(conversionTask);
+            }
         }
 
         /// <summary>
@@ -69,23 +76,29 @@ namespace Doc2web
         /// </summary>
         /// <param name="elements">Targeted open xml elements.</param>
         /// <param name="temporaryPlugins">Plugins that will be added for this conversion task.</param>
+        /// <param name="stream">Stream where the html will be output.</param>
         /// <returns>HTML produce by the conversion engine.</returns>
-        public string Convert(IEnumerable<OpenXmlElement> elements, params object[] temporaryPlugins)
+        public void Convert(IEnumerable<OpenXmlElement> elements, Stream stream, params object[] temporaryPlugins)
         {
             var tempPlugin = _processorFactory.BuildMultiple(temporaryPlugins);
-            var conversionTask = _conversionTaskFactory.Build(elements, tempPlugin);
-
-            return ExecuteConversionTask(conversionTask);
+            var conversionTask = _conversionTaskFactory.Build(elements, stream, tempPlugin);
+            ExecuteConversionTask(conversionTask);
         }
 
-        private static string ExecuteConversionTask(IConversionTask conversionTask)
+        private static void ExecuteConversionTask(IConversionTask conversionTask)
         {
             conversionTask.PreProcess();
             conversionTask.ProcessElements();
             conversionTask.PostProcess();
             conversionTask.AssembleDocument();
-
-            return conversionTask.Result;
+        }
+        private static string ReadOutput(IConversionTask conversionTask)
+        {
+            ((MemoryStream)conversionTask.Out.BaseStream).Position = 0;
+            using (var sr = new StreamReader(conversionTask.Out.BaseStream))
+            {
+                return sr.ReadToEnd();
+            }
         }
     }
 }

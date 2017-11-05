@@ -30,7 +30,7 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <DocumentationFile>bin\Release\Doc2web.xml</DocumentationFile>
-    <DefineConstants>TRACE;RELEASE;NETSTANDARD1_4;RELEASE;NETSTANDARD1_46</DefineConstants>
+    <DefineConstants>TRACE;RELEASE;NETSTANDARD1_0;RELEASE;NETSTANDARD1_46;RELEASE;NETSTANDARD2_0</DefineConstants>
     <OutputPath>bin\Release\</OutputPath>
     <LangVersion>7.1</LangVersion>
   </PropertyGroup>

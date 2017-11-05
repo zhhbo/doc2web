@@ -21,6 +21,10 @@ namespace Doc2web.CLI
         private int _skip = 0;
         private int _take = -1;
         private Regex _regex = null;
+        private string _outputPath;
+        private ConversionEngine _conversionEngine;
+        private FileStream _outputStream;
+        private WordprocessingDocument _wpDoc;
 
         public bool Blank { get; set; }
 
@@ -40,18 +44,19 @@ namespace Doc2web.CLI
         {
             _ms = 0;
             _directory = InputPath.Substring(0, InputPath.Length - FileName.Length);
+            if (Blank) return;
 
             Debug($"Starting {FileName}");
 
+            SelectOutput();
             TryConvert();
-            if (!Blank) WriteOutput();
 
             Debug($"Completed conversion of {FileName}");
 
             Console.WriteLine($"Converted {FileName} in {_ms} ms");
         }
 
-        private void WriteOutput()
+        private void SelectOutput()
         {
             if (OutputPath != "")
             {
@@ -59,16 +64,18 @@ namespace Doc2web.CLI
                 else _directory = Path.Combine(_directory, OutputPath);
                 if (!Directory.Exists(_directory)) Directory.CreateDirectory(_directory);
             }
-            File.WriteAllText($"{_directory}{FileName}.html", html);
+            _outputPath = $"{_directory}{FileName}.html";
         }
 
         private void TryConvert()
         {
             try
             {
-                using (var wpDoc = WordprocessingDocument.Open(InputPath, false))
+                using (_wpDoc = WordprocessingDocument.Open(InputPath, false))
+                using (_conversionEngine = QuickAndEasy.BuildDefaultEngine(_wpDoc))
+                using (_outputStream = File.OpenWrite(_outputPath))
                 {
-                    ConvertDocument(wpDoc);
+                    ConvertDocument();
                 };
             } catch (Exception ex)
             {
@@ -76,17 +83,16 @@ namespace Doc2web.CLI
             }
         }
 
-        private void ConvertDocument(WordprocessingDocument wpDoc)
+        private void ConvertDocument()
         {
             _sw = Stopwatch.StartNew();
             try
             {
-                var elems = FindElements(wpDoc);
-                html = QuickAndEasy.ConvertPartialDocument(wpDoc, elems);
+                var elems = FindElements(_wpDoc);
+                _conversionEngine.Convert(elems, new StreamWriter(_outputStream));
             }
             catch (Exception ex)
             {
-                html = "Conversion error";
                 Console.Error.WriteLine($"Failed to convert ${FileName}");
             } finally
             {

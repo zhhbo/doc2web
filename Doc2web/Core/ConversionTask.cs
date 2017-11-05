@@ -2,6 +2,7 @@
 using DocumentFormat.OpenXml;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,7 +13,7 @@ namespace Doc2web.Core
     {
         public ConversionTask() { }
 
-        public string Result => _result.ToString();
+        public StreamWriter Out { get; set; }
 
         public IEnumerable<OpenXmlElement> RootElements { get; set; }
 
@@ -54,22 +55,30 @@ namespace Doc2web.Core
                 .Select(RenderElementContext)
                 .ToArray();
 
-            _result = new StringBuilder();
-            _result.Append(Part1);
-            _result.Append(GlobalContext.Css);
-            _result.Append(Part2);
+            Out.Write(Part1);
+            Out.Write(GlobalContext.Css);
+            Out.Write(Part2);
+
 
             for(int i = 0; i < renderingTasks.Length; i++)
             {
                 var task = renderingTasks[i];
                 task.Wait();
-                _result.Append(task.Result);
+                QueueWrite(task.Result);
             }
 
-            _result.Append(GlobalContext.Html);
-            _result.Append(Part3);
-            _result.Append(GlobalContext.Js);
-            _result.Append(Part4);
+            _writtingTask.Wait();
+            Out.Write(GlobalContext.Html);
+            Out.Write(Part3);
+            Out.Write(GlobalContext.Js);
+            Out.Write(Part4);
+            Out.Flush();
+        }
+
+        private void QueueWrite(string data)
+        {
+            if (_writtingTask != null) _writtingTask.Wait();
+            _writtingTask = Out.WriteAsync(data);
         }
 
         private Task<string> RenderElementContext(IElementContext context)
@@ -84,7 +93,7 @@ namespace Doc2web.Core
         private static string Part2 = @"</style></head><body>";
         private static string Part3 = @"<script>";
         private static string Part4 = @"</script></body></html>";
-        private StringBuilder _result;
+        private Task _writtingTask;
 
         private Task<RootElementContext> ProcessRootElement(RootElementContext rootElementContext)
         {
