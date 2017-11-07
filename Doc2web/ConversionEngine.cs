@@ -64,6 +64,7 @@ namespace Doc2web
             _conversionTaskFactory = new ConversionTaskFactory
             {
                 LifetimeScope = _lifetimeScope,
+                ProcessorFactory = _processorFactory,
                 Processor = _processor,
                 ContextRenderer = new Core.Rendering.ContextRenderer()
             };
@@ -77,37 +78,18 @@ namespace Doc2web
             _lifetimeScope.Dispose();
         }
 
-        /// <summary>
-        /// Convert some open xml elements in HTML.
-        /// Add some temporary plugins for this conversion task.
-        /// </summary>
-        /// <param name="elements">Targeted open xml elements.</param>
-        /// <param name="temporaryPlugins">Plugins that will be added for this conversion task.</param>
-        /// <returns>HTML produce by the conversion engine.</returns>
-        public string Convert(IEnumerable<OpenXmlElement> elements, params object[] temporaryPlugins)
+        public void Convert(ConversionParameter parameter)
         {
-            using (var stream = new MemoryStream())
-            {
-                var tempPlugin = _processorFactory.BuildMultiple(temporaryPlugins);
-                var conversionTask = _conversionTaskFactory.Build(elements, new MemoryStream(), tempPlugin);
-                ExecuteConversionTask(conversionTask);
-                return ReadOutput(conversionTask);
-            }
+            var conversionTask = _conversionTaskFactory.Build(parameter);
+            ExecuteConversionTask(conversionTask);
         }
 
-        /// <summary>
-        /// Convert some open xml elements in HTML.
-        /// Add some temporary plugins for this conversion task.
-        /// </summary>
-        /// <param name="elements">Targeted open xml elements.</param>
-        /// <param name="temporaryPlugins">Plugins that will be added for this conversion task.</param>
-        /// <param name="stream">Stream where the html will be output.</param>
-        /// <returns>HTML produce by the conversion engine.</returns>
-        public void Convert(IEnumerable<OpenXmlElement> elements, Stream stream, params object[] temporaryPlugins)
+        public string ConvertToString(StringConversionParameter parameter)
         {
-            var tempPlugin = _processorFactory.BuildMultiple(temporaryPlugins);
-            var conversionTask = _conversionTaskFactory.Build(elements, stream, tempPlugin);
+            var tempPlugin = _processorFactory.BuildMultiple(parameter.AdditionalPlugins);
+            var conversionTask = _conversionTaskFactory.Build(parameter);
             ExecuteConversionTask(conversionTask);
+            return parameter.GetResult();
         }
 
         private static void ExecuteConversionTask(IConversionTask conversionTask)
@@ -116,14 +98,6 @@ namespace Doc2web
             conversionTask.ProcessElements();
             conversionTask.PostProcess();
             conversionTask.AssembleDocument();
-        }
-        private static string ReadOutput(IConversionTask conversionTask)
-        {
-            ((MemoryStream)conversionTask.Out.BaseStream).Position = 0;
-            using (var sr = new StreamReader(conversionTask.Out.BaseStream))
-            {
-                return sr.ReadToEnd();
-            }
         }
     }
 }

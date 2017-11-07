@@ -16,28 +16,29 @@ namespace Doc2web.Core
 
         public IContextRenderer ContextRenderer { get; set; }
 
-        public IConversionTask Build(IEnumerable<OpenXmlElement> elements, Stream stream)
-        {
-            return new ConversionTask
-            {
-                Processor = Processor,
-                RootElements = elements,
-                LifetimeScope = LifetimeScope,
-                ContextRenderer = ContextRenderer,
-                Out = new StreamWriter(stream)
-            };
-        }
+        public IProcessorFactory ProcessorFactory { get; set; }
 
-        public IConversionTask Build(IEnumerable<OpenXmlElement> elements, Stream stream, Processor temporary)
+        public IConversionTask Build(ConversionParameter parameter)
         {
-            var processor = new Processor(Processor, temporary);
+            Processor processor; 
+            if (parameter.AdditionalPlugins.Count > 0)
+            {
+                processor = new Processor(
+                    Processor, 
+                    ProcessorFactory.BuildMultiple(parameter.AdditionalPlugins)
+                );
+            } else
+            {
+                processor = Processor;
+            }
+
             return new ConversionTask
             {
                 Processor = processor,
-                RootElements = elements,
+                RootElements = parameter.Elements,
                 LifetimeScope = LifetimeScope,
                 ContextRenderer = ContextRenderer,
-                Out = new StreamWriter(stream)
+                Out = new StreamWriter(parameter.Stream) { AutoFlush = parameter.AutoFlush }
             };
         }
     }

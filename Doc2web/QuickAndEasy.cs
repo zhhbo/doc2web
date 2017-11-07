@@ -35,7 +35,10 @@ namespace Doc2web
         {
             using (var conversionEngine = BuildDefaultEngine(wpDoc))
             {
-                return conversionEngine.Convert(elements);
+                return conversionEngine.ConvertToString(new StringConversionParameter
+                {
+                    Elements = elements,
+                });
             }
         }
 

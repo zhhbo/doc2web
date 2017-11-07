@@ -8,7 +8,7 @@ using System.Text;
 
 namespace Doc2web.Core
 {
-    public class ProcessorFactory
+    public class ProcessorFactory : IProcessorFactory
     {
         public Processor BuildMultiple(params object[] inputObject) =>
             new Processor(inputObject.Select(BuildSingle).ToArray());

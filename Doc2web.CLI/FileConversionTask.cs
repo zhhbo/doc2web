@@ -89,7 +89,11 @@ namespace Doc2web.CLI
             try
             {
                 var elems = FindElements(_wpDoc);
-                _conversionEngine.Convert(elems, new StreamWriter(_outputStream));
+                _conversionEngine.Convert(new ConversionParameter
+                {
+                    Elements = elems,
+                    Stream = _outputStream
+                });
             }
             catch (Exception ex)
             {
