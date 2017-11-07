@@ -21,12 +21,6 @@ namespace Doc2web
             set => throw new InvalidOperationException("Cannot set the Autoflush of a StringConversionParameter");
         }
 
-        public override int AutoFlushBlockCount
-        {
-            get => 0;
-            set => throw new InvalidOperationException("Cannot set the Autoflush of a StringConversionParameter");
-        }
-
         public StringConversionParameter()
         {
             _stream = new MemoryStream();

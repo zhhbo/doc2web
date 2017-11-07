@@ -89,7 +89,7 @@ namespace Doc2web.Core
             }, context);
         }
 
-        private static string Part1 = @"<!DOCTYPE html><html><head><style>";
+        private static string Part1 = "<!DOCTYPE html><html><head><meta charset=\"UTF-8\"><style>";
         private static string Part2 = @"</style></head><body>";
         private static string Part3 = @"<script>";
         private static string Part4 = @"</script></body></html>";

@@ -16,7 +16,7 @@ namespace Doc2web.Tests
 
             Assert.IsInstanceOfType(p.Stream, typeof(MemoryStream));
             Assert.IsFalse(p.AutoFlush);
-            Assert.AreEqual(0, p.AutoFlushBlockCount);
+            //Assert.AreEqual(0, p.AutoFlushBlockCount);
             Assert.IsNotNull(p.AdditionalPlugins);
         }
 
@@ -27,7 +27,7 @@ namespace Doc2web.Tests
 
             Assert.ThrowsException<InvalidOperationException>(() => p.Stream = new MemoryStream());
             Assert.ThrowsException<InvalidOperationException>(() => p.AutoFlush = true);
-            Assert.ThrowsException<InvalidOperationException>(() => p.AutoFlushBlockCount = 10);
+            //Assert.ThrowsException<InvalidOperationException>(() => p.AutoFlushBlockCount = 10);
         }
 
         [TestMethod]
