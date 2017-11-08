@@ -94,7 +94,7 @@ namespace Doc2web.Tests.Core
             _globalContext.Js.Returns("window.alert('hello')");
             _globalContext.Html.Returns(@"<div>some additional tag</div>");
             var expectedOutput =
-                @"<!DOCTYPE html><html><head><style>" +
+                "<!DOCTYPE html><html><head><meta charset=\"UTF-8\"><style>" +
                 _globalContext.Css +
                 @"</style></head><body>" +
                 "<p>1</p><p>2</p>" +

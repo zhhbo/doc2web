@@ -25,20 +25,21 @@ namespace Doc2web.Core
             {
                 processor = new Processor(
                     Processor, 
-                    ProcessorFactory.BuildMultiple(parameter.AdditionalPlugins)
+                    ProcessorFactory.BuildMultiple(parameter.AdditionalPlugins.ToArray())
                 );
             } else
             {
                 processor = Processor;
             }
 
+            var stream = new StreamWriter(parameter.Stream, Encoding.UTF8) { AutoFlush = parameter.AutoFlush };
             return new ConversionTask
             {
                 Processor = processor,
                 RootElements = parameter.Elements,
                 LifetimeScope = LifetimeScope,
                 ContextRenderer = ContextRenderer,
-                Out = new StreamWriter(parameter.Stream) { AutoFlush = parameter.AutoFlush }
+                Out = stream
             };
         }
     }
