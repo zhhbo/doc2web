@@ -4,37 +4,42 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Doc2web.Core.Rendering;
+using System.IO;
 
 namespace Doc2web.Core
 {
     public class ConversionTaskFactory
     {
-        public IContainer EngineContainer { get; set; }
+        public ILifetimeScope LifetimeScope { get; set; }
 
         public Processor Processor { get; set; }
 
         public IContextRenderer ContextRenderer { get; set; }
 
-        public IConversionTask Build(IEnumerable<OpenXmlElement> elements)
-        {
-            return new ConversionTask
-            {
-                Processor = Processor,
-                RootElements = elements,
-                Container = EngineContainer,
-                ContextRenderer = ContextRenderer
-            };
-        }
+        public IProcessorFactory ProcessorFactory { get; set; }
 
-        public IConversionTask Build(IEnumerable<OpenXmlElement> elements, Processor temporary)
+        public IConversionTask Build(ConversionParameter parameter)
         {
-            var processor = new Processor(Processor, temporary);
+            Processor processor; 
+            if (parameter.AdditionalPlugins.Count > 0)
+            {
+                processor = new Processor(
+                    Processor, 
+                    ProcessorFactory.BuildMultiple(parameter.AdditionalPlugins.ToArray())
+                );
+            } else
+            {
+                processor = Processor;
+            }
+
+            var stream = new StreamWriter(parameter.Stream, Encoding.UTF8) { AutoFlush = parameter.AutoFlush };
             return new ConversionTask
             {
                 Processor = processor,
-                RootElements = elements,
-                Container = EngineContainer,
-                ContextRenderer = ContextRenderer
+                RootElements = parameter.Elements,
+                LifetimeScope = LifetimeScope,
+                ContextRenderer = ContextRenderer,
+                Out = stream
             };
         }
     }

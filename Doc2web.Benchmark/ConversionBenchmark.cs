@@ -4,6 +4,7 @@ using Doc2web.Plugins.Numbering;
 using Doc2web.Plugins.Style;
 using Doc2web.Plugins.TextFixes;
 using Doc2web.Plugins.TextProcessor;
+using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
 using System;
@@ -22,7 +23,7 @@ namespace Doc2web.Benchmark
             return new ConversionEngine(
                 new StylePlugin(_wpDoc),
                 new TextProcessorPlugin(),
-                //new NumberingPlugin(_wpDoc),
+                new NumberingPlugin(_wpDoc),
                 new CrossReferencesCleanupPlugin(),
                 new HyphenInsertionPlugin(),
                 new BreakInsertionPlugin(),
@@ -67,13 +68,19 @@ namespace Doc2web.Benchmark
         public ConversionEngine InitializeEngine() => BuildConversionEngine();
 
         //[Benchmark]
-        public string RenderShortest() => _conversionEngine.Convert(_shortestParagraph);
+        public string RenderShortest() => 
+            _conversionEngine.ConvertToString(
+                new StringConversionParameter { Elements = _shortestParagraph });
 
         //[Benchmark]
-        public string RenderLongest() => _conversionEngine.Convert(_longestParagraph);
+        public string RenderLongest() =>
+            _conversionEngine.ConvertToString(
+                new StringConversionParameter { Elements = _longestParagraph });
 
         [Benchmark]
-        public string RenderComplete() => _conversionEngine.Convert(_paragraphs);
+        public string RenderComplete() =>
+            _conversionEngine.ConvertToString(
+                new StringConversionParameter { Elements = _paragraphs });
 
     }
 }

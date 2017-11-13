@@ -35,11 +35,19 @@ namespace Doc2web
         {
             using (var conversionEngine = BuildDefaultEngine(wpDoc))
             {
-                return conversionEngine.Convert(elements);
+                return conversionEngine.ConvertToString(new StringConversionParameter
+                {
+                    Elements = elements,
+                });
             }
         }
 
-        private static ConversionEngine BuildDefaultEngine(WordprocessingDocument wpDoc) =>
+        /// <summary>
+        /// Create a conversion engine using all plugins provided in Doc2web.
+        /// </summary>
+        /// <param name="wpDoc"></param>
+        /// <returns></returns>
+        public static ConversionEngine BuildDefaultEngine(WordprocessingDocument wpDoc) =>
             new ConversionEngine(
                 new StylePlugin(wpDoc),
                 new NumberingPlugin(wpDoc),
@@ -49,7 +57,8 @@ namespace Doc2web
                 new CrossReferencesCleanupPlugin(),
                 new HyphenInsertionPlugin(),
                 new BreakInsertionPlugin(),
-                new EscapeHtmlPlugin()
+                new EscapeHtmlPlugin(),
+                new InstrTxtCleanupPlugin()
             );
     }
 }

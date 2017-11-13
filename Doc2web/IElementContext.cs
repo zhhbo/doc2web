@@ -73,7 +73,7 @@ namespace Doc2web
 
         /// <summary>
         /// Register multiple HtmlNode to be rendered.
-        void AddMultipleNodes(IEnumerable<HtmlNode> nodes);
+        void AddNodes(IEnumerable<HtmlNode> nodes);
 
         /// <summary>
         /// Register a mutation that will be applied to the textual output.

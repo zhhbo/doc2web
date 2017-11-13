@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Doc2web.Core;
+using System.IO;
 
 namespace Doc2web
 {
@@ -12,7 +13,7 @@ namespace Doc2web
     /// </summary>
     public class ConversionEngine : IDisposable
     {
-        private IContainer _container;
+        private ILifetimeScope _lifetimeScope;
         private ConversionTaskFactory _conversionTaskFactory;
         private ProcessorFactory _processorFactory;
         private Processor _processor;
@@ -24,20 +25,46 @@ namespace Doc2web
         /// hooks(InitializeEngineAttribute,PreProcessingAttribute, ElementProcessingAttribute and PostProcessingAttribute).</param>
         public ConversionEngine(params object[] plugins)
         {
-            _processorFactory = new ProcessorFactory();
-            _processor = _processorFactory.BuildMultiple(plugins);
-            Initialize();
+            SetupProcessors(plugins);
+            SetupLifetimeScopeFromScratch();
+            SetupConversionTaskFactory();
         }
 
-        private void Initialize()
+        /// <summary>
+        /// Creates a new conversion engine.
+        /// </summary>
+        /// <param name="plugins">Instances of classes that have methods with attributes that register 
+        /// hooks(InitializeEngineAttribute,PreProcessingAttribute, ElementProcessingAttribute and PostProcessingAttribute).</param>
+        public ConversionEngine(ILifetimeScope parentScope, params object[] plugins)
+        {
+            SetupProcessors(plugins);
+            SetupLifetimeScopeFromParent(parentScope);
+            SetupConversionTaskFactory();
+        }
+
+        private void SetupProcessors(object[] plugins)
+        {
+            _processorFactory = new ProcessorFactory();
+            _processor = _processorFactory.BuildMultiple(plugins);
+        }
+
+        private void SetupLifetimeScopeFromScratch()
         {
             var containerBuilder = new ContainerBuilder();
             _processor.InitEngine(containerBuilder);
-            _container = containerBuilder.Build();
+            _lifetimeScope = containerBuilder.Build();
+        }
+        private void SetupLifetimeScopeFromParent(ILifetimeScope parentScope)
+        {
+            _lifetimeScope = parentScope.BeginLifetimeScope(_processor.InitEngine);
+        }
 
+        private void SetupConversionTaskFactory()
+        {
             _conversionTaskFactory = new ConversionTaskFactory
             {
-                EngineContainer = _container,
+                LifetimeScope = _lifetimeScope,
+                ProcessorFactory = _processorFactory,
                 Processor = _processor,
                 ContextRenderer = new Core.Rendering.ContextRenderer()
             };
@@ -48,44 +75,29 @@ namespace Doc2web
         /// </summary>
         public void Dispose()
         {
-            _container.Dispose();
+            _lifetimeScope.Dispose();
         }
 
-        /// <summary>
-        /// Convert some open xml elements in HTML.
-        /// </summary>
-        /// <param name="elements">Targeted open xml elements.</param>
-        /// <returns>HTML produce by the conversion engine.</returns>
-        public string Convert(IEnumerable<OpenXmlElement> elements)
+        public void Convert(ConversionParameter parameter)
         {
-            var conversionTask = _conversionTaskFactory.Build(elements);
-
-            return ExecuteConversionTask(conversionTask);
+            var conversionTask = _conversionTaskFactory.Build(parameter);
+            ExecuteConversionTask(conversionTask);
         }
 
-        /// <summary>
-        /// Convert some open xml elements in HTML.
-        /// Add some temporary plugins for this conversion task.
-        /// </summary>
-        /// <param name="elements">Targeted open xml elements.</param>
-        /// <param name="temporaryPlugins">Plugins that will be added for this conversion task.</param>
-        /// <returns>HTML produce by the conversion engine.</returns>
-        public string Convert(IEnumerable<OpenXmlElement> elements, params object[] temporaryPlugins)
+        public string ConvertToString(StringConversionParameter parameter)
         {
-            var tempPlugin = _processorFactory.BuildMultiple(temporaryPlugins);
-            var conversionTask = _conversionTaskFactory.Build(elements, tempPlugin);
-
-            return ExecuteConversionTask(conversionTask);
+            var tempPlugin = _processorFactory.BuildMultiple(parameter.AdditionalPlugins);
+            var conversionTask = _conversionTaskFactory.Build(parameter);
+            ExecuteConversionTask(conversionTask);
+            return parameter.GetResult();
         }
 
-        private static string ExecuteConversionTask(IConversionTask conversionTask)
+        private static void ExecuteConversionTask(IConversionTask conversionTask)
         {
             conversionTask.PreProcess();
             conversionTask.ProcessElements();
             conversionTask.PostProcess();
             conversionTask.AssembleDocument();
-
-            return conversionTask.Result;
         }
     }
 }

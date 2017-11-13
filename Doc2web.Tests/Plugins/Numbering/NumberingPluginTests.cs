@@ -60,7 +60,7 @@ namespace Doc2web.Tests.Plugins.Numbering
         }
 
         [TestMethod]
-        public void InitEngine_WordprocessingDocumentTest()
+        public void RegisterConfig_WordprocessingDocumentTest()
         {
             MockDocument();
             Initialize();

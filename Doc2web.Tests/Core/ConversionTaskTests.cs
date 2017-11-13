@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Doc2web.Core;
+using System.IO;
 
 namespace Doc2web.Tests.Core
 {
@@ -15,6 +16,7 @@ namespace Doc2web.Tests.Core
     public class ConversionTaskTests
     {
         private ConversionTask _instance;
+        private MemoryStream _stream;
         private IGlobalContext _globalContext;
         private IContainer _engineContainer;
         private RootElementContext[] _rootElementContext;
@@ -24,6 +26,7 @@ namespace Doc2web.Tests.Core
         [TestInitialize]
         public void Initialize()
         {
+            _stream = new MemoryStream();
             _globalContext = Substitute.For<IGlobalContext>();
             _engineContainer = Substitute.For<IContainer>();
             _rootElementContext = new RootElementContext[] { 
@@ -39,6 +42,12 @@ namespace Doc2web.Tests.Core
             BuildInstance();
         }
 
+        [TestCleanup]
+        public void Cleanup()
+        {
+            _stream.Dispose();
+        }
+
         private void BuildInstance()
         {
             _instance = new ConversionTask
@@ -46,8 +55,9 @@ namespace Doc2web.Tests.Core
                 GlobalContext = _globalContext,
                 Processor = _processor,
                 ContextRenderer = _contextRenderer,
-                Container = _engineContainer,
-                RootElements = _rootElementContext.Select(x => x.RootElement)
+                LifetimeScope = _engineContainer,
+                RootElements = _rootElementContext.Select(x => x.RootElement),
+                Out = new StreamWriter(_stream)
             };
         }
 
@@ -84,7 +94,7 @@ namespace Doc2web.Tests.Core
             _globalContext.Js.Returns("window.alert('hello')");
             _globalContext.Html.Returns(@"<div>some additional tag</div>");
             var expectedOutput =
-                @"<!DOCTYPE html><html><head><style>" +
+                "<!DOCTYPE html><html><head><meta charset=\"UTF-8\"><style>" +
                 _globalContext.Css +
                 @"</style></head><body>" +
                 "<p>1</p><p>2</p>" +
@@ -94,7 +104,9 @@ namespace Doc2web.Tests.Core
                 @"</script></body></html>";
 
             _instance.AssembleDocument();
-            var result = _instance.Result;
+
+            _stream.Position = 0;
+            string result = new StreamReader(_stream).ReadToEnd();
 
             Assert.AreEqual(expectedOutput, result);
         }

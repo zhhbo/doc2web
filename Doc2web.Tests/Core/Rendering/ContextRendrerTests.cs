@@ -24,7 +24,7 @@ namespace Doc2web.Tests.Core.Rendering
                     new Run(
                         new Text("This is the text")))
             );
-            _elementContext.AddMultipleNodes(new HtmlNode[] // Force a node colisison
+            _elementContext.AddNodes(new HtmlNode[] // Force a node colisison
             {
                 new HtmlNode { Start = 0, End = 5, Z = 1 },
                 new HtmlNode { Start = 3, End = 7, Z = 0 },

@@ -12,24 +12,28 @@ namespace Doc2web.Tests.Plugins.Style
     [TestClass]
     public class StylePluginTests
     {
+        private StyleConfig _config;
         private StylePlugin _instance;
 
         [TestInitialize]
         public void Initialize()
         {
-            _instance = new StylePlugin(Samples.NumberingSample3.BuildDoc());
+            _config = new StyleConfig();
+            _instance = new StylePlugin(Samples.NumberingSample3.BuildDoc(), _config);
         }
 
         [TestMethod]
-        public void InitializeEngine_Test()
+        public void RegisterConfig_Test()
         {
             var containerBuilder = new ContainerBuilder();
 
             _instance.InitEngine(containerBuilder);
             var container = containerBuilder.Build();
             var registrator = container.Resolve<ICssRegistrator>();
+            var config = container.Resolve<StyleConfig>();
 
             Assert.IsNotNull(registrator);
+            Assert.AreSame(_config, config);
         }
 
         [TestMethod]

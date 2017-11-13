@@ -80,6 +80,7 @@ is simple and 40 pages in ~115 ms when the open xml is very complicated.
     - [x] Break/tabs/hypen character insertions
     - [x] Cross references clean up
     - [x] Html escape
+    - [x] Remove w:instrText
 - [ ] Benchmarks
   - [x] Conversion
   - [x] Rendering
@@ -101,7 +102,7 @@ is simple and 40 pages in ~115 ms when the open xml is very complicated.
   - [ ] Plugin samples
   - [ ] Github pages
 - [ ] Other
-  - [ ] Coverage > 90%
+  - [x] Coverage > 90%
+  - [x] Continuous integration
+  - [x] NuGet package publicly available (pre-release)
   - [ ] Public and easy docker container with CLI/Benchmark
-  - [ ] NuGet package publicly available
-  - [ ] Continuous integration

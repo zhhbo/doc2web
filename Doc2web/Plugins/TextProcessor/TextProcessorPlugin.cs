@@ -26,7 +26,7 @@ namespace Doc2web.Plugins.TextProcessor
         }
 
         [InitializeEngine]
-        public void InitializeEngine(ContainerBuilder containerBuilder)
+        public void RegisterConfig(ContainerBuilder containerBuilder)
         {
             containerBuilder.RegisterInstance(_config);
         }
