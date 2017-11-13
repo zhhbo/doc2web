@@ -80,6 +80,7 @@ is simple and 40 pages in ~115 ms when the open xml is very complicated.
     - [x] Break/tabs/hypen character insertions
     - [x] Cross references clean up
     - [x] Html escape
+    - [x] Remove w:instrText
 - [ ] Benchmarks
   - [x] Conversion
   - [x] Rendering
