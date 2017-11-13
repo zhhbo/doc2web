@@ -57,7 +57,8 @@ namespace Doc2web
                 new CrossReferencesCleanupPlugin(),
                 new HyphenInsertionPlugin(),
                 new BreakInsertionPlugin(),
-                new EscapeHtmlPlugin()
+                new EscapeHtmlPlugin(),
+                new InstrTxtCleanupPlugin()
             );
     }
 }
