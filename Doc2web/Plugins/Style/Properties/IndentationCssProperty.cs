@@ -96,10 +96,8 @@ namespace Doc2web.Plugins.Style.Properties
             {
                 int f = 0;
                 int s = 0;
-                // if (Left.HasValue) f = // Convert.ToUInt32(Math.Round(Left.Value * 100000, 0) );
                 if (Left.HasValue) f = Convert.ToInt32(Left.Value);
-                if (Hanging.HasValue) s = ReverseBitsWithLoop(Convert.ToInt32(Hanging.Value)); // Convert.ToUInt32(Math.Round(Hanging.Value * 100000, 0));
-                // return (int)((f + UInt32.MaxValue/2) | s);
+                if (Hanging.HasValue) s = ReverseBitsWithLoop(Convert.ToInt32(Hanging.Value));
                 return f & s;
             } catch
             {
