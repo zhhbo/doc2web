@@ -22,48 +22,46 @@ namespace Doc2web.Plugins.Style.Css
         public CssPropertiesSet Get(string styleId)
         {
             if (_cache.TryGetValue(styleId, out CssPropertiesSet result))
-            {
                 return result.Clone();
-            } else
+
+            return GetLocked(styleId);
+        }
+
+        private CssPropertiesSet GetLocked(string styleId)
+        {
+            lock (_cache)
             {
-                lock (_cache)
-                {
-                    return AddStyle(styleId).Clone();
-                }
+                if (_cache.TryGetValue(styleId, out CssPropertiesSet result))
+                    return result.Clone();
+
+                return AddStyle(styleId).Clone();
             }
         }
 
         private CssPropertiesSet AddStyle(string styleId)
         {
-            try
+            var style = _styles.First(x => x.StyleId?.Value == styleId);
+            var props = BuildProps(style);
+            var set = new CssPropertiesSet();
+            set.AddMany(props);
+
+            _cache.Add(styleId, set);
+
+            if (style.BasedOn?.Val != null)
             {
-                var style = _styles.First(x => x.StyleId?.Value == styleId);
-                var props = BuildProps(style);
-                var set = new CssPropertiesSet();
-                set.AddMany(props);
-
-                _cache.Add(styleId, set);
-
-                if (style.BasedOn?.Val != null)
+                if (_cache.TryGetValue(
+                    style.BasedOn.Val,
+                    out CssPropertiesSet basedOn))
                 {
-                    if (_cache.TryGetValue(
-                        style.BasedOn.Val,
-                        out CssPropertiesSet basedOn))
-                    {
-                        set.AddMany(basedOn);
-                    }
-                    else
-                    {
-                        set.AddMany(AddStyle(style.BasedOn.Val));
-                    }
+                    set.AddMany(basedOn);
                 }
+                else
+                {
+                    set.AddMany(AddStyle(style.BasedOn.Val));
+                }
+            }
 
-                return set;
-            }
-            catch
-            {
-                return new CssPropertiesSet();
-            }
+            return set;
         }
 
         public abstract CssPropertiesSet BuildProps(DocumentFormat.OpenXml.Wordprocessing.Style style);

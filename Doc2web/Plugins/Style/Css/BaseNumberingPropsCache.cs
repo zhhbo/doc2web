@@ -35,11 +35,13 @@ namespace Doc2web.Plugins.Style.Css
 
             lock (_cache)
             {
-                try
+                if (_cache.TryGetValue((numberingId, levelIndex), out CssPropertiesSet cached2))
+                {
+                    newEntry = cached2;
+                } else
                 {
                     _cache.Add((numberingId, levelIndex), newEntry);
                 }
-                catch (ArgumentException) { }
             }
 
             return newEntry.Clone();

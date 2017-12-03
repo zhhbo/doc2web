@@ -94,15 +94,31 @@ namespace Doc2web.Plugins.Style.Properties
         {
             try
             {
-                uint f = 0;
-                uint s = 0;
-                if (Left.HasValue) f = Convert.ToUInt32(Math.Round(Left.Value * 100000, 0) );
-                if (Hanging.HasValue) s = Convert.ToUInt32(Math.Round(Hanging.Value * 100000, 0));
-                return (int)((f + UInt32.MaxValue/2) | s);
+                int f = 0;
+                int s = 0;
+                // if (Left.HasValue) f = // Convert.ToUInt32(Math.Round(Left.Value * 100000, 0) );
+                if (Left.HasValue) f = Convert.ToInt32(Left.Value);
+                if (Hanging.HasValue) s = ReverseBitsWithLoop(Convert.ToInt32(Hanging.Value)); // Convert.ToUInt32(Math.Round(Hanging.Value * 100000, 0));
+                // return (int)((f + UInt32.MaxValue/2) | s);
+                return f & s;
             } catch
             {
                 return -1;
             }
+        }
+
+        private static int ReverseBitsWithLoop(int v)
+        {
+            int r = v; // r will be reversed bits of v; first get LSB of v
+            int s = 7; // extra shift needed at end
+            for (v >>= 1; v != 0; v >>= 1)
+            {
+                r <<= 1;
+                r |= (int)(v & 1);
+                s--;
+            }
+            r <<= s; // shift when v's highest bits are zero
+            return r;
         }
 
         public override bool Equals(ICssProperty obj)

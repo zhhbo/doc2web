@@ -89,7 +89,7 @@ namespace Doc2web.Tests.Plugins.Style.Properties
         }
 
         [TestMethod]
-        public void HashCode_Test()
+        public void HashCode_OkTest()
         {
             var elem = new Color { Val = new StringValue("123456") };
             _instance.Element = elem.CloneNode(true) as Color;
@@ -98,6 +98,17 @@ namespace Doc2web.Tests.Plugins.Style.Properties
             var expected = Convert.ToUInt32("123456", 16);
 
             Assert.AreEqual((int)expected, result);
+        }
+
+        [TestMethod]
+        public void HashCode_AutoTest()
+        {
+            var elem = new Color { Val = new StringValue("auto") };
+            _instance.Element = elem.CloneNode(true) as Color;
+
+            var result = _instance.GetHashCode();
+
+            Assert.AreEqual(-1, result);
         }
 
         [TestMethod]
