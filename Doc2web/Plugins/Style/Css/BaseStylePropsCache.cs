@@ -21,14 +21,6 @@ namespace Doc2web.Plugins.Style.Css
 
         public CssPropertiesSet Get(string styleId)
         {
-            if (_cache.TryGetValue(styleId, out CssPropertiesSet result))
-                return result.Clone();
-
-            return GetLocked(styleId);
-        }
-
-        private CssPropertiesSet GetLocked(string styleId)
-        {
             lock (_cache)
             {
                 if (_cache.TryGetValue(styleId, out CssPropertiesSet result))
@@ -40,7 +32,9 @@ namespace Doc2web.Plugins.Style.Css
 
         private CssPropertiesSet AddStyle(string styleId)
         {
-            var style = _styles.First(x => x.StyleId?.Value == styleId);
+            var style = _styles.FirstOrDefault(x => x.StyleId?.Value == styleId);
+            if (style == null) return new CssPropertiesSet();
+
             var props = BuildProps(style);
             var set = new CssPropertiesSet();
             set.AddMany(props);

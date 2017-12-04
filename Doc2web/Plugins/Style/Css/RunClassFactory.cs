@@ -70,7 +70,7 @@ namespace Doc2web.Plugins.Style.Css
         {
             if (styleId != null)
             {
-                cssClass.Props.AddMany(_pStylePropsCache.Get(styleId));
+                // cssClass.Props.AddMany(_pStylePropsCache.Get(styleId));
                 return;
             }
             if (_defaults.DefaultRunStyle != null)

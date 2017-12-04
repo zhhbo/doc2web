@@ -123,7 +123,7 @@ namespace Doc2web.Plugins.Numbering.Mapping
             var startValue = arg.StartNumberingValue?.Val?.HasValue;
             if (startValue.HasValue && startValue.Value)
             {
-                identationConfig.StartValue = arg.StartNumberingValue.Val;
+                identationConfig.StartValue = arg.StartNumberingValue.Val.Value;
             }
             else
             {

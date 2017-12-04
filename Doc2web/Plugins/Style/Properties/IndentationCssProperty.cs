@@ -96,9 +96,9 @@ namespace Doc2web.Plugins.Style.Properties
             {
                 int f = 0;
                 int s = 0;
-                if (Left.HasValue) f = Convert.ToInt32(Left.Value);
-                if (Hanging.HasValue) s = ReverseBitsWithLoop(Convert.ToInt32(Hanging.Value));
-                return f & s;
+                if (Left.HasValue) f = Convert.ToInt32(Left.Value * 1000000);
+                if (Hanging.HasValue) s = ReverseBitsWithLoop(Convert.ToInt32(Hanging.Value * 1000000));
+                return f | s;
             } catch
             {
                 return -1;
