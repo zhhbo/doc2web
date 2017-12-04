@@ -27,6 +27,8 @@ namespace Doc2web.Tests.Plugins.Style.Css
             _config = new StyleConfig();
             _defaults = Substitute.For<IDefaultsProvider>();
             _defaults.Run.Returns(new CssPropertiesSet());
+            _defaults.DefaultRunStyle.Returns(x => null);
+            _defaults.DefaultParagraphStyle.Returns(x => null);
             _pStylePropsCache = Substitute.For<IStylePropsCache>();
             _numPropsCache = Substitute.For<INumberingPropsCache>();
             _rStylePropsCache = Substitute.For<IStylePropsCache>();
@@ -168,7 +170,29 @@ namespace Doc2web.Tests.Plugins.Style.Css
             });
 
             Utils.AssertDynamicClass(_config, result);
-            Assert.IsTrue(props.Equals(props));
+            Assert.IsTrue(props.Equals(result.Props));
+        }
+
+
+        [TestMethod]
+        public void Build_ParagraphDefaultStyleTest()
+        {
+            string styleId = "default-paragraph";
+            var rPr = new RunProperties();
+            var props = new CssPropertiesSet {
+                new MockProp1(),
+                new MockProp2()
+            };
+            _pStylePropsCache.Get(styleId).Returns(props);
+            _defaults.DefaultParagraphStyle.Returns(styleId);
+
+            var result = _instance.Build(new RunClassParam
+            {
+                InlineProperties = rPr,
+            });
+
+            Utils.AssertDynamicClass(_config, result);
+            Assert.IsTrue(props.Equals(result.Props));
         }
 
         [TestMethod]

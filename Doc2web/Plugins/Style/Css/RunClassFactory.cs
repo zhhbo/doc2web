@@ -40,11 +40,6 @@ namespace Doc2web.Plugins.Style.Css
             var cssClass = new CssClass { Name = GenerageDynamicName() };
             var inline = BuildInline(param.InlineProperties);
 
-            // This is according to the doc
-            // cssClass.Props.AddMany(inline);
-            // AddRunStyle(cssClass, param.RunStyleId);
-            // AddNumberingProps(cssClass, param);
-
             // This is according to me
             AddNumberingProps(cssClass, param);
             cssClass.Props.AddMany(inline);
@@ -70,7 +65,21 @@ namespace Doc2web.Plugins.Style.Css
         {
             if (styleId != null)
             {
-                // cssClass.Props.AddMany(_pStylePropsCache.Get(styleId));
+                cssClass.Props.AddMany(_pStylePropsCache.Get(styleId));
+                return;
+            }
+            if (_defaults.DefaultParagraphStyle != null)
+            {
+                var props = _pStylePropsCache.Get(_defaults.DefaultParagraphStyle);
+                cssClass.Props.AddMany(props);
+            }
+        }
+
+        private void AddRunStyle(CssClass cssClass, string styleId)
+        {
+            if (styleId != null)
+            {
+                cssClass.Props.AddMany(_rStylePropsCache.Get(styleId));
                 return;
             }
             if (_defaults.DefaultRunStyle != null)
@@ -78,12 +87,6 @@ namespace Doc2web.Plugins.Style.Css
                 var props = _rStylePropsCache.Get(_defaults.DefaultRunStyle);
                 cssClass.Props.AddMany(props);
             }
-        }
-
-        private void AddRunStyle(CssClass cssClass, string styleId)
-        {
-            if (styleId == null) return;
-            cssClass.Props.AddMany(_rStylePropsCache.Get(styleId));
         }
 
         private static bool WillBeEmptyClass(RunClassParam param, CssPropertiesSet inline) => 
