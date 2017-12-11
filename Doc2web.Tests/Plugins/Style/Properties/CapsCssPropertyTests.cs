@@ -35,7 +35,7 @@ namespace Doc2web.Tests.Plugins.Style.Properties
         public void AssCss_OffTest()
         {
             var expectedCssData = new CssData();
-            expectedCssData.AddAttribute("span.test-cls", "text-transform", "lowercase");
+            expectedCssData.AddAttribute("span.test-cls", "text-transform", "none");
 
             var cssData = new CssData();
             _instance.SetOff(cssData);

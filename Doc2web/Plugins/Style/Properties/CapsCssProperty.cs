@@ -10,7 +10,7 @@ namespace Doc2web.Plugins.Style.Properties
     {
         public override void SetOff(CssData data)
         {
-            data.AddAttribute(Selector, "text-transform", "lowercase");
+            data.AddAttribute(Selector, "text-transform", "none");
         }
 
         public override void SetOn(CssData data)
