@@ -20,6 +20,7 @@ namespace Doc2web.Plugins.Numbering.Mapping.Stringifiers
                 case NumberFormatValues.Ordinal: return new OrdinalNumberStringifier();
                 case NumberFormatValues.OrdinalText: return new OrdinalTextStringifier();
                 case NumberFormatValues.DecimalZero: return new DecimalZeroStringifier();
+                case NumberFormatValues.None: return new NoneStringifier();
                 default: return new DecimalStringifier();
             }
         }
