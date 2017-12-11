@@ -17,12 +17,6 @@ namespace Doc2web.Plugins.Style.Properties
             "center",
             "justify"
         };
-        private StyleConfig _config;
-
-        public JustificationCssProperty(StyleConfig config)
-        {
-            _config = config;
-        }
 
         public override void InsertCss(CssData cssData)
         {
@@ -31,7 +25,7 @@ namespace Doc2web.Plugins.Style.Properties
             {
                 cssData.AddAttribute(Selector, "text-align", MapJusitfyValues[i]);
                 cssData.AddAttribute(Selector, "justify-content", "center");
-                cssData.AddAttribute(Selector + _config.ParagraphCssClassPrefix, "flex", "0");
+                cssData.AddAttribute(Selector + " > p:last-child", "flex", "unset");
             } else if (i != EMPTY) 
                 cssData.AddAttribute(Selector, "text-align", MapJusitfyValues[i]);
         }
