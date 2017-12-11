@@ -69,18 +69,19 @@ namespace Doc2web.CLI
 
         private void TryConvert()
         {
-            //try
-            //{
+            try
+            {
                 using (_wpDoc = WordprocessingDocument.Open(InputPath, false))
                 using (_conversionEngine = QuickAndEasy.BuildDefaultEngine(_wpDoc))
                 using (_outputStream = File.OpenWrite(_outputPath))
                 {
                     ConvertDocument();
                 };
-            //} catch (Exception ex)
-            //{
-            //    Console.Error.WriteLine($"Could not open {FileName}");
-            //}
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine($"Could not open {FileName}");
+            }
         }
 
         private void ConvertDocument()
