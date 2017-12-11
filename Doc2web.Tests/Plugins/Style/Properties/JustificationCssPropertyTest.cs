@@ -13,12 +13,14 @@ namespace Doc2web.Tests.Plugins.Style.Properties
     [TestClass]
     public class JustificationCssPropertyTest
     {
+        private StyleConfig _config;
         private JustificationCssProperty _instance;
 
         [TestInitialize]
         public void Initialize()
         {
-            _instance = new JustificationCssProperty();
+            _config = new StyleConfig();
+            _instance = new JustificationCssProperty(_config);
             _instance.Selector = "p.test";
             _instance.Element = new Justification();
         }
@@ -125,7 +127,9 @@ namespace Doc2web.Tests.Plugins.Style.Properties
         private void AssertIsCenterAlign()
         {
             AssertCssEquals(
-                ("text-align", "center")
+                (_instance.Selector, "text-align", "center"),
+                (_instance.Selector, "justify-content", "center"),
+                (_instance.Selector + _config.ParagraphCssClassPrefix, "flex", "0")
             );
         }
 
